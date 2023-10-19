@@ -5,13 +5,20 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name = "intake_test")
 public class intake extends LinearOpMode {
     DcMotor motor1 = null;
-     DcMotor motor2 = null;
+    DcMotor motor2 = null;
     BNO055IMU imu;
+    double Power = 0;
 
+    double koef;
+
+    double PowerPartFromMaxValue = 0.001;
+
+    ElapsedTime acceleration = new ElapsedTime();
     @Override
     public void runOpMode() throws InterruptedException {
         // init of motor1
@@ -33,18 +40,30 @@ public class intake extends LinearOpMode {
 //
             //
             //
+
             if ((Math.abs(gamepad1.right_stick_y) >= 0.1) && opModeIsActive()) {
-                double Power = 0;
+                if (acceleration.milliseconds() > 1000)
+                    koef = 1;
+                else
+                    koef = 100 - 0.019 * acceleration.milliseconds();
 
-                Power = gamepad1.right_stick_y * 0.25;
-                motor1.setPower(Power);
-                 motor2.setPower(Power);
-
+                Power = gamepad1.right_stick_y * PowerPartFromMaxValue / Math.abs(gamepad1.right_stick_y) * koef;
+                telemetry.addData("Power:", Power);
+                telemetry.addData("Koef:", koef);
+                telemetry.update();
                 // Show the elapsed game time and wheel power.
                 //  telemetry.addData("Status", "Run Time: " + runtime.toString());
                 //  telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
                 //  telemetry.update();
             }
+            else {
+                Power = 0;
+                acceleration.reset();
+            }
+            motor1.setPower(Power);
+            motor2.setPower(Power);
+
+
         }
     }
 }
