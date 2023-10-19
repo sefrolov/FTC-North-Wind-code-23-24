@@ -14,11 +14,11 @@ public class intake extends LinearOpMode {
     BNO055IMU imu;
     double Power = 0;
 
-    double koef;
+    double acceleration_koef;
 
     double PowerPartFromMaxValue = 0.001;
 
-    ElapsedTime acceleration = new ElapsedTime();
+    ElapsedTime acceleration_time = new ElapsedTime();
     @Override
     public void runOpMode() throws InterruptedException {
         // init of motor1
@@ -42,14 +42,14 @@ public class intake extends LinearOpMode {
             //
 
             if ((Math.abs(gamepad1.right_stick_y) >= 0.1) && opModeIsActive()) {
-                if (acceleration.milliseconds() > 1000)
-                    koef = 1;
+                if (acceleration_time.milliseconds() > 1000)
+                    acceleration_koef = 1;
                 else
-                    koef = 100 - 0.019 * acceleration.milliseconds();
+                    acceleration_koef = 100 - 0.019 * acceleration_time.milliseconds();
 
-                Power = gamepad1.right_stick_y * PowerPartFromMaxValue / Math.abs(gamepad1.right_stick_y) * koef;
-                telemetry.addData("Power:", Power);
-                telemetry.addData("Koef:", koef);
+                Power = gamepad1.right_stick_y * PowerPartFromMaxValue / Math.abs(gamepad1.right_stick_y) * acceleration_koef;
+                telemetry.addData("Intake motors power:", Power);
+                telemetry.addData("Intake acceleration koef:", acceleration_koef);
                 telemetry.update();
                 // Show the elapsed game time and wheel power.
                 //  telemetry.addData("Status", "Run Time: " + runtime.toString());
@@ -58,7 +58,7 @@ public class intake extends LinearOpMode {
             }
             else {
                 Power = 0;
-                acceleration.reset();
+                acceleration_time.reset();
             }
             motor1.setPower(Power);
             motor2.setPower(Power);
