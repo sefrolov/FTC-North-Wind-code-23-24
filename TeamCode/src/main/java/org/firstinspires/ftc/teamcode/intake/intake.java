@@ -16,7 +16,7 @@ public class intake extends LinearOpMode {
 
     double acceleration_koef;
 
-    double PowerPartFromMaxValue = 0.001;
+    double PowerPartFromMaxValue = 0.02;
 
     ElapsedTime acceleration_time = new ElapsedTime();
     @Override
@@ -42,12 +42,15 @@ public class intake extends LinearOpMode {
             //
 
             if ((Math.abs(gamepad1.right_stick_y) >= 0.1) && opModeIsActive()) {
+
                 if (acceleration_time.milliseconds() > 1000)
                     acceleration_koef = 1;
                 else
                     acceleration_koef = 100 - 0.019 * acceleration_time.milliseconds();
 
                 Power = gamepad1.right_stick_y * PowerPartFromMaxValue / Math.abs(gamepad1.right_stick_y) * acceleration_koef;
+                //Power = gamepad1.right_stick_y * PowerPartFromMaxValue / Math.abs(gamepad1.right_stick_y);
+
                 telemetry.addData("Intake motors power:", Power);
                 telemetry.addData("Intake acceleration koef:", acceleration_koef);
                 telemetry.update();
