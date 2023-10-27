@@ -6,14 +6,17 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.diff_sverwe.DriveTrainDifferential;
+import org.firstinspires.ftc.teamcode.intake.Intake;
 
 public class RobotNW {
     //TensorFlow camera = null;
     public DriveTrainDifferential DD = new DriveTrainDifferential();
+    public Intake IN = new Intake();
     ElapsedTime timer = new ElapsedTime();
 
     public void init(HardwareMap HM, Telemetry tele, LinearOpMode lop){
         DD.init(HM);
+        //IN.init(HM);
         //camera = new TensorFlow(HM,  lop,  tele, "model_unquant.tflite", "labels.txt");
     }
 
