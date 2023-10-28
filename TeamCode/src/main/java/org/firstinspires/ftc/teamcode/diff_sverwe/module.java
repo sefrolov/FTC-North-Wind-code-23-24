@@ -37,19 +37,33 @@ public class module {
             downMotor.setPower(power);
     }
 
-    public void applyVector(double rotation, double speed){
+    public void applyVector(double speed, double rotation){
         vec2 vector = new vec2(rotation, speed);
-        vec2 UpMotorVector = new vec2(1, 1);
-        vec2 DownMotorVector = new vec2(-1, 1);
-        vec2 RotSpeed = null;
+        vec2 UpMotorVector = new vec2(Math.sin(Math.toRadians(45)), Math.sin(Math.toRadians(45)));
+        vec2 DownMotorVector = new vec2(-Math.sin(Math.toRadians(45)), Math.sin(Math.toRadians(45)));
+        vec2 RotLin = new vec2(0, 0);
         double cosA;
 
+        /*
         vector.turn(vector.DegToRad(45));
+        */
 
-        RotSpeed = vector.normalize(vector.scalMul(vector, DownMotorVector) / DownMotorVector.len2(), vector.scalMul(vector, UpMotorVector) / UpMotorVector.len2());
+        /* RotLin.set(vector.scalMul(DownMotorVector) / 1, vector.scalMul(UpMotorVector) / 1); */
 
-        downMotor.setPower(RotSpeed.getX());
-        upMotor.setPower(RotSpeed.getY());
+        vec2 tmpvec = vector;
+        vec2 tmpvec2 = vector;
+        vector.set(tmpvec.scalMul(DownMotorVector) / 1, tmpvec2.scalMul(UpMotorVector) / 1);
+
+        vector = vector.normalize();
+
+        downMotor.setPower(vector.getX());
+        upMotor.setPower(vector.getY());
+
+
+        /*
+        downMotor.setPower(RotLin.getX());
+        upMotor.setPower(RotLin.getY());
+        */
         //motor2.power =
     }
 }

@@ -50,7 +50,7 @@ import java.util.List;
  */
 @TeleOp(name = "prop_red_detection", group = "Concept")
 //@Disabled
-public class prop_red_detector extends LinearOpMode {
+public class red_detecting_teleop extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 

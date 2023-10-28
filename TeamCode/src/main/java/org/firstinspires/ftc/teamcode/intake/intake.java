@@ -7,8 +7,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class Intake {
 
-    DcMotor motor1 = null;
-    DcMotor motor2 = null;
+    public DcMotor motor1 = null;
+    public DcMotor motor2 = null;
     double Power = 0;
     double acceleration_koef;
     double PowerPartFromMaxValue = 0.02;

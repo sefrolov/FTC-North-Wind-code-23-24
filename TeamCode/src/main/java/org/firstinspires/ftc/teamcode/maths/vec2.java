@@ -83,9 +83,8 @@ public class vec2 {
         return new vec2(X * a, Y * a);
     }
 
-    public double scalMul(vec2 a, vec2 b){
-        double cosA = (a.X * b.X + a.Y * b.Y) / (Math.sqrt(a.X * a.X + a.Y * a.Y) * Math.sqrt(b.X * b.X + b.Y * b.Y));
-        return a.len2() * b.len2() * cosA;
+    public double scalMul(vec2 b){
+        return (this.X * b.X + this.Y * b.Y);
     }
 
     public vec2 abs() {
@@ -105,9 +104,10 @@ public class vec2 {
     }
 
     public vec2 turn(double ang){
-        double x = X * cos(ang) + Y * sin(ang);
-        double y = -X * sin(ang) + Y * cos(ang);
-        return new vec2(x, y);
+        double newX = this.X * cos(ang) - this.Y * sin(ang);
+        Y = this.X * sin(ang) + this.Y * cos(ang);
+        X = newX;
+        return new vec2(X, Y);
     }
 
     public double radToDeg(double ang){
@@ -139,7 +139,7 @@ public class vec2 {
     public vec2 normalize(){
         double c;
 
-        if ((c = Math.max(this.X, this.Y)) > 1){
+        if ((c = Math.max(Math.abs(this.X), Math.abs(this.Y))) > 1){
             this.X /= c;
             this.Y /= c;
         }

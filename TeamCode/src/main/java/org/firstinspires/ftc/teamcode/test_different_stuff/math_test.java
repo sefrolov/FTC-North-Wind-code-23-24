@@ -20,8 +20,8 @@ public class math_test extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            if (Math.abs(gamepad1.left_stick_x) > 0.1 || Math.abs(gamepad1.left_stick_y) > 0.1)
-                Robot.DD.leftModule.applyVector(gamepad1.left_stick_x, -gamepad1.left_stick_y);
+            if (Math.abs(gamepad1.right_trigger - gamepad1.left_trigger) > 0.1 || Math.abs(gamepad1.left_stick_y) > 0.1)
+                Robot.DD.leftModule.applyVector(gamepad1.right_trigger - gamepad1.left_trigger, -gamepad1.left_stick_y);
             else
                 Robot.DD.leftModule.applyVector(0, 0);
             if (Math.abs(gamepad1.right_stick_x) > 0.1 || Math.abs(gamepad1.right_stick_y) > 0.1)
@@ -29,14 +29,13 @@ public class math_test extends LinearOpMode {
             else
                 Robot.DD.rightModule.applyVector(0, 0);
 
-            telemetry.addData("left x:", gamepad1.left_stick_x);
-            telemetry.addData("left y:", gamepad1.left_stick_y);
-            telemetry.addData("right x:", gamepad1.right_stick_x);
-            telemetry.addData("right y:", gamepad1.right_stick_y);
-            telemetry.addData("leftUp power",Robot.DD.leftModule.upMotor.getPower());
-            telemetry.addData("leftDown power",Robot.DD.leftModule.downMotor.getPower());
-            telemetry.addData("RightUp power",Robot.DD.rightModule.upMotor.getPower());
-            telemetry.addData("RightDown power",Robot.DD.rightModule.downMotor.getPower());
+            telemetry.addData("left y:", -gamepad1.left_stick_y);
+            telemetry.addData("right y:", -gamepad1.right_stick_y);
+            telemetry.addData("trig :", gamepad1.right_trigger - gamepad1.left_trigger);
+            telemetry.addData("leftUp power", Robot.DD.leftModule.upMotor.getPower());
+            telemetry.addData("leftDown power", Robot.DD.leftModule.downMotor.getPower());
+            telemetry.addData("RightUp power", Robot.DD.rightModule.upMotor.getPower());
+            telemetry.addData("RightDown power", Robot.DD.rightModule.downMotor.getPower());
 
             telemetry.update();
 

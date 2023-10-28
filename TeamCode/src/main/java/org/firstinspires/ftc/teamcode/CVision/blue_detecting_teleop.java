@@ -50,7 +50,7 @@ import java.util.List;
  */
 @TeleOp(name = "prop_blue_detection", group = "Concept")
 //@Disabled
-public class prop_blue_detector extends LinearOpMode {
+public class blue_detecting_teleop extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
@@ -201,5 +201,23 @@ public class prop_blue_detector extends LinearOpMode {
         }   // end for() loop
 
     }   // end method telemetryTfod()
+
+    public String getPosition(){
+        List<Recognition> currentRecognitions = tfod.getRecognitions();
+
+        // Step through the list of recognitions and display info for each one.
+        for (Recognition recognition : currentRecognitions) {
+            double x = (recognition.getLeft() + recognition.getRight()) / 2 ;
+            double y = (recognition.getTop()  + recognition.getBottom()) / 2 ;
+
+            if (x <= 670)
+                return "Left";
+            else if (x <= 1320)
+                return "Center";
+            else
+                return "Right";
+        }
+        return "Center";
+    }
 
 }   // end class
