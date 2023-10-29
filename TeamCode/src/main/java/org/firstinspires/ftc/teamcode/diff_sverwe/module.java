@@ -1,13 +1,25 @@
 package org.firstinspires.ftc.teamcode.diff_sverwe;
 
+import static java.lang.Math.PI;
+import static java.lang.Math.abs;
+import static java.lang.Math.atan2;
+import static java.lang.Math.cos;
+import static java.lang.Math.signum;
+import static java.lang.Math.sin;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.checkerframework.checker.units.qual.Speed;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.maths.vec2;
 
 public class module {
     public DcMotor downMotor = null;
     public DcMotor upMotor = null;
+    double TICS_PER_REV = 1439, p_coef_turn = 0.1;
+    vec2 cur_dir = new vec2(0, 1);
     public void init(HardwareMap HM, String DownMotorName, String UpMotorName) {
         // init of downMotor
         downMotor = HM.get(DcMotor.class, DownMotorName);
@@ -39,10 +51,10 @@ public class module {
 
     public void applyVector(double speed, double rotation){
         vec2 vector = new vec2(rotation, speed);
-        vec2 UpMotorVector = new vec2(Math.sin(Math.toRadians(45)), Math.sin(Math.toRadians(45)));
-        vec2 DownMotorVector = new vec2(-Math.sin(Math.toRadians(45)), Math.sin(Math.toRadians(45)));
-        vec2 RotLin = new vec2(0, 0);
-        double cosA;
+        vec2 UpMotorVector = new vec2(sin(Math.toRadians(45)), sin(Math.toRadians(45)));
+        vec2 DownMotorVector = new vec2(-sin(Math.toRadians(45)), sin(Math.toRadians(45)));
+        //vec2 RotLin = new vec2(0, 0);
+        //double cosA;
 
         /*
         vector.turn(vector.DegToRad(45));
@@ -65,5 +77,28 @@ public class module {
         upMotor.setPower(RotLin.getY());
         */
         //motor2.power =
+    }
+
+    public double getDirection(){
+        return (upMotor.getCurrentPosition() / TICS_PER_REV * 2 * PI) % (2 * PI);
+    }
+
+    public void applyVectorP(vec2 dir, Telemetry tele){
+        cur_dir = new vec2(cos(getDirection() + PI * 0.5), sin(getDirection() + PI * 0.5));
+        if (dir.scalMul(cur_dir) < 0){
+            dir.neg();
+            applyVector(-dir.len(), dir.vecMul(cur_dir) / dir.len() * p_coef_turn);
+            tele.addData("negative", true);
+        }
+        else applyVector(dir.len(), dir.vecMul(cur_dir) / dir.len() * p_coef_turn);
+        tele.addData("Direction", getDirection());
+        tele.addData("cur_dirX", cur_dir.getX());
+        tele.addData("cur_dirY", cur_dir.getY());
+        tele.addData("dirX", dir.getX());
+        tele.addData("dirY", dir.getY());
+        tele.addData("speed", dir.len());
+        tele.addData("rot", dir.vecMul(cur_dir) / dir.len() * p_coef_turn);
+
+
     }
 }

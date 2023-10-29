@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.maths;
 
+import static java.lang.Math.atan2;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
+import static java.lang.Math.sqrt;
 
 import org.opencv.core.Mat;
 
@@ -87,6 +89,10 @@ public class vec2 {
         return (this.X * b.X + this.Y * b.Y);
     }
 
+    public double vecMul(vec2 b){
+        return (this.X * b.Y - this.Y * b.X);
+    }
+
     public vec2 abs() {
         return new vec2(Math.abs(X), Math.abs(Y));
     }
@@ -101,6 +107,10 @@ public class vec2 {
 
     public double len2() {
         return X * X + Y * Y;
+    }
+
+    public double len() {
+        return sqrt(len2());
     }
 
     public vec2 turn(double ang){
@@ -144,5 +154,9 @@ public class vec2 {
             this.Y /= c;
         }
         return this;
+    }
+
+    public double getDirection(){
+        return atan2(Y, X);
     }
 }

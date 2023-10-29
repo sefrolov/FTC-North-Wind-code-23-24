@@ -32,12 +32,12 @@ public class drive_test extends LinearOpMode {
                     Robot.DD.leftModule.applyMotorPower("up", 0);
 
                 if ((Math.abs(gamepad2.right_stick_y) >= 0.1) && opModeIsActive()) {
-                    Robot.DD.rightModule.applyMotorPower("down", gamepad1.left_stick_y);
+                    Robot.DD.rightModule.applyMotorPower("down", gamepad2.left_stick_y);
                 } else
                     Robot.DD.rightModule.applyMotorPower("down", 0);
 
                 if ((Math.abs(gamepad2.left_stick_y) >= 0.1) && opModeIsActive()) {
-                    Robot.DD.rightModule.applyMotorPower("up", gamepad1.left_stick_y);
+                    Robot.DD.rightModule.applyMotorPower("up", gamepad2.left_stick_y);
                 } else
                     Robot.DD.rightModule.applyMotorPower("up", 0);
 
