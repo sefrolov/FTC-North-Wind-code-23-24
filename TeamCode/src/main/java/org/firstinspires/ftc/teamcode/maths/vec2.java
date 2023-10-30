@@ -49,17 +49,19 @@ public class vec2 {
     }
 
     public vec2 add(vec2 a) {
-        add(a.X, a.Y);
+        this.add(a.X, a.Y);
 
         return this;
     }
 
     public vec2 minus(vec2 a){
-        return add(invert(a));
+        this.add(a.invert());
+        return this;
     }
 
     public vec2 minus(double X, double Y){
-        return add(X, Y);
+        this.minus(new vec2(X,Y));
+        return this;
     }
 
     public vec2 plus(double a, double b) {
@@ -74,17 +76,18 @@ public class vec2 {
         return new vec2(-X, -Y);
     }
 
-    public vec2 invert(vec2 a){
-        a.X = -a.X;
-        a.Y = -a.Y;
+    public vec2 invert(){
+        X = -X;
+        Y = -Y;
 
         return this;
     }
 
     public vec2 mul(double a) {
-        return new vec2(X * a, Y * a);
+        X *= a;
+        Y *= a;
+        return this;
     }
-
     public double scalMul(vec2 b){
         return (this.X * b.X + this.Y * b.Y);
     }
@@ -134,16 +137,6 @@ public class vec2 {
 
     public double getY(){
         return this.Y;
-    }
-
-    public vec2 normalize(double a, double b){
-        double c;
-
-        if ((c = Math.max(a, b)) > 1){
-            a /= c;
-            b /= c;
-        }
-        return new vec2(a, b);
     }
 
     public vec2 normalize(){

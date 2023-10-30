@@ -25,9 +25,12 @@ public class Detector {
 
     public void init(HardwareMap HM, Telemetry tele, String color){
         if (color.equals("Red"))
-            TFOD_MODEL_ASSET = "red_model_meta_tflite";
-        else if (color.equals("Blue"))
-            TFOD_MODEL_ASSET = "model_meta_tflite";
+            TFOD_MODEL_ASSET = "red_model_meta.tflite";
+        else if (color.equals("Blue")) {
+            TFOD_MODEL_ASSET = "model_meta.tflite";
+            tele.addData("", "Blue");
+            tele.update();
+        }
         else {
             tele.addData("TFOD", "unknown color");
             tele.update();
@@ -96,16 +99,21 @@ public class Detector {
 
     }   // end method initTfod()
 
-    public String getPosition(){
+    public String getPosition(Telemetry tele){
         List<Recognition> currentRecognitions = tfod.getRecognitions();
 
+        tele.addData("", "here1");
+        tele.addData("model", TFOD_MODEL_ASSET);
         // Step through the list of recognitions and display info for each one.
         for (Recognition recognition : currentRecognitions) {
             double x = (recognition.getLeft() + recognition.getRight()) / 2 ;
             double y = (recognition.getTop()  + recognition.getBottom()) / 2 ;
 
-            if (x <= 670)
+            if (x <= 670) {
+                tele.addData("", "Left");
+                tele.update();
                 return "Left";
+            }
             else if (x <= 1320)
                 return "Center";
             else

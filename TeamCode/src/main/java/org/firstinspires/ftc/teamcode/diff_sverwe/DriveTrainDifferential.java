@@ -9,7 +9,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.RobotNW;
 import org.firstinspires.ftc.teamcode.maths.vec2;
 
 public class DriveTrainDifferential {
@@ -26,19 +29,37 @@ public class DriveTrainDifferential {
         rightModule.init(HM, "motorRD", "motorRU");
     }
 
-    void applySpeed(vec2 trans, double turnSpeed){
+    public void applySpeed(vec2 trans, double turnSpeed, Telemetry tele) {
         turnSpeedRight = rightWheelCoord.turn(0.5 * PI).mul(MAX_ANG_SPEED * turnSpeed);
         turnSpeedLeft = leftWheelCoord.turn(0.5 * PI).mul(MAX_ANG_SPEED * turnSpeed);
 
         rightSpeed = trans.plus(turnSpeedRight);
         leftSpeed = trans.plus(turnSpeedLeft);
-        if (max(rightSpeed.len(), leftSpeed.len()) > 1){
+        if (max(rightSpeed.len(), leftSpeed.len()) > 1) {
             rightSpeed.mul(1. / max(rightSpeed.len(), leftSpeed.len()));
             leftSpeed.mul(1. / max(rightSpeed.len(), leftSpeed.len()));
         }
 
-        //rightModule.applyVectorP(rightSpeed);
-        //leftModule.applyVectorP(leftSpeed);
+        rightModule.applyVectorP(rightSpeed);
+        leftModule.applyVectorP(leftSpeed);
+        tele.addData("right speed X:", rightSpeed.getX());
+        tele.addData("right speed Y:", rightSpeed.getY());
+        tele.addData("left speed X:", leftSpeed.getX());
+        tele.addData("left speed Y:", leftSpeed.getY());
+    }
+
+    public void goForward( double speed ) {
+        rightModule.applyVector(speed, 0);
+        leftModule.applyVector(speed, 0);
+    }
+
+    public void rotateModules( double speed ) {
+        rightModule.applyVector(0, speed);
+        leftModule.applyVector(0, speed);
+    }
+
+    public void stopDrivetrain() {
+        rightModule.applyVector(0, 0);
+        leftModule.applyVector(0, 0);
     }
 }
-

@@ -23,12 +23,15 @@ public class intake_test extends LinearOpMode {
 
             if ((Math.abs(gamepad1.right_stick_y) >= 0.1) && opModeIsActive()) {
 
-                if (Robot.IN.acceleration_time.milliseconds() > 1000)
-                    Robot.IN.acceleration_koef = 1;
+                if (Robot.IN.acceleration_time.milliseconds() > 500)
+                    Robot.IN.acceleration_koef = 0.1;
                 else
-                    Robot.IN.acceleration_koef = 100 - 0.019 * Robot.IN.acceleration_time.milliseconds();
+                    Robot.IN.acceleration_koef = (10 - 0.001 * Robot.IN.acceleration_time.milliseconds());
 
-                Robot.IN.Power = gamepad1.right_stick_y * Robot.IN.PowerPartFromMaxValue / Math.abs(gamepad1.right_stick_y) * Robot.IN.acceleration_koef;
+                if (-gamepad1.right_stick_y < 0)
+                    Robot.IN.Power = 1.7 * gamepad1.right_stick_y * Robot.IN.PowerPartFromMaxValue /* /Math.abs(gamepad1.right_stick_y)*/ * Robot.IN.acceleration_koef;
+                else
+                    Robot.IN.Power = 1.5 * gamepad1.right_stick_y * Robot.IN.PowerPartFromMaxValue /* /Math.abs(gamepad1.right_stick_y)*/ * Robot.IN.acceleration_koef;
                 //Power = gamepad1.right_stick_y * PowerPartFromMaxValue / Math.abs(gamepad1.right_stick_y);
 
                 telemetry.addData("Intake motors power:", Robot.IN.Power);
@@ -38,6 +41,18 @@ public class intake_test extends LinearOpMode {
                 //  telemetry.addData("Status", "Run Time: " + runtime.toString());
                 //  telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
                 //  telemetry.update();
+            }
+            else if (gamepad1.y)
+            {
+
+                if (Robot.IN.acceleration_time.milliseconds() > 500)
+                    Robot.IN.acceleration_koef = 0.1;
+                else
+                    Robot.IN.acceleration_koef = (10 - 0.001 * Robot.IN.acceleration_time.milliseconds());
+
+                Robot.IN.Power = -1;
+                //Power = gamepad1.right_stick_y * PowerPartFromMaxValue / Math.abs(gamepad1.right_stick_y);
+
             }
             else {
                 Robot.IN.Power = 0;

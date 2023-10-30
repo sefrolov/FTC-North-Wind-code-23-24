@@ -18,7 +18,7 @@ public class Auto_red_left extends LinearOpMode {
         telemetry.update();
 
         while (!opModeIsActive())
-            prop_pos = Robot.BD.getPosition();
+            prop_pos = Robot.BD.getPosition(telemetry);
 
         waitForStart();
 
@@ -36,279 +36,222 @@ public class Auto_red_left extends LinearOpMode {
                 ;/* most stable */
         }
     }
-
     private void right() {
         /* rotate modules */
-        Robot.DD.rightModule.applyVector(1, 0);
-        Robot.DD.leftModule.applyVector(1, 0);
+        Robot.DD.rotateModules(1);
         timer.reset();
         while (timer.milliseconds() < 100 && !isStopRequested())
             ;
 
         /* stop rotating modules */
-        Robot.DD.rightModule.applyVector(0, 0);
-        Robot.DD.leftModule.applyVector(0, 0);
+        Robot.DD.stopDrivetrain();
         timer.reset();
         while (timer.milliseconds() < 100 && !isStopRequested())
             ;
 
-
-
         /* go to spike mark */
-        Robot.DD.rightModule.applyVector(0, 1);
-        Robot.DD.leftModule.applyVector(0, 1);
+        Robot.DD.goForward(1);
         timer.reset();
         while (timer.milliseconds() < 1300 && !isStopRequested())
             ;
         /* stop  */
-        Robot.DD.rightModule.applyVector(0, 0);
-        Robot.DD.leftModule.applyVector(0, 0);
+        Robot.DD.stopDrivetrain();
         timer.reset();
         while (timer.milliseconds() < 100 && !isStopRequested())
             ;
 
         /* unload pixel */
-        Robot.IN.motor1.setPower(0.001);
-        Robot.IN.motor2.setPower(-0.001);
+        Robot.IN.unloadPixel();
         timer.reset();
         while (timer.milliseconds() < 100 && !isStopRequested())
             ;
-        Robot.IN.motor1.setPower(0);
-        Robot.IN.motor2.setPower(0);
-
-
+        Robot.IN.stopIntakeMotors();
 
         /* go back to starting location */
 
-        Robot.DD.rightModule.applyVector(0, -1);
-        Robot.DD.leftModule.applyVector(0, -1);
+        Robot.DD.rotateModules(-1);
         timer.reset();
         while (timer.milliseconds() < 1300 && !isStopRequested())
             ;
         /* stop  */
-        Robot.DD.rightModule.applyVector(0, 0);
-        Robot.DD.leftModule.applyVector(0, 0);
+        Robot.DD.stopDrivetrain();
         timer.reset();
         while (timer.milliseconds() < 100 && !isStopRequested())
             ;
 
-
-
         /* go right to one tile before backstage */
 
         /* rotate modules */
-        Robot.DD.rightModule.applyVector(1, 0);
-        Robot.DD.leftModule.applyVector(1, 0);
+        Robot.DD.rotateModules(1);
         timer.reset();
         while (timer.milliseconds() < 250 && !isStopRequested())
             ;
 
         /* stop */
-        Robot.DD.rightModule.applyVector(0, 0);
-        Robot.DD.leftModule.applyVector(0, 0);
+        Robot.DD.stopDrivetrain();
         timer.reset();
         while (timer.milliseconds() < 100 && !isStopRequested())
             ;
 
         /* go forward */
-        Robot.DD.rightModule.applyVector(0, 1);
-        Robot.DD.leftModule.applyVector(0, 1);
+        Robot.DD.goForward(1);
         timer.reset();
         while (timer.milliseconds() < 1300 * 4 && !isStopRequested())
             ;
 
         /* stop */
-        Robot.DD.rightModule.applyVector(0, 0);
-        Robot.DD.leftModule.applyVector(0, 0);
+        Robot.DD.stopDrivetrain();
         timer.reset();
         while (timer.milliseconds() < 100 && !isStopRequested())
             ;
 
         /* unload pixel */
-        Robot.IN.motor1.setPower(0.001);
-        Robot.IN.motor2.setPower(-0.001);
+        Robot.IN.unloadPixel();
         timer.reset();
         while (timer.milliseconds() < 100 && !isStopRequested())
             ;
-        Robot.IN.motor1.setPower(0);
-        Robot.IN.motor2.setPower(0);
+        Robot.IN.stopIntakeMotors();
     }
-
     private void center() {
         /* go to spike mark */
-        Robot.DD.rightModule.applyVector(0, 1);
-        Robot.DD.leftModule.applyVector(0, 1);
+        Robot.DD.goForward(1);
         timer.reset();
         while (timer.milliseconds() < 1300 && !isStopRequested())
             ;
         /* stop  */
-        Robot.DD.rightModule.applyVector(0, 0);
-        Robot.DD.leftModule.applyVector(0, 0);
+        Robot.DD.stopDrivetrain();
         timer.reset();
         while (timer.milliseconds() < 100 && !isStopRequested())
             ;
 
         /* unload pixel */
-        Robot.IN.motor1.setPower(0.001);
-        Robot.IN.motor2.setPower(-0.001);
+        Robot.IN.unloadPixel();
         timer.reset();
         while (timer.milliseconds() < 100 && !isStopRequested())
             ;
-        Robot.IN.motor1.setPower(0);
-        Robot.IN.motor2.setPower(0);
-
-
+        Robot.IN.stopIntakeMotors();
 
         /* go back to starting location */
 
-        Robot.DD.rightModule.applyVector(0, -1);
-        Robot.DD.leftModule.applyVector(0, -1);
+        Robot.DD.goForward(-1);
         timer.reset();
         while (timer.milliseconds() < 1300 && !isStopRequested())
             ;
         /* stop  */
-        Robot.DD.rightModule.applyVector(0, 0);
-        Robot.DD.leftModule.applyVector(0, 0);
+        Robot.DD.stopDrivetrain();
         timer.reset();
         while (timer.milliseconds() < 100 && !isStopRequested())
             ;
-
-
 
         /* go right to one tile before backstage */
 
         /* rotate modules */
-        Robot.DD.rightModule.applyVector(1, 0);
-        Robot.DD.leftModule.applyVector(1, 0);
+        Robot.DD.rotateModules(1);
         timer.reset();
         while (timer.milliseconds() < 350 && !isStopRequested())
             ;
 
         /* stop */
-        Robot.DD.rightModule.applyVector(0, 0);
-        Robot.DD.leftModule.applyVector(0, 0);
+        Robot.DD.stopDrivetrain();
         timer.reset();
         while (timer.milliseconds() < 100 && !isStopRequested())
             ;
 
         /* go forward */
-        Robot.DD.rightModule.applyVector(0, 1);
-        Robot.DD.leftModule.applyVector(0, 1);
+        Robot.DD.goForward(1);
         timer.reset();
         while (timer.milliseconds() < 1300 * 4 && !isStopRequested())
             ;
 
         /* stop */
-        Robot.DD.rightModule.applyVector(0, 0);
-        Robot.DD.leftModule.applyVector(0, 0);
+        Robot.DD.stopDrivetrain();
         timer.reset();
         while (timer.milliseconds() < 100 && !isStopRequested())
             ;
 
         /* unload pixel */
-        Robot.IN.motor1.setPower(0.001);
-        Robot.IN.motor2.setPower(-0.001);
+        Robot.IN.unloadPixel();
         timer.reset();
         while (timer.milliseconds() < 100 && !isStopRequested())
             ;
-        Robot.IN.motor1.setPower(0);
-        Robot.IN.motor2.setPower(0);
+        Robot.IN.stopIntakeMotors();
     }
-
     private void left() {
         /* rotate modules */
-        Robot.DD.rightModule.applyVector(-1, 0);
-        Robot.DD.leftModule.applyVector(-1, 0);
+        Robot.DD.rotateModules(-1);
         timer.reset();
         while (timer.milliseconds() < 100 && !isStopRequested())
             ;
 
         /* stop rotating modules */
-        Robot.DD.rightModule.applyVector(0, 0);
-        Robot.DD.leftModule.applyVector(0, 0);
+        Robot.DD.stopDrivetrain();
         timer.reset();
         while (timer.milliseconds() < 100 && !isStopRequested())
             ;
 
-
-
         /* go to spike mark */
-        Robot.DD.rightModule.applyVector(0, 1);
-        Robot.DD.leftModule.applyVector(0, 1);
+        Robot.DD.goForward(1);
         timer.reset();
         while (timer.milliseconds() < 1300 && !isStopRequested())
             ;
+
         /* stop  */
-        Robot.DD.rightModule.applyVector(0, 0);
-        Robot.DD.leftModule.applyVector(0, 0);
+        Robot.DD.stopDrivetrain();
         timer.reset();
         while (timer.milliseconds() < 100 && !isStopRequested())
             ;
 
         /* unload pixel */
-        Robot.IN.motor1.setPower(0.001);
-        Robot.IN.motor2.setPower(-0.001);
+        Robot.IN.unloadPixel();
         timer.reset();
         while (timer.milliseconds() < 100 && !isStopRequested())
             ;
-        Robot.IN.motor1.setPower(0);
-        Robot.IN.motor2.setPower(0);
-
-
+        Robot.IN.stopIntakeMotors();
 
         /* go back to starting location */
 
-        Robot.DD.rightModule.applyVector(0, -1);
-        Robot.DD.leftModule.applyVector(0, -1);
+        Robot.DD.goForward(-1);
         timer.reset();
         while (timer.milliseconds() < 1300 && !isStopRequested())
             ;
+
         /* stop  */
-        Robot.DD.rightModule.applyVector(0, 0);
-        Robot.DD.leftModule.applyVector(0, 0);
+        Robot.DD.stopDrivetrain();
         timer.reset();
         while (timer.milliseconds() < 100 && !isStopRequested())
             ;
-
-
 
         /* go right to one tile before backstage */
 
         /* rotate modules */
-        Robot.DD.rightModule.applyVector(1, 0);
-        Robot.DD.leftModule.applyVector(1, 0);
+        Robot.DD.rotateModules(1);
         timer.reset();
         while (timer.milliseconds() < 450 && !isStopRequested())
             ;
 
         /* stop */
-        Robot.DD.rightModule.applyVector(0, 0);
-        Robot.DD.leftModule.applyVector(0, 0);
+        Robot.DD.stopDrivetrain();
         timer.reset();
         while (timer.milliseconds() < 100 && !isStopRequested())
             ;
 
         /* go forward */
-        Robot.DD.rightModule.applyVector(0, 1);
-        Robot.DD.leftModule.applyVector(0, 1);
+        Robot.DD.goForward(1);
         timer.reset();
         while (timer.milliseconds() < 1300 * 4 && !isStopRequested())
             ;
 
         /* stop */
-        Robot.DD.rightModule.applyVector(0, 0);
-        Robot.DD.leftModule.applyVector(0, 0);
+        Robot.DD.stopDrivetrain();
         timer.reset();
         while (timer.milliseconds() < 100 && !isStopRequested())
             ;
 
         /* unload pixel */
-        Robot.IN.motor1.setPower(0.001);
-        Robot.IN.motor2.setPower(-0.001);
+        Robot.IN.unloadPixel();
         timer.reset();
         while (timer.milliseconds() < 100 && !isStopRequested())
             ;
-        Robot.IN.motor1.setPower(0);
-        Robot.IN.motor2.setPower(0);
+        Robot.IN.stopIntakeMotors();
     }
 }

@@ -23,15 +23,68 @@ public class drive_test_enc extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
+            /*
             if (abs(gamepad1.left_stick_x) > 0.05 || abs(gamepad1.left_stick_y) > 0.05)
-            Robot.DD.leftModule.applyVectorP(new vec2(gamepad1.left_stick_x, -gamepad1.left_stick_y), telemetry);
-            else Robot.DD.leftModule.applyVectorP(new vec2(0, 0), telemetry);
+            Robot.DD.rightModule.applyVectorP(new vec2(gamepad1.left_stick_x, -gamepad1.left_stick_y), telemetry);
+            else
+             Robot.DD.rightModule.applyVectorP(new vec2(0, 0), telemetry);
             if (abs(gamepad1.right_stick_x) > 0.05 || abs(gamepad1.right_stick_y) > 0.05)
             Robot.DD.rightModule.applyVectorP(new vec2(gamepad1.right_stick_x, -gamepad1.right_stick_y), telemetry);
-            else Robot.DD.rightModule.applyVectorP(new vec2(0, 0), telemetry);
+            else
+             Robot.DD.rightModule.applyVectorP(new vec2(0, 0), telemetry);
             //telemetry.addData("left encoder", Robot.DD.leftModule.getDirection());
             //telemetry.addData("right encoder", Robot.DD.rightModule.getDirection());
             telemetry.update();
+
+            if (gamepad1.a){
+                Robot.DD.rightModule.applyVector(0, -1);
+            }
+            else if (gamepad1.b){
+                Robot.DD.rightModule.applyVector(1, 0);
+            }
+            else if (gamepad1.x){
+                Robot.DD.rightModule.applyVector(0.5, 0.5);
+            }
+            else if (gamepad1.y){
+                Robot.DD.rightModule.applyVector(-0.5, 0.3);
+            }
+            else
+                Robot.DD.rightModule.applyVector(0, 0);
+            */
+            if (!gamepad2.y){
+                if (abs(gamepad2.left_stick_x) > 0.05 || abs(gamepad2.left_stick_y) > 0.05)
+                    Robot.DD.leftModule.applyVectorPTele(new vec2(gamepad2.left_stick_x, -gamepad2.left_stick_y), telemetry);
+                else
+                    Robot.DD.leftModule.applyVectorPTele(new vec2(0, 0), telemetry);
+                if (abs(gamepad2.right_stick_x) > 0.05 || abs(gamepad2.right_stick_y) > 0.05)
+                    Robot.DD.rightModule.applyVectorPTele(new vec2(gamepad2.right_stick_x, -gamepad2.right_stick_y), telemetry);
+                else
+                    Robot.DD.rightModule.applyVectorPTele(new vec2(0, 0), telemetry);
+                telemetry.addData("left encoder", Robot.DD.leftModule.getDirection());
+                telemetry.addData("right encoder", Robot.DD.rightModule.getDirection());
+            }
+            else {
+                if (abs(gamepad2.left_stick_x) > 0.05 || abs(gamepad2.left_stick_y) > 0.05 || (Math.abs(gamepad2.right_trigger - gamepad2.left_trigger)) > 0.05)
+                    Robot.DD.applySpeed(new vec2(gamepad2.left_stick_x, -gamepad2.left_stick_y), (gamepad2.right_trigger - gamepad2.left_trigger), telemetry);
+                else
+                    Robot.DD.applySpeed(new vec2(0, 0), 0, telemetry);
+            }
+            /*
+            if (gamepad2.a) {
+                Robot.DD.leftModule.applyVector(0, -1);
+            }
+            else if (gamepad2.b) {
+                Robot.DD.leftModule.applyVector(1, 0);
+            }
+            else if (gamepad2.x) {
+                Robot.DD.leftModule.applyVector(1, 0);
+            }
+            else if (gamepad2.y) {
+                Robot.DD.leftModule.applyVector(-0.5, 0.3);
+            }
+            else
+                Robot.DD.leftModule.applyVector(0, 0);
+            */
         }
     }
 }

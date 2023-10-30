@@ -21,7 +21,7 @@ public class RobotNW {
         if (object_detection_color.length > 0)
             ODcolor = object_detection_color[0];
         DD.init(HM);
-        //IN.init(HM);
+        IN.init(HM);
         BD.init(HM, tele, ODcolor);
 
         //camera = new TensorFlow(HM,  lop,  tele, "model_unquant.tflite", "labels.txt");

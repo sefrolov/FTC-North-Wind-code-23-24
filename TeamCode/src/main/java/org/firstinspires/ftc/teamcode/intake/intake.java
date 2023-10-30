@@ -29,4 +29,33 @@ public class intake {
         motor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
+    public void unloadPixel() {
+        motor1.setPower(0.001);
+        motor2.setPower(-0.001);
+    }
+
+    public void stopIntakeMotors() {
+        motor1.setPower(0);
+        motor2.setPower(0);
+    }
+
+    public void work_intake(double input){
+        if (acceleration_time.milliseconds() > 500)
+            acceleration_koef = 0.1;
+        else
+            acceleration_koef = (10 - 0.001 * acceleration_time.milliseconds());
+
+        if (Math.abs(input) > 0.1) {
+            if (-input < 0)
+                Power = 1.7 * input * PowerPartFromMaxValue /* /Math.abs(gamepad1.right_stick_y)*/ * acceleration_koef;
+            else
+                Power = 1.5 * input * PowerPartFromMaxValue /* /Math.abs(gamepad1.right_stick_y)*/ * acceleration_koef;
+        }
+        else {
+                Power = 0;
+                acceleration_time.reset();
+             }
+            motor1.setPower(Power);
+            motor2.setPower(Power);
+    }
 }
