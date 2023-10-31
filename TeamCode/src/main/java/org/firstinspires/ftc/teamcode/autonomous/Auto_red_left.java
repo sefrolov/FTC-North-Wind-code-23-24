@@ -74,6 +74,8 @@ public class Auto_red_left extends LinearOpMode {
         comTraj.stopDrivetrain();
 
         comTraj.goFromStartToBackstage();
+
+        comAct.unloadPixel();
     }
     private void center() {
         /* go to spike mark */
@@ -100,6 +102,8 @@ public class Auto_red_left extends LinearOpMode {
         comTraj.stopDrivetrain();
 
         comTraj.goFromStartToBackstage();
+
+        comAct.unloadPixel();
     }
     private void left() {
         /* rotate modules */
@@ -133,5 +137,7 @@ public class Auto_red_left extends LinearOpMode {
         comTraj.stopDrivetrain();
 
         comTraj.goFromStartToBackstage();
+
+        comAct.unloadPixel();
     }
 }

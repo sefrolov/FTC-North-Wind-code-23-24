@@ -18,23 +18,10 @@ public class CommonAutonomousTrajectory {
 
     public void goFromStartToBackstage(){
         /* go forward */
-        Robot.DD.goForward(-1);
-        timer.reset();
-        while (timer.milliseconds() < 1300 * 4 && !lin.isStopRequested())
-            ;
+        goForward(-1, 1300);
 
         /* stop */
-        Robot.DD.stopDrivetrain();
-        timer.reset();
-        while (timer.milliseconds() < 100 && !lin.isStopRequested())
-            ;
-
-        /* unload pixel */
-        Robot.IN.unloadPixel();
-        timer.reset();
-        while (timer.milliseconds() < 100 && !lin.isStopRequested())
-            ;
-        Robot.IN.stopIntakeMotors();
+        stopDrivetrain();
     }
 
     public void stopDrivetrain(){
