@@ -46,26 +46,7 @@ public class Auto_blue_left extends LinearOpMode {
     }
 
     private void right() {
-        /* rotate modules */
-        comTraj.rotateModules(1, 100);
-
-        /* stop rotating modules */
-        comTraj.stopDrivetrain();
-
-        /* go to spike mark */
-        comTraj.goForward(1, 1300);
-
-        /* stop  */
-        comTraj.stopDrivetrain();
-
-        /* unload pixel */
-        comAct.unloadPixel();
-
-        /* go back to starting location */
-        comTraj.goForward(-1, 1300);
-
-        /* stop  */
-        comTraj.stopDrivetrain();
+        comTraj.rightSpike();
 
         /* go right to one tile before backstage */
 
@@ -75,26 +56,15 @@ public class Auto_blue_left extends LinearOpMode {
         /* stop */
         comTraj.stopDrivetrain();
 
-        comTraj.goFromStartToBackstage();
+        comTraj.goForward(-1, 1300);
+
+        comTraj.stopDrivetrain();
 
         comAct.unloadPixel();
     }
 
     private void center() {
-        /* go to spike mark */
-        comTraj.goForward(1, 1300);
-
-        /* stop  */
-        comTraj.stopDrivetrain();
-
-        /* unload pixel */
-        comAct.unloadPixel();
-
-        /* go back to starting location */
-        comTraj.goForward(-1, 1300);
-
-        /* stop  */
-        comTraj.stopDrivetrain();
+        comTraj.centerSpike();
 
         /* go right to one tile before backstage */
 
@@ -104,34 +74,15 @@ public class Auto_blue_left extends LinearOpMode {
         /* stop */
         comTraj.stopDrivetrain();
 
-        comTraj.goFromStartToBackstage();
+        comTraj.goForward(-1, 1300);
+
+        comTraj.stopDrivetrain();
 
         comAct.unloadPixel();
     }
 
     private void left() {
-        /* rotate modules */
-        comTraj.rotateModules(-1, 100);
-
-        /* stop rotating modules */
-        comTraj.stopDrivetrain();
-
-
-
-        /* go to spike mark */
-        comTraj.goForward(1, 1300);
-
-        /* stop  */
-        comTraj.stopDrivetrain();
-
-        /* unload pixel */
-        comAct.unloadPixel();
-
-        /* go back to starting location */
-        comTraj.goForward(-1, 1300);
-
-        /* stop  */
-        comTraj.stopDrivetrain();
+        comTraj.leftSpike();
 
         /* go right to one tile before backstage */
 
@@ -141,7 +92,9 @@ public class Auto_blue_left extends LinearOpMode {
         /* stop */
         comTraj.stopDrivetrain();
 
-        comTraj.goFromStartToBackstage();
+        comTraj.goForward(-1, 1300);
+
+        comTraj.stopDrivetrain();
 
         comAct.unloadPixel();
     }

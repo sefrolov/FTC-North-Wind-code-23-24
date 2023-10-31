@@ -9,19 +9,13 @@ public class CommonAutonomousTrajectory {
     RobotNW Robot;
     ElapsedTime timer;
     LinearOpMode lin;
+    CommonAutonomousActions comAct;
 
     public CommonAutonomousTrajectory(RobotNW Robot1, ElapsedTime timer1, LinearOpMode lin1) {
         Robot = Robot1;
         timer = timer1;
         lin = lin1;
-    }
-
-    public void goFromStartToBackstage(){
-        /* go forward */
-        goForward(-1, 1300);
-
-        /* stop */
-        stopDrivetrain();
+        comAct = new CommonAutonomousActions(Robot, timer, lin);
     }
 
     public void stopDrivetrain(){
@@ -43,5 +37,68 @@ public class CommonAutonomousTrajectory {
         timer.reset();
         while (timer.milliseconds() < 450 && !lin.isStopRequested())
             ;
+    }
+
+    public void leftSpike() {
+        /* rotate modules */
+        rotateModules(-1, 100);
+
+        /* stop rotating modules */
+        stopDrivetrain();
+
+        /* go to spike mark */
+        goForward(1, 1300);
+
+        /* stop  */
+        stopDrivetrain();
+
+        /* unload pixel */
+        comAct.unloadPixel();
+
+        /* go back to starting location */
+        goForward(-1, 1300);
+
+        /* stop  */
+        stopDrivetrain();
+    }
+
+    public void rightSpike() {
+        /* rotate modules */
+        rotateModules(1, 100);
+
+        /* stop rotating modules */
+        stopDrivetrain();
+
+        /* go to spike mark */
+        goForward(1, 1300);
+
+        /* stop  */
+        stopDrivetrain();
+
+        /* unload pixel */
+        comAct.unloadPixel();
+
+        /* go back to starting location */
+        goForward(-1, 1300);
+
+        /* stop  */
+        stopDrivetrain();
+    }
+
+    public void centerSpike() {
+        /* go to spike mark */
+        goForward(1, 1300);
+
+        /* stop  */
+        stopDrivetrain();
+
+        /* unload pixel */
+        comAct.unloadPixel();
+
+        /* go back to starting location */
+        goForward(-1, 1300);
+
+        /* stop  */
+        stopDrivetrain();
     }
 }
