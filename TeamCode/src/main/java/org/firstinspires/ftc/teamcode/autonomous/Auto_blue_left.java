@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.RobotNW;
+import org.firstinspires.ftc.teamcode.autonomous.CommonAutonomousTrajectory;
 
 @Autonomous(name = "Auto_blue_left")
 public class Auto_blue_left extends LinearOpMode {
@@ -12,13 +13,20 @@ public class Auto_blue_left extends LinearOpMode {
     ElapsedTime timer = new ElapsedTime();
     String prop_pos = "";
 
+    CommonAutonomousTrajectory comTraj = new CommonAutonomousTrajectory(Robot, timer, this);
+
+    CommonAutonomousActions comAct = new CommonAutonomousActions(Robot, timer, this);
+
     public void runOpMode() throws InterruptedException {
         Robot.init(hardwareMap, telemetry, this, "Blue");
         telemetry.addData("", "Init complited");
         telemetry.update();
 
-        while (!opModeIsActive())
+        while (!isStarted()) {
+            telemetry.addData("", "not started");
             prop_pos = Robot.BD.getPosition(telemetry);
+            telemetry.update();
+        }
 
         waitForStart();
 
@@ -39,234 +47,96 @@ public class Auto_blue_left extends LinearOpMode {
 
     private void right() {
         /* rotate modules */
-        Robot.DD.rotateModules(1);
-        timer.reset();
-        while (timer.milliseconds() < 100 && !isStopRequested())
-            ;
+        comTraj.rotateModules(1, 100);
 
         /* stop rotating modules */
-        Robot.DD.stopDrivetrain();
-        timer.reset();
-        while (timer.milliseconds() < 100 && !isStopRequested())
-            ;
-
-
+        comTraj.stopDrivetrain();
 
         /* go to spike mark */
-        Robot.DD.goForward(1);
-        timer.reset();
-        while (timer.milliseconds() < 1300 && !isStopRequested())
-            ;
+        comTraj.goForward(1, 1300);
+
         /* stop  */
-        Robot.DD.stopDrivetrain();
-        timer.reset();
-        while (timer.milliseconds() < 100 && !isStopRequested())
-            ;
+        comTraj.stopDrivetrain();
 
         /* unload pixel */
-        Robot.IN.unloadPixel();
-        timer.reset();
-        while (timer.milliseconds() < 100 && !isStopRequested())
-            ;
-        Robot.IN.stopIntakeMotors();
-
-
+        comAct.unloadPixel();
 
         /* go back to starting location */
+        comTraj.goForward(-1, 1300);
 
-        Robot.DD.goForward(-1);
-        timer.reset();
-        while (timer.milliseconds() < 1300 && !isStopRequested())
-            ;
         /* stop  */
-        Robot.DD.stopDrivetrain();
-        timer.reset();
-        while (timer.milliseconds() < 100 && !isStopRequested())
-            ;
-
-
+        comTraj.stopDrivetrain();
 
         /* go right to one tile before backstage */
 
         /* rotate modules */
-        Robot.DD.rotateModules(1);
-        timer.reset();
-        while (timer.milliseconds() < 250 && !isStopRequested())
-            ;
+        comTraj.rotateModules(1, 250);
 
         /* stop */
-        Robot.DD.stopDrivetrain();
-        timer.reset();
-        while (timer.milliseconds() < 100 && !isStopRequested())
-            ;
+        comTraj.stopDrivetrain();
 
-        /* go forward */
-        Robot.DD.goForward(-1);
-        timer.reset();
-        while (timer.milliseconds() < 1300 * 2 && !isStopRequested())
-            ;
-
-        /* stop */
-        Robot.DD.stopDrivetrain();
-        timer.reset();
-        while (timer.milliseconds() < 100 && !isStopRequested())
-            ;
-
-        /* unload pixel */
-        Robot.IN.unloadPixel();
-        timer.reset();
-        while (timer.milliseconds() < 100 && !isStopRequested())
-            ;
-        Robot.IN.stopIntakeMotors();
+        comTraj.goFromStartToBackstage();
     }
 
     private void center() {
         /* go to spike mark */
-        Robot.DD.goForward(1);
-        timer.reset();
-        while (timer.milliseconds() < 1300 && !isStopRequested())
-            ;
+        comTraj.goForward(1, 1300);
+
         /* stop  */
-        Robot.DD.stopDrivetrain();
-        timer.reset();
-        while (timer.milliseconds() < 100 && !isStopRequested())
-            ;
+        comTraj.stopDrivetrain();
 
         /* unload pixel */
-        Robot.IN.unloadPixel();
-        timer.reset();
-        while (timer.milliseconds() < 100 && !isStopRequested())
-            ;
-        Robot.IN.stopIntakeMotors();
-
-
+        comAct.unloadPixel();
 
         /* go back to starting location */
+        comTraj.goForward(-1, 1300);
 
-        Robot.DD.goForward(-1);
-        timer.reset();
-        while (timer.milliseconds() < 1300 && !isStopRequested())
-            ;
         /* stop  */
-        Robot.DD.stopDrivetrain();
-        timer.reset();
-        while (timer.milliseconds() < 100 && !isStopRequested())
-            ;
-
-
+        comTraj.stopDrivetrain();
 
         /* go right to one tile before backstage */
 
         /* rotate modules */
-        Robot.DD.rotateModules(1);
-        timer.reset();
-        while (timer.milliseconds() < 350 && !isStopRequested())
-            ;
+        comTraj.rotateModules(1, 350);
 
         /* stop */
-        Robot.DD.stopDrivetrain();
-        timer.reset();
-        while (timer.milliseconds() < 100 && !isStopRequested())
-            ;
+        comTraj.stopDrivetrain();
 
-        /* go forward */
-        Robot.DD.goForward(-1);
-        timer.reset();
-        while (timer.milliseconds() < 1300 * 2 && !isStopRequested())
-            ;
-
-        /* stop */
-        Robot.DD.stopDrivetrain();
-        timer.reset();
-        while (timer.milliseconds() < 100 && !isStopRequested())
-            ;
-
-        /* unload pixel */
-        Robot.IN.unloadPixel();
-        timer.reset();
-        while (timer.milliseconds() < 100 && !isStopRequested())
-            ;
-        Robot.IN.stopIntakeMotors();
+        comTraj.goFromStartToBackstage();
     }
 
     private void left() {
         /* rotate modules */
-        Robot.DD.rotateModules(-1);
-        timer.reset();
-        while (timer.milliseconds() < 100 && !isStopRequested())
-            ;
+        comTraj.rotateModules(-1, 100);
 
         /* stop rotating modules */
-        Robot.DD.stopDrivetrain();
-        timer.reset();
-        while (timer.milliseconds() < 100 && !isStopRequested())
-            ;
+        comTraj.stopDrivetrain();
 
 
 
         /* go to spike mark */
-        Robot.DD.goForward(1);
-        timer.reset();
-        while (timer.milliseconds() < 1300 && !isStopRequested())
-            ;
+        comTraj.goForward(1, 1300);
+
         /* stop  */
-        Robot.DD.stopDrivetrain();
-        timer.reset();
-        while (timer.milliseconds() < 100 && !isStopRequested())
-            ;
+        comTraj.stopDrivetrain();
 
         /* unload pixel */
-        Robot.IN.unloadPixel();
-        timer.reset();
-        while (timer.milliseconds() < 100 && !isStopRequested())
-            ;
-        Robot.IN.stopIntakeMotors();
+        comAct.unloadPixel();
 
         /* go back to starting location */
+        comTraj.goForward(-1, 1300);
 
-        Robot.DD.goForward(-1);
-        timer.reset();
-        while (timer.milliseconds() < 1300 && !isStopRequested())
-            ;
         /* stop  */
-        Robot.DD.stopDrivetrain();
-        timer.reset();
-        while (timer.milliseconds() < 100 && !isStopRequested())
-            ;
-
-
+        comTraj.stopDrivetrain();
 
         /* go right to one tile before backstage */
 
         /* rotate modules */
-        Robot.DD.rotateModules(1);
-        timer.reset();
-        while (timer.milliseconds() < 450 && !isStopRequested())
-            ;
+        comTraj.rotateModules(1, 450);
 
         /* stop */
-        Robot.DD.stopDrivetrain();
-        timer.reset();
-        while (timer.milliseconds() < 100 && !isStopRequested())
-            ;
+        comTraj.stopDrivetrain();
 
-        /* go forward */
-        Robot.DD.goForward(-1);
-        timer.reset();
-        while (timer.milliseconds() < 1300 * 2 && !isStopRequested())
-            ;
-
-        /* stop */
-        Robot.DD.stopDrivetrain();
-        timer.reset();
-        while (timer.milliseconds() < 100 && !isStopRequested())
-            ;
-
-        /* unload pixel */
-        Robot.IN.unloadPixel();
-        timer.reset();
-        while (timer.milliseconds() < 100 && !isStopRequested())
-            ;
-        Robot.IN.stopIntakeMotors();
+        comTraj.goFromStartToBackstage();
     }
 }
