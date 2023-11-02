@@ -22,7 +22,7 @@ public class module {
     public DcMotor downMotor = null;
     public DcMotor upMotor = null;
     double TICS_PER_REV = 1440, p_coef_turn = -1;
-    vec2 cur_dir = new vec2(0, 1);
+    public vec2 cur_dir = new vec2(0, 1);
     public void init(HardwareMap HM, String DownMotorName, String UpMotorName) {
         // init of downMotor
         downMotor = HM.get(DcMotor.class, DownMotorName);
@@ -69,7 +69,7 @@ public class module {
         vec2 tmpvec2 = vector;
         vector.set(tmpvec.scalMul(DownMotorVector) / 1, tmpvec2.scalMul(UpMotorVector) / 1);
 
-        vector.mul(4 / Math.sin(toRadians(45)));
+        vector.mul(2 * Math.sin(toRadians(45)));
         vector = vector.normalize();
 
         downMotor.setPower(vector.getX());
@@ -136,6 +136,19 @@ public class module {
         dir.normalize();
 
         cur_dir = new vec2(cos(getDirection() + PI * 0.5), sin(getDirection() + PI * 0.5));
+
+        if (dir.scalMul(cur_dir) < 0){
+            dir.invert();
+            applyVectorTele(-dir.len(), dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);
+            tele.addData("negative", true);
+            tele.addData("X:", cur_dir.getX());
+            tele.addData("Y:", cur_dir.getY());
+        }
+        else applyVectorTele(dir.len(), dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);
+    }
+
+    public void applyVectorPTeleNoEncoder(vec2 dir, Telemetry tele){
+        dir.normalize();
 
         if (dir.scalMul(cur_dir) < 0){
             dir.invert();

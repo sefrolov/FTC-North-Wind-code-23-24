@@ -11,13 +11,12 @@ public class Auto_red_left extends LinearOpMode {
     RobotNW Robot = new RobotNW();
     ElapsedTime timer = new ElapsedTime();
     String prop_pos = "";
-
     CommonAutonomousTrajectory comTraj = new CommonAutonomousTrajectory(Robot, timer, this);
 
     CommonAutonomousActions comAct = new CommonAutonomousActions(Robot, timer, this);
 
     public void runOpMode() throws InterruptedException {
-        Robot.init(hardwareMap, telemetry, this);
+        Robot.init(hardwareMap, telemetry, this, "Red");
         telemetry.addData("", "Init complited");
         telemetry.update();
 
@@ -40,7 +39,7 @@ public class Auto_red_left extends LinearOpMode {
             else if (prop_pos.equals("Left"))
                 left();
             else
-                ;/* most stable */
+                center();/* most stable */
         }
     }
     private void right() {

@@ -17,7 +17,7 @@ public class Auto_red_right extends LinearOpMode {
     CommonAutonomousActions comAct = new CommonAutonomousActions(Robot, timer, this);
 
     public void runOpMode() throws InterruptedException {
-        Robot.init(hardwareMap, telemetry, this);
+        Robot.init(hardwareMap, telemetry, this, "Red");
         telemetry.addData("", "Init complited");
         telemetry.update();
 
@@ -40,7 +40,7 @@ public class Auto_red_right extends LinearOpMode {
             else if (prop_pos.equals("Left"))
                 left();
             else
-                ;/* most stable */
+                center();/* most stable */
         }
     }
 

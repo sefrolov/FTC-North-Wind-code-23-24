@@ -41,7 +41,7 @@ public class Auto_blue_left extends LinearOpMode {
             else if (prop_pos.equals("Left"))
                 left();
             else
-                ;/* most stable */
+                center();/* most stable */
         }
     }
 
