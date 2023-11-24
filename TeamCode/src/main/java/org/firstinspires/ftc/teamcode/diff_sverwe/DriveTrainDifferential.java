@@ -23,10 +23,9 @@ public class DriveTrainDifferential {
     vec2 leftWheelCoord = new vec2(-5, 0);
     double MAX_ANG_SPEED = 1. / max(rightWheelCoord.len(), leftWheelCoord.len());
     vec2 turnSpeedLeft, turnSpeedRight, leftSpeed, rightSpeed;
-
     public void init(HardwareMap HM) {
-        leftModule.init(HM, "motorLD", "motorLU");
-        rightModule.init(HM, "motorRD", "motorRU");
+        leftModule.init(HM, "motorLD", "motorLU", 8192, 0.3);
+        rightModule.init(HM, "motorRD", "motorRU", 1440, -0.3);
     }
 
     public void applySpeed(vec2 trans, double turnSpeed, Telemetry tele) {
@@ -40,8 +39,9 @@ public class DriveTrainDifferential {
             leftSpeed.mul(1. / max(rightSpeed.len(), leftSpeed.len()));
         }
 
-        rightModule.applyVectorP(rightSpeed);
-        leftModule.applyVectorP(leftSpeed);
+        rightSpeed.set(rightSpeed.getX(), -rightSpeed.getY());
+        rightModule.applyVectorPTele(rightSpeed, tele);
+        leftModule.applyVectorPTele(leftSpeed, tele);
         tele.addData("right speed X:", rightSpeed.getX());
         tele.addData("right speed Y:", rightSpeed.getY());
         tele.addData("left speed X:", leftSpeed.getX());

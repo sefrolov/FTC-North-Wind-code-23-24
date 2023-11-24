@@ -21,9 +21,9 @@ import org.firstinspires.ftc.teamcode.maths.vec2;
 public class module {
     public DcMotor downMotor = null;
     public DcMotor upMotor = null;
-    double TICS_PER_REV = 1440, p_coef_turn = -1;
+    double TICS_PER_REV, p_coef_turn;
     public vec2 cur_dir = new vec2(0, 1);
-    public void init(HardwareMap HM, String DownMotorName, String UpMotorName) {
+    public void init(HardwareMap HM, String DownMotorName, String UpMotorName, double TPR, double coef) {
         // init of downMotor
         downMotor = HM.get(DcMotor.class, DownMotorName);
         downMotor.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -36,6 +36,9 @@ public class module {
         upMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         upMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         upMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        TICS_PER_REV = TPR;
+        p_coef_turn = coef;
     }
 
     /* function to apply power to both motors. first argument is <double> downMotorPower; second argument is <double> upMotorPower */
@@ -105,8 +108,8 @@ public class module {
         downMotor.setPower(vector.getX());
         upMotor.setPower(vector.getY());
 
-        tele.addData("power of down motor", vector.getX());
-        tele.addData("power of upper motor", vector.getY());
+        tele.addData("upMotorHuy", upMotor.getCurrentPosition());
+        tele.addData("TPR", TICS_PER_REV);
         tele.update();
 
 
@@ -143,6 +146,8 @@ public class module {
             tele.addData("negative", true);
             tele.addData("X:", cur_dir.getX());
             tele.addData("Y:", cur_dir.getY());
+            tele.addData("upMotor", upMotor.getCurrentPosition());
+            //tele.update();
         }
         else applyVectorTele(dir.len(), dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);
     }
