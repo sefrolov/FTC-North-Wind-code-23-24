@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 
-public class lift extends LinearOpMode {
+public class lift_dasha extends LinearOpMode {
 
     Servo serv_lift_r;
     Servo serv_lift_l;

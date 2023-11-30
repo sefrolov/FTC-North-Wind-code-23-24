@@ -10,12 +10,15 @@ import org.firstinspires.ftc.teamcode.diff_sverwe.imu_sensor;
 import org.firstinspires.ftc.teamcode.intake.intake;
 import org.firstinspires.ftc.teamcode.CVision.Detector;
 import org.firstinspires.ftc.teamcode.plane.plane;
+import org.firstinspires.ftc.teamcode.lift.lift;
 
 public class RobotNW {
     //TensorFlow camera = null;
     public DriveTrainDifferential DD = new DriveTrainDifferential();
     public intake IN = new intake();
     public Detector BD = new Detector();
+
+    public lift LI = new lift();
 
     public imu_sensor IM = new imu_sensor();
     public plane PL = new plane();
@@ -30,6 +33,7 @@ public class RobotNW {
         BD.init(HM, tele, ODcolor);
         PL.init(HM);
         IM.init(HM);
+        LI.init(HM);
 
         //camera = new TensorFlow(HM,  lop,  tele, "model_unquant.tflite", "labels.txt");
     }
