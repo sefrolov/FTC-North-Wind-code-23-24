@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.intake.intake;
 import org.firstinspires.ftc.teamcode.CVision.Detector;
 import org.firstinspires.ftc.teamcode.plane.plane;
 import org.firstinspires.ftc.teamcode.lift.lift;
-
+import org.firstinspires.ftc.teamcode.intake.intake_folding;
 public class RobotNW {
     //TensorFlow camera = null;
     public DriveTrainDifferential DD = new DriveTrainDifferential();
@@ -22,6 +22,8 @@ public class RobotNW {
 
     public imu_sensor IM = new imu_sensor();
     public plane PL = new plane();
+
+    public intake_folding IF = new intake_folding();
     ElapsedTime timer = new ElapsedTime();
 
     public void init(HardwareMap HM, Telemetry tele, LinearOpMode lop, String... object_detection_color) {
@@ -34,6 +36,7 @@ public class RobotNW {
         PL.init(HM);
         IM.init(HM);
         LI.init(HM);
+        IF.init(HM);
 
         //camera = new TensorFlow(HM,  lop,  tele, "model_unquant.tflite", "labels.txt");
     }
