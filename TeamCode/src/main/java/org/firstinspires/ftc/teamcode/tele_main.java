@@ -33,6 +33,10 @@ public class tele_main extends LinearOpMode {
                 Robot.DD.applySpeed(new vec2(gamepad1.left_stick_x, -gamepad1.left_stick_y), gamepad1.right_trigger - gamepad1.left_trigger, telemetry);
             else
                 Robot.DD.applySpeed(new vec2(0, 0), 0, telemetry);*/
+            if (Math.abs(gamepad1.left_stick_x) > 0.05 || Math.abs(gamepad1.left_stick_y) > 0.05)
+                Robot.DD.applySpeed(new vec2(gamepad1.left_stick_x, -gamepad1.left_stick_y), gamepad1.right_trigger - gamepad1.left_trigger, telemetry);
+            else
+                Robot.DD.applySpeed(new vec2(0, 0), 0, telemetry);
 
             /* 1 encoder */
             /*
@@ -101,7 +105,7 @@ public class tele_main extends LinearOpMode {
 
             /* left module manual handling, right module encoder handling */
 
-            if (gamepad1.b) {
+            /*if (gamepad1.b) {
                 Robot.DD.rightModule.cur_dir = new vec2(0, 1);
                 telemetry.addData("", "Reinit succesfull");
                 telemetry.update();
@@ -124,7 +128,7 @@ public class tele_main extends LinearOpMode {
                     Robot.DD.rightModule.applyVectorTele(-gamepad1.right_stick_y, gamepad1.right_stick_x, telemetry);
                 else
                     Robot.DD.rightModule.applyVectorTele(0, 0, telemetry);
-            }
+            }*/
 
             /* both modules manual handling */
             /* if y is pressed divide power by 3 */

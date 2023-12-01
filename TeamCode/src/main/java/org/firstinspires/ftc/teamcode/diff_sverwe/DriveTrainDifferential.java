@@ -25,7 +25,7 @@ public class DriveTrainDifferential {
     vec2 turnSpeedLeft, turnSpeedRight, leftSpeed, rightSpeed;
     public void init(HardwareMap HM) {
         leftModule.init(HM, "motorLD", "motorLU", 8192, 0.3);
-        rightModule.init(HM, "motorRD", "motorRU", 1440, -0.3);
+        rightModule.init(HM, "motorRD", "motorRU", /*1440*/1310, -0.3);
     }
 
     public void applySpeed(vec2 trans, double turnSpeed, Telemetry tele) {

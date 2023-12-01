@@ -110,7 +110,7 @@ public class module {
 
         tele.addData("upMotorHuy", upMotor.getCurrentPosition());
         tele.addData("TPR", TICS_PER_REV);
-        tele.update();
+        //tele.update();
 
 
         /*
@@ -136,7 +136,7 @@ public class module {
         else applyVector(dir.len(), dir.vecMul(cur_dir) / dir.len() * p_coef_turn);
     }
     public void applyVectorPTele(vec2 dir, Telemetry tele){
-        dir.normalize();
+        //dir.normalize();
 
         cur_dir = new vec2(cos(getDirection() + PI * 0.5), sin(getDirection() + PI * 0.5));
 
