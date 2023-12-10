@@ -24,14 +24,18 @@ public class outtake_test extends LinearOpMode {
 
         while (opModeIsActive()) {
             if (gamepad1.x) {
+                power = -0.5;
+            }
+            else if (gamepad1.y) {
                 power = 0.5;
             }
             else {
                 power = 0;
             }
             // motor.setPower(power);
+            /*
             Robot.OT.setPower(power);
-
+            */
         }
     }
 

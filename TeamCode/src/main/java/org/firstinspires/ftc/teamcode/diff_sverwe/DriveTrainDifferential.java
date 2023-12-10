@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.diff_sverwe;
 
 import static java.lang.Double.max;
 import static java.lang.Math.PI;
+import static java.lang.Math.sqrt;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -24,28 +25,37 @@ public class DriveTrainDifferential {
     double MAX_ANG_SPEED = 1. / max(rightWheelCoord.len(), leftWheelCoord.len());
     vec2 turnSpeedLeft, turnSpeedRight, leftSpeed, rightSpeed;
     public void init(HardwareMap HM) {
-        leftModule.init(HM, "motorLD", "motorLU", 8192, 0.3);
-        rightModule.init(HM, "motorRD", "motorRU", /*1440*/1310, -0.3);
+        leftModule.init(HM, "motorLD", "motorLU", 8192, 0.5);
+        rightModule.init(HM, "motorRD", "motorRU", /*1440*/1024, 0.5);
     }
 
     public void applySpeed(vec2 trans, double turnSpeed, Telemetry tele) {
-        turnSpeedRight = rightWheelCoord.turn(0.5 * PI).mul(MAX_ANG_SPEED * turnSpeed);
-        turnSpeedLeft = leftWheelCoord.turn(0.5 * PI).mul(MAX_ANG_SPEED * turnSpeed);
+        turnSpeedRight = rightWheelCoord.turned(0.5 * PI).mul(MAX_ANG_SPEED * turnSpeed);
+        turnSpeedLeft = leftWheelCoord.turned(0.5 * PI).mul(MAX_ANG_SPEED * turnSpeed);
 
         rightSpeed = trans.plus(turnSpeedRight);
         leftSpeed = trans.plus(turnSpeedLeft);
+        rightSpeed.mul(-1);
         if (max(rightSpeed.len(), leftSpeed.len()) > 1) {
             rightSpeed.mul(1. / max(rightSpeed.len(), leftSpeed.len()));
             leftSpeed.mul(1. / max(rightSpeed.len(), leftSpeed.len()));
         }
 
-        rightSpeed.set(rightSpeed.getX(), -rightSpeed.getY());
+        //rightSpeed.set(rightSpeed.getX(), -rightSpeed.getY());
         rightModule.applyVectorPTele(rightSpeed, tele);
         leftModule.applyVectorPTele(leftSpeed, tele);
-        tele.addData("right speed X:", rightSpeed.getX());
+        /*tele.addData("right speed X:", rightSpeed.getX());
         tele.addData("right speed Y:", rightSpeed.getY());
         tele.addData("left speed X:", leftSpeed.getX());
         tele.addData("left speed Y:", leftSpeed.getY());
+        tele.addData("turn right speed X:", turnSpeedRight.getX());
+        tele.addData("turn right speed Y:", turnSpeedRight.getY());
+        tele.addData("turn left speed X:", turnSpeedLeft.getX());
+        tele.addData("turn left speed Y:", turnSpeedLeft.getY());
+        tele.addData("turn left speed X:", rightWheelCoord/*.turn(0.5 * PI).getX());*/
+        //tele.addData("turn left speed Y:", rightWheelCoord/*.turn(0.5 * PI)*/.getY());
+        //tele.addData("turn speed:", turnSpeed);
+        tele.update();
     }
 
     public void goForward( double speed ) {

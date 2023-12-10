@@ -20,13 +20,13 @@ public class odometry {
     double C = 15.6 / 1024.0 * 2.0 * Math.PI;
     static double x0, y0, tetta_0, n1_0, n2_0;
     double delta_tetta, delta_x, delta_y, delta_n1, delta_n2;
-    static final double L = 10, B = 10;
+    static final double L = 10, B = 10; /// парал = (вперед) = X: 8.8, Y: 4.6 /// перпендекуляр X: -8.4б Y: 10.5
     imu_sensor tetta;
-    DcMotor encoder_x, encoder_y;
+    public DcMotor encoder_x, encoder_y;
 
-    public void init(HardwareMap HM, Telemetry tele) {
+    public void init(HardwareMap HM, Telemetry tele, imu_sensor koef) {
         // init of downMotor
-        encoder_x = HM.get(DcMotor.class, "encoder_x");
+        encoder_x = HM.get(DcMotor.class, "intake_motor2c ");
         encoder_y = HM.get(DcMotor.class, "encoder_y");
         tele.addData("","init succesfully");
         tele.update();
@@ -35,6 +35,7 @@ public class odometry {
         n2_0 = 0;
         x0 = 0;
         y0 = 0;
+        tetta = koef;
     }
 
     void Update_pos() {

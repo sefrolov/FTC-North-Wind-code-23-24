@@ -84,8 +84,8 @@ public class vec2 {
     }
 
     public vec2 mul(double a) {
-        X *= a;
-        Y *= a;
+        this.X *= a;
+        this.Y *= a;
         return this;
     }
     public double scalMul(vec2 b){
@@ -123,6 +123,9 @@ public class vec2 {
         return new vec2(X, Y);
     }
 
+    public vec2 turned(double ang){
+        return new vec2(this.X * cos(ang) - this.Y * sin(ang), this.X * sin(ang) + this.Y * cos(ang));
+    }
     public double radToDeg(double ang){
         return ang * 180 / Math.PI;
     }

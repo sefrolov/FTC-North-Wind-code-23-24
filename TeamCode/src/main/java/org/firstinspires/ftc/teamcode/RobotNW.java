@@ -12,7 +12,10 @@ import org.firstinspires.ftc.teamcode.CVision.Detector;
 import org.firstinspires.ftc.teamcode.plane.plane;
 import org.firstinspires.ftc.teamcode.lift.lift;
 import org.firstinspires.ftc.teamcode.intake.intake_folding;
+import org.firstinspires.ftc.teamcode.diff_sverwe.odometry;
 import org.firstinspires.ftc.teamcode.outtake.outtake;
+import org.firstinspires.ftc.teamcode.lift.change_over;
+
 public class RobotNW {
     //TensorFlow camera = null;
     public DriveTrainDifferential DD = new DriveTrainDifferential();
@@ -26,6 +29,9 @@ public class RobotNW {
 
     public intake_folding IF = new intake_folding();
 
+    public odometry OD = new odometry();
+    public change_over CO = new change_over();
+
     public outtake OT = new outtake();
     ElapsedTime timer = new ElapsedTime();
 
@@ -33,14 +39,16 @@ public class RobotNW {
         String ODcolor = "";
         if (object_detection_color.length > 0)
             ODcolor = object_detection_color[0];
-        DD.init(HM);
-        IN.init(HM);
-        BD.init(HM, tele, ODcolor);
-        PL.init(HM);
-        IM.init(HM);
-        LI.init(HM);
-        IF.init(HM);
-        OT.init(HM);
+        DD.init(HM); /* Differential drive */
+        IN.init(HM); /* intake */
+        BD.init(HM, tele, ODcolor); /* tf2 detector */
+        PL.init(HM); /* plane */
+        IM.init(HM); /* imu sensor */
+        LI.init(HM); /* lift */
+        IF.init(HM); /* intake folding */
+        CO.init(HM); /* change over */
+        /* OD.init(HM, tele, IM); */
+        OT.init(HM); /* outtake */
         //camera = new TensorFlow(HM,  lop,  tele, "model_unquant.tflite", "labels.txt");
     }
 

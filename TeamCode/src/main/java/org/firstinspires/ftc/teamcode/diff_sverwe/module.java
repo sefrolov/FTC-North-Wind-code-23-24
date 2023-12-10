@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.diff_sverwe;
 
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
+import static java.lang.Math.acos;
 import static java.lang.Math.atan2;
 import static java.lang.Math.cos;
 import static java.lang.Math.signum;
@@ -21,8 +22,8 @@ import org.firstinspires.ftc.teamcode.maths.vec2;
 public class module {
     public DcMotor downMotor = null;
     public DcMotor upMotor = null;
-    double TICS_PER_REV, p_coef_turn;
-    public vec2 cur_dir = new vec2(0, 1);
+    double TICS_PER_REV, p_coef_turn, cur_speed = 0, target_speed = 0;
+    public vec2 cur_dir = new vec2(0, 1), target_dir = new vec2(0);
     public void init(HardwareMap HM, String DownMotorName, String UpMotorName, double TPR, double coef) {
         // init of downMotor
         downMotor = HM.get(DcMotor.class, DownMotorName);
@@ -100,7 +101,10 @@ public class module {
 
         vec2 tmpvec = vector;
         vec2 tmpvec2 = vector;
+        System.out.println("cur speed:" + speed);
+        System.out.println("before new vector set:" + vector.getX());
         vector.set(tmpvec.scalMul(DownMotorVector) / 1, tmpvec2.scalMul(UpMotorVector) / 1);
+        System.out.println("after new vector set:" + vector.getX());
 
         vector.mul(4 / Math.sin(toRadians(45)));
         vector = vector.normalize();
@@ -108,9 +112,11 @@ public class module {
         downMotor.setPower(vector.getX());
         upMotor.setPower(vector.getY());
 
+        /*
         tele.addData("upMotorHuy", upMotor.getCurrentPosition());
         tele.addData("TPR", TICS_PER_REV);
-        //tele.update();
+        tele.update();
+        */
 
 
         /*
@@ -124,6 +130,11 @@ public class module {
         return (upMotor.getCurrentPosition() / TICS_PER_REV * 2 * PI) % (2 * PI);
     }
 
+    public double getDifference(){
+        cur_dir = new vec2(cos(getDirection() + PI * 0.5), sin(getDirection() + PI * 0.5));
+        return acos(target_dir.scalMul(cur_dir) / cur_dir.len() / target_dir.len());
+    }
+
     public void applyVectorP(vec2 dir){
         dir.normalize();
 
@@ -135,22 +146,59 @@ public class module {
         }
         else applyVector(dir.len(), dir.vecMul(cur_dir) / dir.len() * p_coef_turn);
     }
+
     public void applyVectorPTele(vec2 dir, Telemetry tele){
         //dir.normalize();
 
         cur_dir = new vec2(cos(getDirection() + PI * 0.5), sin(getDirection() + PI * 0.5));
-
+        target_dir = dir;
+        target_speed = dir.len();
         if (dir.scalMul(cur_dir) < 0){
             dir.invert();
-            applyVectorTele(-dir.len(), dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);
+            target_speed *= -1;
+            if (cur_speed - target_speed >= 0.02 && cur_speed >= -0.5) cur_speed -= 0.02;
+            else if (cur_speed - target_speed <= -0.02 && cur_speed <= 0.5) cur_speed += 0.02;
+            //else cur_speed = target_speed;
+            if (getDifference() < PI / 6.) applyVectorTele(cur_speed, dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);
+            else applyVectorTele(cur_speed, dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);
             tele.addData("negative", true);
             tele.addData("X:", cur_dir.getX());
             tele.addData("Y:", cur_dir.getY());
             tele.addData("upMotor", upMotor.getCurrentPosition());
             //tele.update();
         }
-        else applyVectorTele(dir.len(), dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);
-    }
+        else {
+            if (cur_speed - target_speed >= 0.02 && cur_speed >= -0.5) cur_speed -= 0.02;
+            else if (cur_speed - target_speed <= -0.02 && cur_speed <= 0.5) cur_speed += 0.02;
+            //else cur_speed = target_speed;
+            if (getDifference() < PI / 6.) applyVectorTele(cur_speed, dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);
+            else applyVectorTele(cur_speed, dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);
+        }
+        tele.addData("cur_speed", cur_speed);
+        tele.addData("target_speed", target_speed);
+        tele.update();
+        //tele.addData("upMotor", upMotor.getCurrentPosition());
+    }/*
+    public void applyVectorPTele(vec2 dir, Telemetry tele){
+        //dir.normalize();
+
+        cur_dir = new vec2(cos(getDirection() + PI * 0.5), sin(getDirection() + PI * 0.5));
+        if (dir.scalMul(cur_dir) < 0){
+            dir.invert();
+            if (getDifference() < PI / 6.) applyVectorTele(-dir.len(), dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);
+            else applyVectorTele(0, dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);
+            tele.addData("negative", true);
+            tele.addData("X:", cur_dir.getX());
+            tele.addData("Y:", cur_dir.getY());
+            tele.addData("upMotor", upMotor.getCurrentPosition());
+            //tele.update();
+        }
+        else if (getDifference() < PI / 6.) applyVectorTele(dir.len(), dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);
+        else applyVectorTele(0, dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);
+        tele.addData("negative", true);
+        tele.addData("cur dir", getDirection());
+        tele.addData("upMotor", upMotor.getCurrentPosition());
+    }*/
 
     public void applyVectorPTeleNoEncoder(vec2 dir, Telemetry tele){
         dir.normalize();

@@ -10,13 +10,20 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Device;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.maths.vec2;
 
 @TeleOp(name = "tele_main")
 public class tele_main extends LinearOpMode {
     RobotNW Robot = new RobotNW();
+    vec2 JoyDir = new vec2(0);
 
+    double last_turn = 0;
+    vec2 last_trans = new vec2(0);
+    double angle = 0;
+    boolean WasRotating = false, outtake_flag = false;
+    ElapsedTime outtake_timer = new ElapsedTime();
     @Override
     public void runOpMode() throws InterruptedException {
         Robot.init(hardwareMap, telemetry, this);
@@ -33,10 +40,55 @@ public class tele_main extends LinearOpMode {
                 Robot.DD.applySpeed(new vec2(gamepad1.left_stick_x, -gamepad1.left_stick_y), gamepad1.right_trigger - gamepad1.left_trigger, telemetry);
             else
                 Robot.DD.applySpeed(new vec2(0, 0), 0, telemetry);*/
-            if (Math.abs(gamepad1.left_stick_x) > 0.05 || Math.abs(gamepad1.left_stick_y) > 0.05)
-                Robot.DD.applySpeed(new vec2(gamepad1.left_stick_x, -gamepad1.left_stick_y), gamepad1.right_trigger - gamepad1.left_trigger, telemetry);
+
+            /*** FOR DRIVER STARTS HERE ***/
+
+/*
+            JoyDir.set(gamepad1.left_stick_x, gamepad1.left_stick_y);
+
+            if (abs(gamepad1.left_stick_x) > 0.02 || abs(gamepad1.left_stick_y) > 0.02 || (Math.abs(gamepad1.right_trigger - gamepad1.left_trigger) / 2.) > 0.02) {
+                last_trans = new vec2(gamepad1.left_stick_x, gamepad1.left_stick_y);
+                last_turn = (gamepad1.right_trigger - gamepad1.left_trigger) / 2.;
+
+                if (last_turn == 0 && WasRotating) {
+                    angle = Robot.IM.getAngle();
+                    WasRotating = false;
+                }
+*/
+                /* angle control */
+/*
+                if (last_turn == 0 && !WasRotating) {
+                    Robot.DD.applySpeed(JoyDir.turn(Robot.IM.getPositiveAngle() + 2 * PI), (Robot.IM.getAngle() - angle) / 1., telemetry);
+                }
+                if (last_turn != 0) {
+                    WasRotating = true;
+                    Robot.DD.applySpeed(JoyDir.turn(Robot.IM.getPositiveAngle() + 2 * PI), last_turn, telemetry);
+                }
+ */
+                /* end of angle control */
+/*
+            }
+            else
+                Robot.DD.applySpeed(/*new vec2(0.01, 0.01)*/
+/*              last_trans.mul(0.1), last_turn / 10., telemetry);
+*/
+
+            /*** FOR DRIVER ENDS HERE ***/
+
+            if (abs(gamepad1.left_stick_x) > 0.02 || abs(gamepad1.left_stick_y) > 0.02 || (Math.abs(gamepad1.right_trigger - gamepad1.left_trigger)) > 0.02) {
+                last_trans = new vec2(gamepad1.left_stick_x, gamepad1.left_stick_y);
+                last_turn = (gamepad1.right_trigger - gamepad1.left_trigger);
+                Robot.DD.applySpeed(new vec2(gamepad1.left_stick_x, gamepad1.left_stick_y), (gamepad1.right_trigger - gamepad1.left_trigger), telemetry);
+            }
+            else
+                Robot.DD.applySpeed(/*new vec2(0.01, 0.01)*/ last_trans.mul(0.1), last_turn / 10., telemetry);
+
+            /*
+            if (abs(gamepad1.left_stick_x) > 0.02 || abs(gamepad1.left_stick_y) > 0.02 || (Math.abs(gamepad1.right_trigger - gamepad1.left_trigger)) > 0.02)
+                Robot.DD.applySpeed(JoyDir.turn(Robot.IM.getPositiveAngle() + 2 * PI), (gamepad1.right_trigger - gamepad1.left_trigger), telemetry);
             else
                 Robot.DD.applySpeed(new vec2(0, 0), 0, telemetry);
+            */
 
             /* 1 encoder */
             /*
@@ -146,12 +198,82 @@ public class tele_main extends LinearOpMode {
             /*** END OF WHEELBASE DRIVING SECTION ***/
 
             /*** INTAKE CONTROL ***/
-            if (gamepad2.y) {
-                Robot.IN.motor1.setPower(-1);
-                Robot.IN.motor1.setPower(1);
-            } else
-                Robot.IN.work_intake(gamepad2.left_stick_y);
+
+
+            if (gamepad2.x)
+                Robot.IN.intake_run();
+            else if (gamepad2.right_trigger > 0.5)
+                Robot.IN.intake_run_away();
+            else
+                Robot.IN.stopIntakeMotors();
+
+
+
             /*** END OF INTAKE CONTROL ***/
+            /* ODOMETRY TELEMETRY
+
+            telemetry.addData("Pos y:", Robot.OD.encoder_y.getCurrentPosition());
+            telemetry.addData("Pos x:", Robot.OD.encoder_x.getCurrentPosition());
+            */
+
+            /*** PLANE CONTROL ***/
+
+            if (gamepad2.right_bumper) {
+                Robot.PL.prepare();
+            } else if (gamepad2.left_trigger > 0.5) {
+                Robot.PL.launch();
+            }
+
+            /*** END OF PLANE CONTROL ***/
+
+            /*** INTAKE FOLDING CONTROL ***/
+
+
+            if (gamepad2.x || gamepad2.y)
+                Robot.IF.spin();
+            else if (gamepad2.dpad_left)
+                Robot.IF.spin_reverse();
+            else
+                Robot.IF.stop();
+
+
+            /*** END OF INTAKE FOLDING CONTROL ***/
+
+            /** CHANGE OVER CONTROL ***/
+
+            if (gamepad2.dpad_up)
+                Robot.CO.setPositionHigh();
+            else if (gamepad2.dpad_down)
+                Robot.CO.setPositionLow();
+            else if (gamepad2.dpad_right)
+              Robot.CO.setPositionDef();
+
+            /*** END OF CHANGE OVER CONTROL ***/
+
+            /*** OUTTAKE CONTROL ***/
+
+            if (gamepad2.x)
+                Robot.OT.runLoading();
+            else if ((gamepad2.b || gamepad1.b) && outtake_flag == false) {
+                outtake_flag = true;
+                outtake_timer.reset();
+            }
+            else
+                Robot.OT.stop();
+            //Robot.OT.checkOuttake();
+
+            if (outtake_flag){
+                if (outtake_timer.milliseconds() < 200){
+                    Robot.OT.runUnloading();
+                }
+                else{
+                    Robot.OT.stop();
+                    outtake_flag = false;
+                }
+            }
+            /*** END OF OUTTAKE CONTROL ***/
+
+            telemetry.update();
         }
     }
 }

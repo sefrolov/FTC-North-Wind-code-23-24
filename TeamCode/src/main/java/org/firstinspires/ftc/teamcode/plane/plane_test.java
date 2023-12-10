@@ -21,12 +21,11 @@ public class plane_test extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            if (gamepad1.a) {
-                degr = 0;
-            } else if (gamepad1.b) {
-                degr = 1;
+            if (gamepad2.a) {
+                Robot.PL.prepare();
+            } else if (gamepad2.b) {
+                Robot.PL.launch();
             }
-            Robot.PL.setPos(degr);
 
           /*  wait_time.reset();
             while (degr != 1) {

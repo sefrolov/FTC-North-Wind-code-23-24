@@ -13,6 +13,8 @@ import org.firstinspires.ftc.teamcode.maths.vec2;
 @TeleOp(name = "drive_test_enc")
 public class drive_test_enc extends LinearOpMode {
     RobotNW Robot = new RobotNW();
+    double last_turn = 0;
+    vec2 last_trans = new vec2(0);
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -60,18 +62,25 @@ public class drive_test_enc extends LinearOpMode {
                 else
                     Robot.DD.leftModule.applyVectorPTele(new vec2(0, 0), telemetry);
                 if (abs(gamepad2.right_stick_x) > 0.05 || abs(gamepad2.right_stick_y) > 0.05)
-                    Robot.DD.rightModule.applyVectorPTele(new vec2(-gamepad2.right_stick_x, gamepad2.right_stick_y), telemetry);
+                    Robot.DD.rightModule.applyVectorPTele(new vec2(gamepad2.right_stick_x, gamepad2.right_stick_y), telemetry);
                 else
                     Robot.DD.rightModule.applyVectorPTele(new vec2(0, 0), telemetry);
+                /*
                 telemetry.addData("left encoder", Robot.DD.leftModule.upMotor.getCurrentPosition());
                 telemetry.addData("right encoder", Robot.DD.rightModule.upMotor.getCurrentPosition());
                 telemetry.update();
+                */
+
             }
             else {
-                if (abs(gamepad2.left_stick_x) > 0.05 || abs(gamepad2.left_stick_y) > 0.05 || (Math.abs(gamepad2.right_trigger - gamepad2.left_trigger)) > 0.05)
+
+                if (abs(gamepad2.left_stick_x) > 0.02 || abs(gamepad2.left_stick_y) > 0.02 || (Math.abs(gamepad2.right_trigger - gamepad2.left_trigger)) > 0.02) {
+                    last_trans = new vec2(gamepad2.left_stick_x, gamepad2.left_stick_y);
+                    last_turn = (gamepad2.right_trigger - gamepad2.left_trigger);
                     Robot.DD.applySpeed(new vec2(gamepad2.left_stick_x, gamepad2.left_stick_y), (gamepad2.right_trigger - gamepad2.left_trigger), telemetry);
+                }
                 else
-                    Robot.DD.applySpeed(new vec2(0, 0), 0, telemetry);
+                    Robot.DD.applySpeed(/*new vec2(0.01, 0.01)*/ last_trans.mul(0.1), last_turn / 10., telemetry);
             }
 
 

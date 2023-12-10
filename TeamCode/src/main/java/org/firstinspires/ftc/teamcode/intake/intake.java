@@ -15,6 +15,8 @@ public class intake {
     double PowerPartFromMaxValue = 0.02;
     ElapsedTime acceleration_time = new ElapsedTime();
 
+    ElapsedTime time = new ElapsedTime();
+
     public void init(HardwareMap HM) {
         // init of motor1
         motor1 = HM.get(DcMotor.class, "intake_motor1");
@@ -38,25 +40,50 @@ public class intake {
     public void stopIntakeMotors() {
         motor1.setPower(0);
         motor2.setPower(0);
+        time.reset();
     }
 
+    public void intake_run() {
+        if (time.milliseconds() > 500)
+            acceleration_koef = 0.009;
+        else
+            acceleration_koef = (0.5 - 0.0008 * time.milliseconds());
+
+        Power = acceleration_koef;
+
+        motor1.setPower(Power);
+        motor2.setPower(Power);
+    }
+
+    public void intake_run_away() {
+        if (time.milliseconds() > 500)
+            acceleration_koef = 0.009;
+        else
+            acceleration_koef = (0.5 - 0.0008 * time.milliseconds());
+
+        Power = acceleration_koef;
+
+        motor1.setPower(-Power);
+        motor2.setPower(-Power);
+    }
     public void work_intake(double input){
-        if (acceleration_time.milliseconds() > 500)
+        if (acceleration_time.milliseconds() > 1000)
             acceleration_koef = 0.1;
         else
             acceleration_koef = (10 - 0.001 * acceleration_time.milliseconds());
 
         if (Math.abs(input) > 0.1) {
             if (-input < 0)
-                Power = 1.7 * input * PowerPartFromMaxValue /* /Math.abs(gamepad1.right_stick_y)*/ * acceleration_koef;
+                Power = 4 * 1.7 * input * PowerPartFromMaxValue /* /Math.abs(gamepad1.right_stick_y)*/ * acceleration_koef;
             else
-                Power = 1.5 * input * PowerPartFromMaxValue /* /Math.abs(gamepad1.right_stick_y)*/ * acceleration_koef;
+                Power = 4 * 1.5 * input * PowerPartFromMaxValue /* /Math.abs(gamepad1.right_stick_y)*/ * acceleration_koef;
         }
         else {
                 Power = 0;
                 acceleration_time.reset();
              }
-            motor1.setPower(Power);
-            motor2.setPower(Power);
+        System.out.println("here" + Power);
+        motor1.setPower(-Power);
+        motor2.setPower(-Power);
     }
 }
