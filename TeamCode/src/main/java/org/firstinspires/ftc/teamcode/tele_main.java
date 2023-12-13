@@ -6,19 +6,21 @@ import static java.lang.Math.abs;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Device;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.drive.TwoWheelTrackingLocalizer;
 import org.firstinspires.ftc.teamcode.maths.vec2;
 
 @TeleOp(name = "tele_main")
 public class tele_main extends LinearOpMode {
     RobotNW Robot = new RobotNW();
     vec2 JoyDir = new vec2(0);
-
     double last_turn = 0;
     vec2 last_trans = new vec2(0);
     double angle = 0;
@@ -27,12 +29,26 @@ public class tele_main extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Robot.init(hardwareMap, telemetry, this);
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+
+        drive.setPoseEstimate(new Pose2d(-60, 12, Math.toRadians(180)));
+
         telemetry.addData("", "init succesfully");
         telemetry.update();
 
         waitForStart();
 
         while (opModeIsActive()) {
+            /*** ODOMETRY SECTION ***/
+            drive.update();
+            // Retrieve your pose
+            Pose2d myPose = /*myLocalizer*/drive.getPoseEstimate();
+
+            telemetry.addData("x", myPose.getX());
+            telemetry.addData("y", myPose.getY());
+            telemetry.addData("heading", myPose.getHeading());
+            telemetry.update();
+
             /*** WHEELBASE DRIVING SECTION ***/
 
             /* normal condition */
@@ -206,7 +222,6 @@ public class tele_main extends LinearOpMode {
                 Robot.IN.intake_run_away();
             else
                 Robot.IN.stopIntakeMotors();
-
 
 
             /*** END OF INTAKE CONTROL ***/

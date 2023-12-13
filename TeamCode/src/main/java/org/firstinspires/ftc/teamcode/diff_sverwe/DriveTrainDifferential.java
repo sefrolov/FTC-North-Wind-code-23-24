@@ -29,6 +29,24 @@ public class DriveTrainDifferential {
         rightModule.init(HM, "motorRD", "motorRU", /*1440*/1024, 0.5);
     }
 
+    public void applySpeedFieldCentric(vec2 trans, double turnSpeed, double heading) {
+        trans.turn(-heading);
+
+        turnSpeedRight = rightWheelCoord.turned(0.5 * PI).mul(MAX_ANG_SPEED * turnSpeed);
+        turnSpeedLeft = leftWheelCoord.turned(0.5 * PI).mul(MAX_ANG_SPEED * turnSpeed);
+
+        rightSpeed = trans.plus(turnSpeedRight);
+        leftSpeed = trans.plus(turnSpeedLeft);
+        rightSpeed.mul(-1);
+        if (max(rightSpeed.len(), leftSpeed.len()) > 1) {
+            rightSpeed.mul(1. / max(rightSpeed.len(), leftSpeed.len()));
+            leftSpeed.mul(1. / max(rightSpeed.len(), leftSpeed.len()));
+        }
+
+        //rightSpeed.set(rightSpeed.getX(), -rightSpeed.getY());
+        rightModule.applyVectorPHard(rightSpeed);
+        leftModule.applyVectorPHard(leftSpeed);
+    }
     public void applySpeed(vec2 trans, double turnSpeed, Telemetry tele) {
         turnSpeedRight = rightWheelCoord.turned(0.5 * PI).mul(MAX_ANG_SPEED * turnSpeed);
         turnSpeedLeft = leftWheelCoord.turned(0.5 * PI).mul(MAX_ANG_SPEED * turnSpeed);
@@ -42,8 +60,8 @@ public class DriveTrainDifferential {
         }
 
         //rightSpeed.set(rightSpeed.getX(), -rightSpeed.getY());
-        rightModule.applyVectorPTele(rightSpeed, tele);
-        leftModule.applyVectorPTele(leftSpeed, tele);
+        rightModule.applyVectorPTeleHard(rightSpeed, tele);
+        leftModule.applyVectorPTeleHard(leftSpeed, tele);
         /*tele.addData("right speed X:", rightSpeed.getX());
         tele.addData("right speed Y:", rightSpeed.getY());
         tele.addData("left speed X:", leftSpeed.getX());

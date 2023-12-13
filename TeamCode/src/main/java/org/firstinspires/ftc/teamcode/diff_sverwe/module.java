@@ -71,19 +71,16 @@ public class module {
 
         vec2 tmpvec = vector;
         vec2 tmpvec2 = vector;
+        System.out.println("cur speed:" + speed);
+        System.out.println("before new vector set:" + vector.getX());
         vector.set(tmpvec.scalMul(DownMotorVector) / 1, tmpvec2.scalMul(UpMotorVector) / 1);
+        System.out.println("after new vector set:" + vector.getX());
 
-        vector.mul(2 * Math.sin(toRadians(45)));
+        vector.mul(4 / Math.sin(toRadians(45)));
         vector = vector.normalize();
 
         downMotor.setPower(vector.getX());
         upMotor.setPower(vector.getY());
-
-        /*
-        downMotor.setPower(RotLin.getX());
-        upMotor.setPower(RotLin.getY());
-        */
-        //motor2.power =
     }
 
     public void applyVectorTele(double speed, double rotation, Telemetry tele){
@@ -178,7 +175,53 @@ public class module {
         tele.addData("target_speed", target_speed);
         tele.update();
         //tele.addData("upMotor", upMotor.getCurrentPosition());
-    }/*
+    }
+
+    public void applyVectorPTeleHard(vec2 dir, Telemetry tele){
+        //dir.normalize();
+
+        cur_dir = new vec2(cos(getDirection() + PI * 0.5), sin(getDirection() + PI * 0.5));
+        target_dir = dir;
+        target_speed = dir.len();
+        if (dir.scalMul(cur_dir) < 0){
+            dir.invert();
+            target_speed *= -1;
+            if (getDifference() < PI / 6.) applyVectorTele(target_speed, dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);
+            else applyVectorTele(target_speed, dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);
+            tele.addData("negative", true);
+            tele.addData("X:", cur_dir.getX());
+            tele.addData("Y:", cur_dir.getY());
+            tele.addData("upMotor", upMotor.getCurrentPosition());
+            //tele.update();
+        }
+        else {
+            if (getDifference() < PI / 6.) applyVectorTele(target_speed, dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);
+            else applyVectorTele(target_speed, dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);
+        }
+        tele.addData("target_speed", target_speed);
+        tele.update();
+        //tele.addData("upMotor", upMotor.getCurrentPosition());
+    }
+
+    public void applyVectorPHard(vec2 dir){
+        //dir.normalize();
+
+        cur_dir = new vec2(cos(getDirection() + PI * 0.5), sin(getDirection() + PI * 0.5));
+        target_dir = dir;
+        target_speed = dir.len();
+        if (dir.scalMul(cur_dir) < 0){
+            dir.invert();
+            target_speed *= -1;
+            if (getDifference() < PI / 6.) applyVector(target_speed, dir.vecMul(cur_dir) / dir.len() * p_coef_turn);
+            else applyVector(target_speed, dir.vecMul(cur_dir) / dir.len() * p_coef_turn);
+        }
+        else {
+            if (getDifference() < PI / 6.) applyVector(target_speed, dir.vecMul(cur_dir) / dir.len() * p_coef_turn);
+            else applyVector(target_speed, dir.vecMul(cur_dir) / dir.len() * p_coef_turn);
+        }
+    }
+
+    /*
     public void applyVectorPTele(vec2 dir, Telemetry tele){
         //dir.normalize();
 

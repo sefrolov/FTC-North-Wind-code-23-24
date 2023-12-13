@@ -4,6 +4,7 @@ import static java.lang.Math.PI;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -49,6 +50,9 @@ public class imu_sensor {
         return ang;
     }
 
+    public Double getExternalHeadingVelocity() {
+        return (double) imu.getAngularVelocity().zRotationRate;
+    }
     public double getPositiveAngle() {
         positiveAng = getAngle();
         if (positiveAng < 0) positiveAng += 2 * PI;

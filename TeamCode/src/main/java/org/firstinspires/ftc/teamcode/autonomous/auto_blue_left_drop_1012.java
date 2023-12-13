@@ -12,10 +12,6 @@ public class auto_blue_left_drop_1012 extends LinearOpMode {
     RobotNW Robot = new RobotNW();
     ElapsedTime timer = new ElapsedTime();
     String prop_pos = "";
-    CommonAutonomousTrajectory comTraj = new CommonAutonomousTrajectory(Robot, timer, this);
-
-    CommonAutonomousActions comAct = new CommonAutonomousActions(Robot, timer, this);
-
     public void runOpMode() throws InterruptedException {
         Robot.init(hardwareMap, telemetry, this);
         telemetry.addData("", "Init completed");
