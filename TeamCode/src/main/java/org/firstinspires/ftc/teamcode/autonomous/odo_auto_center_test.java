@@ -11,8 +11,8 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.maths.vec2;
 import org.opencv.core.Mat;
 
-@Autonomous(name = "odo_auto_test")
-public class odo_auto_test extends LinearOpMode {
+@Autonomous(name = "odo_auto_center_test")
+public class odo_auto_center_test extends LinearOpMode {
     RobotNW Robot = new RobotNW();
     ElapsedTime timer = new ElapsedTime();
     String prop_pos = "";
@@ -70,7 +70,7 @@ public class odo_auto_test extends LinearOpMode {
 
 
             drive.update();
-            targetPose = new Pose2d(-30.93, 35.2, Math.toRadians(270));
+            targetPose = new Pose2d(-36, 12, Math.toRadians(0));
             myPose = drive.getPoseEstimate();
             speed = 0.5;
             while ((Math.abs(myPose.getX() - targetPose.getX()) >= 1.6 || Math.abs(myPose.getY() - targetPose.getY()) >= 1.6 || Math.abs(myPose.getHeading() - targetPose.getHeading()) >= 0.1) && opModeIsActive())
@@ -94,7 +94,7 @@ public class odo_auto_test extends LinearOpMode {
             telemetry.update();
 
             drive.update();
-            targetPose = new Pose2d(-46, 49.5, Math.toRadians(270));
+            targetPose = new Pose2d(-42, 49.5, Math.toRadians(270));
             myPose = drive.getPoseEstimate();
 
             while ((Math.abs(myPose.getX() - targetPose.getX()) >= 1.6 || Math.abs(myPose.getY() - targetPose.getY()) >= 1.6 || Math.abs(myPose.getHeading() - targetPose.getHeading()) >= 0.1) && opModeIsActive())

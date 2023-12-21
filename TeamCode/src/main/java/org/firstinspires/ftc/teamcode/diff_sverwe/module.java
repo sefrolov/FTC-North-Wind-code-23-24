@@ -191,8 +191,9 @@ public class module {
             tele.addData("negative", true);
             tele.addData("X:", cur_dir.getX());
             tele.addData("Y:", cur_dir.getY());
-            tele.addData("upMotor", upMotor.getCurrentPosition());
-            //tele.update();
+            tele.addData("upMotor:", upMotor.getCurrentPosition());
+            tele.addData("TPR:",  TICS_PER_REV);
+            tele.update();
         }
         else {
             if (getDifference() < PI / 6.) applyVectorTele(target_speed, dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);

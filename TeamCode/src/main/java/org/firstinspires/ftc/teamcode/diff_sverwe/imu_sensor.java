@@ -28,6 +28,7 @@ public class imu_sensor {
 
         imu = HM.get(BNO055IMU.class, "imu");
 
+
         parameters.mode = BNO055IMU.SensorMode.IMU;
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
 //        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;

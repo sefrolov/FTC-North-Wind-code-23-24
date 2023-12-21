@@ -25,12 +25,17 @@ public class DriveTrainDifferential {
     double MAX_ANG_SPEED = 1. / max(rightWheelCoord.len(), leftWheelCoord.len());
     vec2 turnSpeedLeft, turnSpeedRight, leftSpeed, rightSpeed;
     public void init(HardwareMap HM) {
-        leftModule.init(HM, "motorLD", "motorLU", 8192, 0.5);
-        rightModule.init(HM, "motorRD", "motorRU", /*1440*/1024, 0.5);
+        leftModule.init(HM, "motorLD", "motorLU", 8192, 0.3);
+        rightModule.init(HM, "motorRD", "motorRU", /*1440*/1024, 0.3);
     }
 
     public void applySpeedFieldCentric(vec2 trans, double turnSpeed, double heading) {
-        trans.turn(-heading);
+
+        /* transfer robot vector to filed system */
+        trans.set(trans.getY(), trans.getX());
+
+        /* turn vector to heading of robot */
+        trans.turn(heading);
 
         turnSpeedRight = rightWheelCoord.turned(0.5 * PI).mul(MAX_ANG_SPEED * turnSpeed);
         turnSpeedLeft = leftWheelCoord.turned(0.5 * PI).mul(MAX_ANG_SPEED * turnSpeed);

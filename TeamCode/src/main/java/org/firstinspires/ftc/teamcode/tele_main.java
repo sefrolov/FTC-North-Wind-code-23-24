@@ -31,7 +31,7 @@ public class tele_main extends LinearOpMode {
         Robot.init(hardwareMap, telemetry, this);
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        drive.setPoseEstimate(new Pose2d(-60, 12, Math.toRadians(180)));
+        drive.setPoseEstimate(new Pose2d(-63.38, 15.14, Math.toRadians(180)));
 
         telemetry.addData("", "init succesfully");
         telemetry.update();
@@ -91,13 +91,21 @@ public class tele_main extends LinearOpMode {
 
             /*** FOR DRIVER ENDS HERE ***/
 
-            if (abs(gamepad1.left_stick_x) > 0.02 || abs(gamepad1.left_stick_y) > 0.02 || (Math.abs(gamepad1.right_trigger - gamepad1.left_trigger)) > 0.02) {
-                last_trans = new vec2(gamepad1.left_stick_x, gamepad1.left_stick_y);
-                last_turn = (gamepad1.right_trigger - gamepad1.left_trigger);
-                Robot.DD.applySpeed(new vec2(gamepad1.left_stick_x, gamepad1.left_stick_y), (gamepad1.right_trigger - gamepad1.left_trigger), telemetry);
+            if (abs(gamepad1.left_stick_x) > 0.02 || abs(gamepad1.left_stick_y) > 0.02 || (Math.abs(gamepad1.left_trigger - gamepad1.right_trigger)) > 0.02) {
+                last_trans = new vec2(-gamepad1.left_stick_x, -gamepad1.left_stick_y);
+                last_turn = (gamepad1.left_trigger - gamepad1.right_trigger);
+                Robot.DD.applySpeed(new vec2(-gamepad1.left_stick_x, -gamepad1.left_stick_y), (gamepad1.left_trigger - gamepad1.right_trigger), telemetry);
+                if (last_turn == 0 && !WasRotating) {
+                    Robot.DD.applySpeed(JoyDir.turn(Robot.IM.getPositiveAngle() + 2 * PI), (Robot.IM.getAngle() - angle) / 1., telemetry);
+                }
+                if (last_turn != 0) {
+                    WasRotating = true;
+                    Robot.DD.applySpeed(JoyDir.turn(Robot.IM.getPositiveAngle() + 2 * PI), last_turn, telemetry);
+                }
             }
             else
                 Robot.DD.applySpeed(/*new vec2(0.01, 0.01)*/ last_trans.mul(0.1), last_turn / 10., telemetry);
+
 
             /*
             if (abs(gamepad1.left_stick_x) > 0.02 || abs(gamepad1.left_stick_y) > 0.02 || (Math.abs(gamepad1.right_trigger - gamepad1.left_trigger)) > 0.02)
