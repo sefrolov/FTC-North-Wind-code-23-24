@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.autonomous;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -12,6 +13,7 @@ import org.firstinspires.ftc.teamcode.maths.vec2;
 import org.opencv.core.Mat;
 
 @Autonomous(name = "odo_auto_center_test")
+@Disabled
 public class odo_auto_center_test extends LinearOpMode {
     RobotNW Robot = new RobotNW();
     ElapsedTime timer = new ElapsedTime();

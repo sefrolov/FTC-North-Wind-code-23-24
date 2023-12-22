@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -8,6 +9,7 @@ import org.firstinspires.ftc.teamcode.RobotNW;
 import org.firstinspires.ftc.teamcode.maths.vec2;
 
 @Autonomous(name = "Auto_blue_left_drop_1012")
+@Disabled
 public class auto_blue_left_drop_1012 extends LinearOpMode {
     RobotNW Robot = new RobotNW();
     ElapsedTime timer = new ElapsedTime();
