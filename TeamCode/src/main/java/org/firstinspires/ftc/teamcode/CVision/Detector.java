@@ -132,6 +132,5 @@ public class Detector {
 
     public void StopStreaming(){
         visionPortal.stopStreaming();
-        visionPortal.close();
     }
 }

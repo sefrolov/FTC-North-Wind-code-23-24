@@ -34,8 +34,6 @@ public class odo_PID_left_blue_left_test extends LinearOpMode {
         Pose2d relocation = new Pose2d(0, 0, 0);
         auto_PID calculator = new auto_PID();
 
-        calculator.init(targetPose.getX() - myPose.getX(), targetPose.getY() - myPose.getY(), targetPose.getHeading() - myPose.getHeading());
-
         while (!isStarted()) {
             telemetry.addData("", "not started");
             prop_pos = Robot.BD.getPosition(telemetry);
@@ -51,6 +49,15 @@ public class odo_PID_left_blue_left_test extends LinearOpMode {
 
         while (opModeIsActive()) {
             Robot.BD.StopStreaming();
+            if (prop_pos.equals("Center"))
+                targetPose = auto_constants.BLUE_LEFT_CENTER_SPIKE;
+            else if (prop_pos.equals("Right"))
+                targetPose = auto_constants.BLUE_LEFT_RIGHT_SPIKE;
+            else
+                targetPose = auto_constants.BLUE_LEFT_LEFT_SPIKE;
+
+            calculator.init(targetPose.getX() - myPose.getX(), targetPose.getY() - myPose.getY(), targetPose.getHeading() - myPose.getHeading());
+
             while (!isParked && opModeIsActive()){
                 drive.update();
                 myPose = drive.getPoseEstimate();
@@ -71,7 +78,13 @@ public class odo_PID_left_blue_left_test extends LinearOpMode {
             timer.reset();
             while (timer.milliseconds() <= 1500 && opModeIsActive());
 
-            targetPose = auto_constants.BLUE_LEFT_LEFT_DROP;
+            if (prop_pos.equals("Center"))
+                targetPose = auto_constants.BLUE_LEFT_CENTER_DROP;
+            else if (prop_pos.equals("Right"))
+                targetPose = auto_constants.BLUE_LEFT_RIGHT_DROP;
+            else
+                targetPose = auto_constants.BLUE_LEFT_LEFT_DROP;
+
             calculator.reset(targetPose.getX() - myPose.getX(), targetPose.getY() - myPose.getY(), targetPose.getHeading() - myPose.getHeading());
             isParked = false;
 
