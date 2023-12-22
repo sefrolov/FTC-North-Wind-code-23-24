@@ -158,10 +158,12 @@ public class module {
             //else cur_speed = target_speed;
             if (getDifference() < PI / 6.) applyVectorTele(cur_speed, dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);
             else applyVectorTele(cur_speed, dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);
+            /*
             tele.addData("negative", true);
             tele.addData("X:", cur_dir.getX());
             tele.addData("Y:", cur_dir.getY());
             tele.addData("upMotor", upMotor.getCurrentPosition());
+            */
             //tele.update();
         }
         else {
@@ -171,9 +173,12 @@ public class module {
             if (getDifference() < PI / 6.) applyVectorTele(cur_speed, dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);
             else applyVectorTele(cur_speed, dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);
         }
+        /*
         tele.addData("cur_speed", cur_speed);
         tele.addData("target_speed", target_speed);
         tele.update();
+        */
+
         //tele.addData("upMotor", upMotor.getCurrentPosition());
     }
 
@@ -188,19 +193,24 @@ public class module {
             target_speed *= -1;
             if (getDifference() < PI / 6.) applyVectorTele(target_speed, dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);
             else applyVectorTele(target_speed, dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);
+            /*
             tele.addData("negative", true);
             tele.addData("X:", cur_dir.getX());
             tele.addData("Y:", cur_dir.getY());
             tele.addData("upMotor:", upMotor.getCurrentPosition());
             tele.addData("TPR:",  TICS_PER_REV);
             tele.update();
+            */
+
         }
         else {
             if (getDifference() < PI / 6.) applyVectorTele(target_speed, dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);
             else applyVectorTele(target_speed, dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);
         }
+        /*
         tele.addData("target_speed", target_speed);
         tele.update();
+        */
         //tele.addData("upMotor", upMotor.getCurrentPosition());
     }
 

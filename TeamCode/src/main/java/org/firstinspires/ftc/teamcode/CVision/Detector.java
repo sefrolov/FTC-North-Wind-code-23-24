@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.Camera;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -22,6 +23,8 @@ public class Detector {
 
     private TfodProcessor tfod;
     private VisionPortal visionPortal;
+
+    WebcamName camera;
 
     public void init(HardwareMap HM, Telemetry tele, String color){
         if (color.equals("Red"))
@@ -66,7 +69,8 @@ public class Detector {
 
         // Set the camera (webcam vs. built-in RC phone camera).
         if (USE_WEBCAM) {
-            builder.setCamera(HM.get(WebcamName.class, "Webcam 1"));
+            camera = HM.get(WebcamName.class, "Webcam 1");
+            builder.setCamera(camera);
         } else {
             builder.setCamera(BuiltinCameraDirection.BACK);
         }
@@ -99,6 +103,10 @@ public class Detector {
 
     }   // end method initTfod()
 
+    public void restart_streaming(HardwareMap hm){
+        visionPortal.setProcessorEnabled(tfod, false);
+        visionPortal.setProcessorEnabled(tfod, true);
+    }
     public String getPosition(Telemetry tele){
         List<Recognition> currentRecognitions = tfod.getRecognitions();
 

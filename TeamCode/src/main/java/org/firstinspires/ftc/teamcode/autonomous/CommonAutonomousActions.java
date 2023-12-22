@@ -65,8 +65,8 @@ public class CommonAutonomousActions {
         }
 
         if (Math.abs(dX) >= 1 && Math.abs(dY) >= 1) {
-            speedX = dX / Math.abs(dY);
             speedY = dY / Math.abs(dX);
+            speedX = dX / Math.abs(dY);
         }
         else if (Math.abs(dX) <= 1) {
             speedX = 0;
