@@ -14,7 +14,6 @@ public class auto_blue_left extends LinearOpMode {
     RobotNW Robot = new RobotNW();
     ElapsedTime timer = new ElapsedTime();
     String prop_pos = "";
-    boolean isParked = false;
 
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
@@ -26,14 +25,12 @@ public class auto_blue_left extends LinearOpMode {
 
         Pose2d myPose = drive.getPoseEstimate();
         Pose2d targetPose;
-        Pose2d relocation;
+        Pose2d errors;
         auto_PID calculator = new auto_PID();
 
         while (!isStarted()) {
             telemetry.addData("", "not started");
             prop_pos = Robot.BD.getPosition(telemetry);
-            if (prop_pos.equals("Center"))
-                Robot.BD.restart_streaming(hardwareMap);
             telemetry.addData("pos:", prop_pos);
             telemetry.update();
         }
@@ -42,90 +39,58 @@ public class auto_blue_left extends LinearOpMode {
 
         //Robot.servo.setPosition(0.16);
 
-        while (opModeIsActive()) {
-            Robot.BD.StopStreaming();
-            if (prop_pos.equals("Center"))
-                targetPose = auto_constants.BLUE_LEFT_CENTER_SPIKE;
-            else if (prop_pos.equals("Right"))
-                targetPose = auto_constants.BLUE_LEFT_RIGHT_SPIKE;
-            else
-                targetPose = auto_constants.BLUE_LEFT_LEFT_SPIKE;
-
+        Robot.BD.StopStreaming();
+        if (prop_pos.equals("Center"))
+            targetPose = auto_constants.BLUE_LEFT_CENTER_SPIKE;
+        else if (prop_pos.equals("Right"))
+        {
+            targetPose = auto_constants.BLUE_LEFT_RIGHT_SPIKE_WAYPOINT;
             calculator.init(targetPose.getX() - myPose.getX(), targetPose.getY() - myPose.getY(), targetPose.getHeading() - myPose.getHeading());
-
-            while (!isParked && opModeIsActive()){
-                drive.update();
-                myPose = drive.getPoseEstimate();
-                relocation = calculator.calculate_speeds(targetPose, myPose, 1);
-                telemetry.addData("SpeedX:", calculator.speedX);
-                telemetry.addData("SpeedY:", calculator.speedY);
-                telemetry.addData("Rotation:", calculator.rotation);
-                telemetry.addData("IsParked:", isParked);
-                telemetry.update();
-                if (Math.abs(calculator.errorX) <= 1 && Math.abs(calculator.errorY) <= 1 && Math.abs(calculator.errorHeading) <= 0.1)
-                    isParked = true;
-                Robot.DD.applySpeedFieldCentric(new vec2(relocation.getX(), relocation.getY()), relocation.getHeading(), myPose.getHeading());
-            }
-            Robot.DD.applySpeed(new vec2(0), 0, telemetry);
-            telemetry.addData("IsParked:", isParked);
-            telemetry.update();
-
-            timer.reset();
-            while (timer.milliseconds() <= 1500 && opModeIsActive()); /* drop purple pixel here */
-
-            if (prop_pos.equals("Center"))
-                targetPose = auto_constants.BLUE_CENTER_DROP;
-            else if (prop_pos.equals("Right"))
-                targetPose = auto_constants.BLUE_RIGHT_DROP;
-            else
-                targetPose = auto_constants.BLUE_LEFT_DROP;
-
-            calculator.reset(targetPose.getX() - myPose.getX(), targetPose.getY() - myPose.getY(), targetPose.getHeading() - myPose.getHeading());
-            isParked = false;
-
-            while (!isParked && opModeIsActive()){
-                drive.update();
-                myPose = drive.getPoseEstimate();
-                relocation = calculator.calculate_speeds(targetPose, myPose, 1);
-                telemetry.addData("SpeedX:", calculator.speedX);
-                telemetry.addData("SpeedY:", calculator.speedY);
-                telemetry.addData("Rotation:", calculator.rotation);
-                telemetry.addData("IsParked:", isParked);
-                telemetry.update();
-                if (Math.abs(calculator.errorX) <= 1 && Math.abs(calculator.errorY) <= 1 && Math.abs(calculator.errorHeading) <= 0.1)
-                    isParked = true;
-                Robot.DD.applySpeedFieldCentric(new vec2(relocation.getX(), relocation.getY()), relocation.getHeading(), myPose.getHeading());
-            }
-            Robot.DD.applySpeed(new vec2(0), 0, telemetry);
-            telemetry.addData("IsParked:", isParked);
-            telemetry.update();
-
-            timer.reset();
-            while (timer.milliseconds() <= 1500 && opModeIsActive()); /* drop yellow pixel here */
-
-            targetPose = auto_constants.BLUE_FINAL_ZONE;
-            calculator.reset(targetPose.getX() - myPose.getX(), targetPose.getY() - myPose.getY(), targetPose.getHeading() - myPose.getHeading());
-            isParked = false;
-
-            while (!isParked && opModeIsActive()){
-                drive.update();
-                myPose = drive.getPoseEstimate();
-                relocation = calculator.calculate_speeds(targetPose, myPose, 1);
-                telemetry.addData("SpeedX:", calculator.speedX);
-                telemetry.addData("SpeedY:", calculator.speedY);
-                telemetry.addData("Rotation:", calculator.rotation);
-                telemetry.addData("IsParked:", isParked);
-                telemetry.update();
-                if (Math.abs(calculator.errorX) <= 1 && Math.abs(calculator.errorY) <= 1 && Math.abs(calculator.errorHeading) <= 0.1)
-                    isParked = true;
-                Robot.DD.applySpeedFieldCentric(new vec2(relocation.getX(), relocation.getY()), relocation.getHeading(), myPose.getHeading());
-            }
-            Robot.DD.applySpeed(new vec2(0), 0, telemetry);
-            telemetry.addData("IsParked:", isParked);
-            telemetry.update();
-            while(opModeIsActive())
-                Robot.DD.applySpeed(new vec2(0), 0, telemetry);
-
+            errors = new Pose2d(5, 5, 1);
+            Robot.DD.straightGoTo(targetPose, errors, calculator, drive, this);
+            targetPose = auto_constants.BLUE_LEFT_RIGHT_SPIKE;
         }
+        else
+            targetPose = auto_constants.BLUE_LEFT_LEFT_SPIKE;
+
+        calculator.init(targetPose.getX() - myPose.getX(), targetPose.getY() - myPose.getY(), targetPose.getHeading() - myPose.getHeading());
+
+        errors = new Pose2d(0.4, 0.4, 0.1);
+        Robot.DD.straightGoTo(targetPose, errors, calculator, drive, this);
+
+        timer.reset();
+        while(timer.milliseconds() < 325 && opModeIsActive()) {
+            Robot.IN.unloadPixel();
+            telemetry.addData("adaaaa", "+");
+            telemetry.update();
+        }
+        Robot.IN.stopIntakeMotors();
+        Robot.CO.setPositionHigh();
+
+        if (prop_pos.equals("Center"))
+            targetPose = auto_constants.BLUE_CENTER_DROP;
+        else if (prop_pos.equals("Right"))
+            targetPose = auto_constants.BLUE_RIGHT_DROP;
+        else
+            targetPose = auto_constants.BLUE_LEFT_DROP;
+
+        calculator.reset(targetPose.getX() - myPose.getX(), targetPose.getY() - myPose.getY(), targetPose.getHeading() - myPose.getHeading());
+        errors = new Pose2d(0.8, 0.1, 0.05);
+        Robot.DD.straightGoTo(targetPose, errors, calculator, drive, this);
+
+        Robot.OT.runUnloading();
+        timer.reset();
+        while(timer.milliseconds() < 800 && opModeIsActive()) {
+            telemetry.addData("adaaaa", "+");
+            telemetry.update();
+        }
+        Robot.OT.stop();
+
+        targetPose = auto_constants.BLUE_FINAL_ZONE;
+        calculator.reset(targetPose.getX() - myPose.getX(), targetPose.getY() - myPose.getY(), targetPose.getHeading() - myPose.getHeading());
+        errors = new Pose2d(0.2, 1, 0.1);
+        Robot.DD.straightGoTo(targetPose, errors, calculator, drive, this);
+        Robot.DD.setWheelsDefault();
+        Robot.CO.setPositionLow();
     }
 }

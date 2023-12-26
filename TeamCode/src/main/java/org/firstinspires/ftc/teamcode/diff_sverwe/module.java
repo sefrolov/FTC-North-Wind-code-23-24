@@ -193,14 +193,11 @@ public class module {
             target_speed *= -1;
             if (getDifference() < PI / 6.) applyVectorTele(target_speed, dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);
             else applyVectorTele(target_speed, dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);
-            /*
-            tele.addData("negative", true);
-            tele.addData("X:", cur_dir.getX());
-            tele.addData("Y:", cur_dir.getY());
-            tele.addData("upMotor:", upMotor.getCurrentPosition());
-            tele.addData("TPR:",  TICS_PER_REV);
-            tele.update();
-            */
+            if (TICS_PER_REV == 1024) {
+                tele.addData("upMotor:", upMotor.getCurrentPosition());
+                tele.addData("TPR:", TICS_PER_REV);
+                tele.update();
+            }
 
         }
         else {
@@ -263,5 +260,26 @@ public class module {
             tele.addData("negative", true);
         }
         else applyVectorTele(dir.len(), dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);
+    }
+
+    public void setDirection(long target_ticks){
+        //dir.normalize();
+
+        long cur_ticks;
+        int rotations;
+
+        cur_ticks = upMotor.getCurrentPosition();
+        rotations = (int)(cur_ticks / TICS_PER_REV);
+        target_ticks += TICS_PER_REV * rotations;
+        while (target_ticks < cur_ticks) {
+            cur_ticks = upMotor.getCurrentPosition();
+            applyVector(0, 0.5);
+        }
+        applyVector(0, 0);
+        while (target_ticks > cur_ticks) {
+            cur_ticks = upMotor.getCurrentPosition();
+            applyVector(0, -0.5);
+        }
+        applyVector(0, 0);
     }
 }

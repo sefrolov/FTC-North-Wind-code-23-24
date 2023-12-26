@@ -33,8 +33,8 @@ public class intake {
     }
 
     public void unloadPixel() {
-        motor1.setPower(0.001);
-        motor2.setPower(-0.001);
+        motor1.setPower(-0.5);
+        motor2.setPower(-0.5);
     }
 
     public void stopIntakeMotors() {

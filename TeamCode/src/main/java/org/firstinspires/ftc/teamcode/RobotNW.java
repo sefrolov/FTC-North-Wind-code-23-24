@@ -39,7 +39,7 @@ public class RobotNW {
         String ODcolor = "";
         if (object_detection_color.length > 0)
             ODcolor = object_detection_color[0];
-        DD.init(HM); /* Differential drive */
+        DD.init(HM, tele); /* Differential drive */
         IN.init(HM); /* intake */
         BD.init(HM, tele, ODcolor); /* tf2 detector */
         PL.init(HM); /* plane */

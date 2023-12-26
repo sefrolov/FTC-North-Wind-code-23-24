@@ -33,8 +33,6 @@ public class auto_red_right extends LinearOpMode {
         while (!isStarted()) {
             telemetry.addData("", "not started");
             prop_pos = Robot.BD.getPosition(telemetry);
-            if (prop_pos.equals("Center"))
-                Robot.BD.restart_streaming(hardwareMap);
             telemetry.addData("pos:", prop_pos);
             telemetry.update();
         }
@@ -50,7 +48,28 @@ public class auto_red_right extends LinearOpMode {
             else if (prop_pos.equals("Right"))
                 targetPose = auto_constants.RED_RIGHT_RIGHT_SPIKE;
             else
+            {
+                targetPose = auto_constants.RED_RIGHT_LEFT_SPIKE_WAYPOINT;
+                calculator.init(targetPose.getX() - myPose.getX(), targetPose.getY() - myPose.getY(), targetPose.getHeading() - myPose.getHeading());
+
+                while (!isParked && opModeIsActive()){
+                    drive.update();
+                    myPose = drive.getPoseEstimate();
+                    relocation = calculator.calculate_speeds(targetPose, myPose, 1);
+                    telemetry.addData("SpeedX:", calculator.speedX);
+                    telemetry.addData("SpeedY:", calculator.speedY);
+                    telemetry.addData("Rotation:", calculator.rotation);
+                    telemetry.addData("IsParked:", isParked);
+                    telemetry.update();
+                    if (Math.abs(calculator.errorX) <= 4 && Math.abs(calculator.errorY) <= 4 && Math.abs(calculator.errorHeading) <= 0.5)
+                        isParked = true;
+                    Robot.DD.applySpeedFieldCentric(new vec2(relocation.getX(), relocation.getY()), relocation.getHeading(), myPose.getHeading());
+                }
+                telemetry.addData("IsParked:", isParked);
+                telemetry.update();
                 targetPose = auto_constants.RED_RIGHT_LEFT_SPIKE;
+                isParked = false;
+            }
 
             calculator.init(targetPose.getX() - myPose.getX(), targetPose.getY() - myPose.getY(), targetPose.getHeading() - myPose.getHeading());
 
@@ -72,7 +91,13 @@ public class auto_red_right extends LinearOpMode {
             telemetry.update();
 
             timer.reset();
-            while (timer.milliseconds() <= 1500 && opModeIsActive()); /* drop purple pixel here */
+            while(timer.milliseconds() < 325 && opModeIsActive()) {
+                Robot.IN.unloadPixel();
+                telemetry.addData("adaaaa", "+");
+                telemetry.update();
+            }
+            Robot.IN.stopIntakeMotors();
+            Robot.CO.setPositionHigh();
 
             if (prop_pos.equals("Center"))
                 targetPose = auto_constants.RED_CENTER_DROP;
@@ -93,7 +118,7 @@ public class auto_red_right extends LinearOpMode {
                 telemetry.addData("Rotation:", calculator.rotation);
                 telemetry.addData("IsParked:", isParked);
                 telemetry.update();
-                if (Math.abs(calculator.errorX) <= 1 && Math.abs(calculator.errorY) <= 1 && Math.abs(calculator.errorHeading) <= 0.1)
+                if (Math.abs(calculator.errorX) <= 1 && Math.abs(calculator.errorY) <= 1 && Math.abs(calculator.errorHeading) <= 0.02)
                     isParked = true;
                 Robot.DD.applySpeedFieldCentric(new vec2(relocation.getX(), relocation.getY()), relocation.getHeading(), myPose.getHeading());
             }
@@ -101,8 +126,13 @@ public class auto_red_right extends LinearOpMode {
             telemetry.addData("IsParked:", isParked);
             telemetry.update();
 
+            Robot.OT.runUnloading();
             timer.reset();
-            while (timer.milliseconds() <= 1500 && opModeIsActive()); /* drop yellow pixel here */
+            while(timer.milliseconds() < 800 && opModeIsActive()) {
+                telemetry.addData("adaaaa", "+");
+                telemetry.update();
+            }
+            Robot.OT.stop();
 
             targetPose = auto_constants.RED_FINAL_ZONE;
             calculator.reset(targetPose.getX() - myPose.getX(), targetPose.getY() - myPose.getY(), targetPose.getHeading() - myPose.getHeading());
@@ -124,6 +154,8 @@ public class auto_red_right extends LinearOpMode {
             Robot.DD.applySpeed(new vec2(0), 0, telemetry);
             telemetry.addData("IsParked:", isParked);
             telemetry.update();
+            Robot.DD.setWheelsDefault();
+            Robot.CO.setPositionLow();
             while(opModeIsActive())
                 Robot.DD.applySpeed(new vec2(0), 0, telemetry);
 

@@ -79,7 +79,7 @@ public class Detector {
         builder.setCameraResolution(new Size(1920, 1080));
 
         // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
-        builder.enableLiveView(true);
+        builder.enableLiveView(false);
 
         // Set the stream format; MJPEG uses less bandwidth than default YUY2.
         builder.setStreamFormat(VisionPortal.StreamFormat.YUY2);
@@ -115,7 +115,6 @@ public class Detector {
         // Step through the list of recognitions and display info for each one.
         for (Recognition recognition : currentRecognitions) {
             double x = (recognition.getLeft() + recognition.getRight()) / 2 ;
-            double y = (recognition.getTop()  + recognition.getBottom()) / 2 ;
 
             if (x <= 670) {
                 tele.addData("", "Left");
@@ -127,7 +126,7 @@ public class Detector {
             else
                 return "Right";
         }
-        return "Center";
+        return "Right";
     }
 
     public void StopStreaming(){

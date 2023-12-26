@@ -7,17 +7,17 @@ import org.firstinspires.ftc.teamcode.maths.vec2;
 public class auto_PID {
     double Ix, Dx, Px, Iy, Dy, Py, IHeading, DHeading, PHeading;
 
-    double kPx = 0.013;
-    double kDx = 0.08;
-    double kIx = 0.0012;
+    double kPx = 0.0195;
+    double kDx = 0.12;
+    double kIx = 0.0018;
 
-    double kPy = 0.013;
-    double kDy = 0.08;
-    double kIy = 0.0012;
+    double kPy = 0.0195;
+    double kDy = 0.12;
+    double kIy = 0.0018;
 
-    double kPHeading = 0.09;
-    double kDHeading = 0.09;
-    double kIHeading = 0.013;
+    double kPHeading = 0.135;
+    double kDHeading = 0.135;
+    double kIHeading = 0.03;
 
     double errorX;
     double errorOldX;
@@ -90,7 +90,7 @@ public class auto_PID {
         Ix = Dx = Px = Iy = Dy = Py = IHeading = DHeading = PHeading = 0;
     }
 
-    Pose2d calculate_speeds(Pose2d target, Pose2d current, double speed){
+    public Pose2d calculate_speeds(Pose2d target, Pose2d current, double speed){
         targetX = target.getX();
         targetY = target.getY();
         targetHeading = target.getHeading();
@@ -145,5 +145,29 @@ public class auto_PID {
         errorOldY = errorY;
         errorOldHeading = errorHeading;
         return new Pose2d(speedX, speedY, rotation);
+    }
+
+    public double getSpeedX(){
+        return this.speedX;
+    }
+
+    public double getSpeedY(){
+        return this.speedY;
+    }
+
+    public double getRotation(){
+        return this.rotation;
+    }
+
+    public double getErrorX(){
+        return this.errorX;
+    }
+
+    public double getErrorY(){
+        return this.errorY;
+    }
+
+    public double getErrorHeading(){
+        return this.errorHeading;
     }
 }

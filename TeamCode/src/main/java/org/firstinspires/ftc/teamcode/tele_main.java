@@ -23,18 +23,20 @@ public class tele_main extends LinearOpMode {
     vec2 JoyDir = new vec2(0);
     double last_turn = 0;
     vec2 last_trans = new vec2(0);
-    double angle = 0;
+    double angle = Math.toRadians(180);
     boolean WasRotating = false, outtake_flag = false;
     ElapsedTime outtake_timer = new ElapsedTime();
 
     double dHeading;
+    double last_angle = 0;
     double rotation;
+    double Irotation = 0;
     @Override
     public void runOpMode() throws InterruptedException {
         Robot.init(hardwareMap, telemetry, this);
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        drive.setPoseEstimate(new Pose2d(-63.38, 15.14, Math.toRadians(180)));
+        drive.setPoseEstimate(new Pose2d(-63.38, 15.14, angle));
 
         telemetry.addData("", "init succesfully");
         telemetry.update();
@@ -97,39 +99,39 @@ public class tele_main extends LinearOpMode {
             if (abs(gamepad1.left_stick_x) > 0.02 || abs(gamepad1.left_stick_y) > 0.02 || (Math.abs(gamepad1.left_trigger - gamepad1.right_trigger)) > 0.02) {
                 last_turn = (gamepad1.left_trigger - gamepad1.right_trigger);
                 JoyDir.set(-gamepad1.left_stick_x, -gamepad1.left_stick_y);
-                rotation = 0;
 
                 if (last_turn == 0 && !WasRotating) {
-                    dHeading = Robot.IM.getAngle() - angle;
-                    rotation = 0;
-                    if (dHeading < 0 && Math.abs(dHeading) > Math.PI)
-                        rotation = 2 * Math.PI + dHeading;
-                    else if (dHeading < 0 && Math.abs(dHeading) <= Math.PI)
-                        rotation = dHeading;
-                    else if (dHeading >= 0 && Math.abs(dHeading) <= Math.PI)
-                        rotation = dHeading;
-                    else if (dHeading >= 0 && Math.abs(dHeading) > Math.PI)
-                        rotation = -(2 * Math.PI - dHeading);
+                    if (dHeading * (Robot.IM.getPositiveAngle() - angle) < 0)
+                        Irotation = 0;
+                    dHeading = Robot.IM.getPositiveAngle() - angle;
+                    Irotation += dHeading;
                 }
                 if (last_turn == 0 && WasRotating) {
-                    angle = Robot.IM.getAngle();
+                    angle = Robot.IM.getPositiveAngle();
                     WasRotating = false;
+                    Irotation = 0;
                 }
                 if (last_turn != 0) {
                     WasRotating = true;
+                    Irotation = 0;
                 }
+                telemetry.addData("angle ", angle);
+
                 telemetry.addData("WasRotating", WasRotating);
                 telemetry.addData("lastTurn", last_turn);
                 telemetry.addData("turnSpd", rotation / 10 + last_turn);
                 telemetry.update();
-                Robot.DD.applySpeed(JoyDir, rotation / 10 + last_turn, telemetry);
+                Robot.DD.applySpeed(JoyDir, /*Irotation * 0.01 +*/ last_turn, telemetry);
+                last_angle = Robot.IM.getPositiveAngle();
             }
-            else
-                Robot.DD.applySpeed(/*new vec2(0.01, 0.01)*/ last_trans.mul(0.1), last_turn / 10., telemetry);
-
+            else {
+                Robot.DD.applySpeed(new vec2(0, 0), 0, telemetry);
+                dHeading = 0;
+            }
 
             /*
             if (abs(gamepad1.left_stick_x) > 0.02 || abs(gamepad1.left_stick_y) > 0.02 || (Math.abs(gamepad1.right_trigger - gamepad1.left_trigger)) > 0.02)
+
                 Robot.DD.applySpeed(JoyDir.turn(Robot.IM.getPositiveAngle() + 2 * PI), (gamepad1.right_trigger - gamepad1.left_trigger), telemetry);
             else
                 Robot.DD.applySpeed(new vec2(0, 0), 0, telemetry);

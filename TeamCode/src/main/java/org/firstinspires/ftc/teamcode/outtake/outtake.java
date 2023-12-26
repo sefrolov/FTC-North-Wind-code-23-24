@@ -19,11 +19,11 @@ public class outtake {
     }
 
     public void runLoading(){
-        setPower(-1);
+        setPower(1);
     }
 
     public void runUnloading(){
-        setPower(1);
+        setPower(-1);
     }
 
     public void dropOne() {
