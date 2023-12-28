@@ -59,6 +59,20 @@ public class imu_sensor {
         if (positiveAng < 0) positiveAng += 2 * PI;
         return positiveAng;
     }
+
+    public double PositiveToAngle( double newAngle ) {
+        double ang = newAngle;
+
+        if (ang > PI) ang -= 2 * PI;
+        return ang;
+    }
+
+    public double AngleToPositive( double newAngle ) {
+        double ang = newAngle;
+
+        if (ang < 0) ang += 2 * PI;
+        return ang;
+    }
 /*
     public void startAccel(){
         imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
