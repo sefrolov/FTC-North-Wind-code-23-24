@@ -40,13 +40,16 @@ public class tele_main extends LinearOpMode {
     double targetAngle = Math.toRadians(0);
     double curAngle = Math.toRadians(0);
     boolean WasRotating = false, outtake_flag = false, IsAngle = true;
+    boolean see = false;
     ElapsedTime outtake_timer = new ElapsedTime();
 
+    Pose2d errors = new Pose2d(1, 1, 0.05);
     double dHeading;
     double last_delta_angle = 0;
     double rotation;
     double Irotation = 0;
 
+    Pose2d errs = new Pose2d(1000, 1000, 1000);
     PID_system calculator = new PID_system();
     auto_PID auto_calculator = new auto_PID();
 
@@ -131,6 +134,39 @@ public class tele_main extends LinearOpMode {
             }
 
             /* BACKDROP LEFT PARKING */
+
+            /* align to get correct errs & set target position */
+
+            if (gamepad1.dpad_left) {
+                if (op_container.blue == true)
+                    errs = Robot.AT.getErrors(1);
+                else
+                    errs = Robot.AT.getErrors(4);
+                if (errs.getY() != 1000) {
+                    see = true;
+                    gamepad1.setLedColor(1, 0, 1, 300000);
+                }
+                else {
+                    see = false;
+                    gamepad1.setLedColor(0, 1, 0, 300000);
+                    gamepad1.rumbleBlips(2);
+                }
+                drive.update();
+                curPos = drive.getPoseEstimate();
+
+                if (see) {
+                    double X = curPos.getX() + errs.getX() + 1;
+                    double Y = curPos.getY() + errs.getY() - 6;
+                    Pose2d targetPose = new Pose2d(X, Y, Math.toRadians(270));
+                    Robot.DD.straightGoTo(targetPose, errors, auto_calculator, drive, this);
+                    drive.update();
+                    if (op_container.blue == true)
+                        drive.setPoseEstimate(new Pose2d(-42, 50, drive.getPoseEstimate().getHeading()));
+                    else
+                        drive.setPoseEstimate(new Pose2d(30, 50, drive.getPoseEstimate().getHeading()));
+                }
+            }
+/*
             if (gamepad1.dpad_left && op_container.blue == true) {
                 tele_auto.goToZone(BLUE_LEFT_DROP, drive, auto_calculator, gamepad1, Robot, telemetry, this);
                 targetAngle = BLUE_LEFT_DROP.getHeading();
@@ -139,7 +175,7 @@ public class tele_main extends LinearOpMode {
                 tele_auto.goToZone(RED_LEFT_DROP, drive, auto_calculator, gamepad1, Robot, telemetry, this);
                 targetAngle = RED_LEFT_DROP.getHeading();
             }
-
+*/
             /* BACKDROP CENTER PARKING */
             if (gamepad1.dpad_up && op_container.blue == true) {
                 tele_auto.goToZone(BLUE_CENTER_DROP, drive, auto_calculator, gamepad1, Robot, telemetry, this);

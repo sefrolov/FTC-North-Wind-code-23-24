@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.CVision.AT_Detector;
 import org.firstinspires.ftc.teamcode.diff_sverwe.DriveTrainDifferential;
 import org.firstinspires.ftc.teamcode.diff_sverwe.imu_sensor;
 import org.firstinspires.ftc.teamcode.intake.intake;
@@ -33,15 +34,19 @@ public class RobotNW {
     public change_over CO = new change_over();
 
     public outtake OT = new outtake();
+    public AT_Detector AT = new AT_Detector();
     ElapsedTime timer = new ElapsedTime();
 
     public void init(HardwareMap HM, Telemetry tele, LinearOpMode lop, String... object_detection_color) {
         String ODcolor = "";
-        if (object_detection_color.length > 0)
+        if (object_detection_color.length > 0) {
             ODcolor = object_detection_color[0];
+            BD.init(HM, tele, ODcolor); /* tf2 detector */
+        }
+        else
+            AT.init(HM);
         DD.init(HM, tele); /* Differential drive */
         IN.init(HM); /* intake */
-        BD.init(HM, tele, ODcolor); /* tf2 detector */
         PL.init(HM); /* plane */
         IM.init(HM); /* imu sensor */
         LI.init(HM); /* lift */
@@ -49,6 +54,7 @@ public class RobotNW {
         CO.init(HM); /* change over */
         /* OD.init(HM, tele, IM); */
         OT.init(HM); /* outtake */
+
         //camera = new TensorFlow(HM,  lop,  tele, "model_unquant.tflite", "labels.txt");
     }
 
