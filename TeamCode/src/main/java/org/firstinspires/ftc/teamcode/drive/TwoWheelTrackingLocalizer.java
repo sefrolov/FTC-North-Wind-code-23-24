@@ -49,8 +49,8 @@ public class TwoWheelTrackingLocalizer extends TwoTrackingWheelLocalizer {
     public static double PERPENDICULAR_X = 10.5 / CM_PER_INCH;
     public static double PERPENDICULAR_Y = 8.46 / CM_PER_INCH;
 
-    public static double MULTIPLIER_X = 1.12446939;
-    public static double MULTIPLIER_Y = 1.12604588;
+    public static double MULTIPLIER_X = 1.11983304;
+    public static double MULTIPLIER_Y = 1.11983304;
 
     // Parallel/Perpendicular to the forward axis
     // Parallel wheel is parallel to the forward axis

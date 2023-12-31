@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
+import static java.lang.Math.PI;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 import org.firstinspires.ftc.teamcode.maths.vec2;
@@ -7,17 +9,14 @@ import org.firstinspires.ftc.teamcode.maths.vec2;
 public class auto_PID {
     double Ix, Dx, Px, Iy, Dy, Py, IHeading, DHeading, PHeading;
 
-    double kPx = 0.0195;
-    double kDx = 0.12;
-    double kIx = 0.0018;
+    public double kPtrans = 0.0205;
+    public double kDtrans = 0.1;
+    public double kItrans = 0.002;
 
-    double kPy = 0.0195;
-    double kDy = 0.12;
-    double kIy = 0.0018;
+    public double kPHeading = 0.135;
 
-    double kPHeading = 0.135;
-    double kDHeading = 0.135;
-    double kIHeading = 0.03;
+    public double kDHeading = 0.133;
+    public double kIHeading = 0.033;
 
     double errorX;
     double errorOldX;
@@ -42,15 +41,15 @@ public class auto_PID {
 
     vec2 relocation = new vec2(0);
 
-    void init(double erx, double ery, double erh){
+    public void init(Pose2d targetPos, Pose2d curPos){
         errorX = 0;
-        errorOldX = erx;
+        errorOldX = targetPos.getX() - curPos.getX();
 
         errorY = 0;
-        errorOldY = ery;
+        errorOldY = targetPos.getY() - curPos.getY();
 
         errorHeading = 0;
-        errorOldHeading = erh;
+        errorOldHeading = targetPos.getHeading() - curPos.getHeading();
 
         targetX = 0;
         targetY = 0;
@@ -64,16 +63,15 @@ public class auto_PID {
         speedY = 0;
         rotation = 0;
     }
-
-    void reset(double erx, double ery, double erh){
+    public void reset(Pose2d targetPos, Pose2d curPos){
         errorX = 0;
-        errorOldX = erx;
+        errorOldX = targetPos.getX() - curPos.getX();
 
         errorY = 0;
-        errorOldY = ery;
+        errorOldY = targetPos.getY() - curPos.getY();
 
         errorHeading = 0;
-        errorOldHeading = erh;
+        errorOldHeading = targetPos.getHeading() - curPos.getHeading();
 
         targetX = 0;
         targetY = 0;
@@ -102,6 +100,11 @@ public class auto_PID {
         errorY = targetY - currentY;
         errorHeading = targetHeading - currentHeading;
 
+        if (Math.abs(errorHeading) > PI && errorHeading > 0)
+            errorHeading = errorHeading - 2 * PI;
+        else if (Math.abs(errorHeading) > PI && errorHeading < 0)
+            errorHeading = 2 * PI + errorHeading;
+
         relocation.set(errorX, errorY);
 
         Px = errorX;
@@ -126,8 +129,8 @@ public class auto_PID {
         if (errorHeading * errorOldHeading < 0)
             IHeading = 0;
 
-        speedX = Px * kPx + Dx * kDx + Ix * kIx;
-        speedY = Py * kPy + Dy * kDy + Iy * kIy;
+        speedX = Px * kPtrans + Dx * kDtrans + Ix * kItrans;
+        speedY = Py * kPtrans + Dy * kDtrans + Iy * kItrans;
         rotation = PHeading * kPHeading + DHeading * kDHeading + IHeading * kIHeading;
 
         if (Math.abs(speedX) > 1 || Math.abs(speedY) > 1 || Math.abs(rotation) > 1){
@@ -145,6 +148,54 @@ public class auto_PID {
         errorOldY = errorY;
         errorOldHeading = errorHeading;
         return new Pose2d(speedX, speedY, rotation);
+    }
+
+    public void incrkPtrans(){
+        kPtrans += 0.0005;
+    }
+
+    public void incrkDtrans(){
+        kDtrans += 0.002;
+    }
+
+    public void incrkItrans(){
+        kItrans += 0.00005;
+    }
+
+    public void incrkPheading(){
+        kPHeading += 0.0005;
+    }
+
+    public void incrkDheading(){
+        kDHeading += 0.0005;
+    }
+
+    public void incrkIheading(){
+        kIHeading += 0.004;
+    }
+
+    public void decrkPtrans(){
+        kPtrans -= 0.0005;
+    }
+
+    public void decrkDtrans(){
+        kDtrans -= 0.002;
+    }
+
+    public void decrkItrans(){
+        kItrans -= 0.00005;
+    }
+
+    public void decrkPheading(){
+        kPHeading -= 0.0005;
+    }
+
+    public void decrkDheading(){
+        kDHeading -= 0.0005;
+    }
+
+    public void decrkIheading(){
+        kIHeading -= 0.004;
     }
 
     public double getSpeedX(){

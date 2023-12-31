@@ -48,9 +48,7 @@ public class PID_system {
         rotation = PHeading * kPHeading + DHeading * kDHeading + IHeading;
 
         if (Math.abs(rotation) > 1) {
-            ; //double koef = 1 /  rotation;
-
-            rotation *= 1;
+            rotation = 1 * Math.signum(rotation);
         }
         //rotation *= angle;
 

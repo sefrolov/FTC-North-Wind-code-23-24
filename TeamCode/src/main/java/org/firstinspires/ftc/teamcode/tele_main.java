@@ -1,6 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
 
+import static org.firstinspires.ftc.teamcode.tele_movement.location_constants.BLUE_CENTER_DROP;
+import static org.firstinspires.ftc.teamcode.tele_movement.location_constants.BLUE_LEFT_DROP;
+import static org.firstinspires.ftc.teamcode.tele_movement.location_constants.BLUE_RIGHT_DROP;
+import static org.firstinspires.ftc.teamcode.tele_movement.location_constants.BLUE_WING;
+import static org.firstinspires.ftc.teamcode.tele_movement.location_constants.RED_CENTER_DROP;
+import static org.firstinspires.ftc.teamcode.tele_movement.location_constants.RED_LEFT_DROP;
+import static org.firstinspires.ftc.teamcode.tele_movement.location_constants.RED_RIGHT_DROP;
+import static org.firstinspires.ftc.teamcode.tele_movement.location_constants.RED_WING;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.cos;
@@ -9,6 +17,7 @@ import static java.lang.Math.sin;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Device;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -18,6 +27,9 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.TwoWheelTrackingLocalizer;
 import org.firstinspires.ftc.teamcode.maths.vec2;
 import org.firstinspires.ftc.teamcode.diff_sverwe.PID_system;
+import org.firstinspires.ftc.teamcode.tele_movement.location_constants;
+import org.firstinspires.ftc.teamcode.tele_movement.op_container;
+import org.firstinspires.ftc.teamcode.tele_movement.tele_auto;
 
 @TeleOp(name = "tele_main")
 public class tele_main extends LinearOpMode {
@@ -25,7 +37,8 @@ public class tele_main extends LinearOpMode {
     vec2 JoyDir = new vec2(0);
     double last_turn = 0;
     vec2 last_trans = new vec2(0);
-    double angle = Math.toRadians(180);
+    double targetAngle = Math.toRadians(0);
+    double curAngle = Math.toRadians(0);
     boolean WasRotating = false, outtake_flag = false, IsAngle = true;
     ElapsedTime outtake_timer = new ElapsedTime();
 
@@ -35,17 +48,20 @@ public class tele_main extends LinearOpMode {
     double Irotation = 0;
 
     PID_system calculator = new PID_system();
+    auto_PID auto_calculator = new auto_PID();
+
     @Override
     public void runOpMode() throws InterruptedException {
         Robot.init(hardwareMap, telemetry, this);
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        drive.setPoseEstimate(new Pose2d(-63.38, 15.14, angle));
+        drive.setPoseEstimate(op_container.location);
 
         telemetry.addData("", "init succesfully");
         telemetry.update();
 
         calculator.init(0);
+        auto_calculator.init(new Pose2d(0, 48, 0), new Pose2d(0, 48, 0));
 
         waitForStart();
 
@@ -53,260 +69,104 @@ public class tele_main extends LinearOpMode {
             /*** ODOMETRY SECTION ***/
             drive.update();
             // Retrieve your pose
-            Pose2d myPose = /*myLocalizer*/drive.getPoseEstimate();
-            /*
-            telemetry.addData("x", myPose.getX());
-            telemetry.addData("y", myPose.getY());
-            telemetry.addData("heading", myPose.getHeading());
-            telemetry.update();
-            */
+            Pose2d curPos = drive.getPoseEstimate();
+
             /*** WHEELBASE DRIVING SECTION ***/
 
-            /* normal condition */
-            /*if (Math.abs(gamepad1.left_stick_x) > 0.05 || Math.abs(gamepad1.left_stick_y) > 0.05 || (gamepad1.right_trigger - gamepad1.left_trigger) >= 0.05)
-                Robot.DD.applySpeed(new vec2(gamepad1.left_stick_x, -gamepad1.left_stick_y), gamepad1.right_trigger - gamepad1.left_trigger, telemetry);
-            else
-                Robot.DD.applySpeed(new vec2(0, 0), 0, telemetry);*/
-
-            /*** FOR DRIVER STARTS HERE ***/
-
-/*
-            JoyDir.set(gamepad1.left_stick_x, gamepad1.left_stick_y);
-
-            if (abs(gamepad1.left_stick_x) > 0.02 || abs(gamepad1.left_stick_y) > 0.02 || (Math.abs(gamepad1.right_trigger - gamepad1.left_trigger) / 2.) > 0.02) {
-                last_trans = new vec2(gamepad1.left_stick_x, gamepad1.left_stick_y);
-                last_turn = (gamepad1.right_trigger - gamepad1.left_trigger) / 2.;
-
-                if (last_turn == 0 && WasRotating) {
-                    angle = Robot.IM.getAngle();
-                        WasRotating = false;
-                }
-*/
-                /* angle control */
-/*
-                if (last_turn == 0 && !WasRotating) {
-                    Robot.DD.applySpeed(JoyDir.turn(Robot.IM.getPositiveAngle() + 2 * PI), (Robot.IM.getAngle() - angle) / 1., telemetry);
-                }
-                if (last_turn != 0) {
-                    WasRotating = true;
-                    Robot.DD.applySpeed(JoyDir.turn(Robot.IM.getPositiveAngle() + 2 * PI), last_turn, telemetry);
-                }
- */
-                /* end of angle control */
-/*
-            }
-            else
-                Robot.DD.applySpeed(/*new vec2(0.01, 0.01)*/
-/*              last_trans.mul(0.1), last_turn / 10., telemetry);
-*/
+            curAngle = Robot.IM.getPositiveAngle();
 
             if ((Math.abs(gamepad1.left_trigger - gamepad1.right_trigger)) < 0.02 && WasRotating) {
-                if (IsAngle)
-                  angle = Robot.IM.getPositiveAngle();
-                else 
-                    angle = Robot.IM.getAngle(); 
+                targetAngle = Robot.IM.getPositiveAngle();
                 WasRotating = false;
-
-
             }
 
+            dHeading = targetAngle - curAngle;
+
+            if (Math.abs(dHeading) > PI && dHeading > 0)
+                dHeading = dHeading - 2 * PI;
+            else if (Math.abs(dHeading) > PI && dHeading < 0)
+                dHeading = 2 * PI + dHeading;
 
             if (abs(gamepad1.left_stick_x) > 0.02 || abs(gamepad1.left_stick_y) > 0.02 || (Math.abs(gamepad1.left_trigger - gamepad1.right_trigger)) > 0.02) {
                 last_turn = (gamepad1.left_trigger - gamepad1.right_trigger);
                 JoyDir.set(-gamepad1.left_stick_x, -gamepad1.left_stick_y);
 
-                if (Robot.IM.getPositiveAngle() >= PI / 2 && Robot.IM.getPositiveAngle() <= 3 * PI / 2 ) {
-                    IsAngle = true;
-                    Robot.IM.AngleToPositive(angle);
-                }
-
-                if (Robot.IM.getAngle() >= -PI / 2 && Robot.IM.getAngle() <= PI / 2 ) {
-                    IsAngle = false;
-                    Robot.IM.AngleToPositive(angle);
-                }
-
-                if (last_turn == 0 && !WasRotating && IsAngle) {
-                    if (dHeading * (Robot.IM.getPositiveAngle() - angle) < 0)
-                        Irotation = 0;
-                    dHeading = Robot.IM.getPositiveAngle() - angle;
-                    Irotation += dHeading;
-                }
-                if (last_turn == 0 && !WasRotating && !IsAngle) {
-                    if (dHeading * (Robot.IM.getAngle() - angle) < 0)
-                        Irotation = 0;
-                    dHeading = Robot.IM.getAngle() - angle;
-                    Irotation += dHeading;
-                }
-
-                    // dHeading = Robot.IM.getPositiveAngle() - angle;
-
-                if (last_turn == 0 && WasRotating && IsAngle) {
-                    angle = Robot.IM.getPositiveAngle();
+                if (Math.abs(last_turn) < 0.02) {
+                    Robot.DD.applySpeed(JoyDir, /*calculator.calculate_speeds(dHeading)*/ 0, telemetry);
                     WasRotating = false;
-                    Irotation = 0;
                 }
-
-                if (last_turn == 0 && WasRotating && !IsAngle) {
-                    angle = Robot.IM.getAngle();
-                    WasRotating = false;
-                    Irotation = 0;
-                }
-                if (last_turn != 0) {
-                    WasRotating = true;
-                    calculator.reset(angle);
-                    Irotation = 0;
-                }
-                
-                
-  /*              telemetry.addData("dHeading", dHeading);
-
-                telemetry.addData("CALCULATE ", -calculator.getRotation());
-                telemetry.addData("angle ", angle);
-                telemetry.addData("real angle ", Robot.IM.getPositiveAngle());
-                telemetry.addData("WasRotating", WasRotating);
-                telemetry.addData("lastTurn", last_turn);
-                telemetry.addData("turnSpd", rotation / 10 + last_turn);
-                telemetry.update();
-*/
-                if ( last_turn == 0)
-                    Robot.DD.applySpeed(JoyDir, -calculator.calculate_speeds(dHeading)/* + last_turn*/, telemetry);
-                else
+                else {
                     Robot.DD.applySpeed(JoyDir, last_turn, telemetry);
-
-                last_delta_angle = angle;
-
+                    WasRotating = true;
+                }
             }
-            else {
-                dHeading = Robot.IM.getPositiveAngle() - angle;
-                Robot.DD.applySpeed(new vec2(0, 0), -calculator.calculate_speeds(dHeading)/* + last_turn*/, telemetry);
+            else
+            {
+                Robot.DD.applySpeed(new vec2(0, 0), /*calculator.calculate_speeds(dHeading)*/0, telemetry);
                 //Robot.DD.applySpeed(new vec2(0, 0), 0, telemetry);
                 //dHeading = 0;
-
             }
 
             telemetry.addData("dHeading", dHeading);
-            telemetry.addData("CALCULATE ", -calculator.getRotation());
-            telemetry.addData("angle ", angle);
+            telemetry.addData("CALCULATE ", calculator.getRotation());
+            telemetry.addData("angle ", targetAngle);
             telemetry.addData("real angle ", Robot.IM.getPositiveAngle());
             telemetry.addData("WasRotating", WasRotating);
             telemetry.addData("lastTurn", last_turn);
             telemetry.addData("turnSpd", rotation / 10 + last_turn);
             telemetry.update();
 
-            /*
-            if (abs(gamepad1.left_stick_x) > 0.02 || abs(gamepad1.left_stick_y) > 0.02 || (Math.abs(gamepad1.right_trigger - gamepad1.left_trigger)) > 0.02)
-
-                Robot.DD.applySpeed(JoyDir.turn(Robot.IM.getPositiveAngle() + 2 * PI), (gamepad1.right_trigger - gamepad1.left_trigger), telemetry);
-            else
-                Robot.DD.applySpeed(new vec2(0, 0), 0, telemetry);
-            */
-
-            /* 1 encoder */
-            /*
-            if (abs(gamepad1.left_stick_x) > 0.05 || abs(gamepad1.left_stick_y) > 0.05)
-                Robot.DD.leftModule.applyVectorPTele(new vec2(gamepad1.left_stick_x, -gamepad1.left_stick_y), telemetry);
-            else
-                Robot.DD.leftModule.applyVectorPTele(new vec2(0, 0), telemetry);
-            if (Math.abs(gamepad1.right_stick_x) > 0.05 || Math.abs(gamepad1.right_stick_y) > 0.05)
-                Robot.DD.rightModule.applyVector(gamepad1.right_stick_x, -gamepad1.right_stick_y);
-            else
-                Robot.DD.rightModule.applyVector(0, 0);
-            */
-
-            /* 6 wheel system no encoders */
-            /*
-            if (!gamepad1.y) {
-                if (abs(gamepad1.left_stick_x) > 0.05 || abs(gamepad1.left_stick_y) > 0.05) {
-                    Robot.DD.rightModule.applyVectorTele(-gamepad1.left_stick_y, gamepad1.left_stick_x, telemetry);
-                    Robot.DD.leftModule.applyVectorTele(-gamepad1.left_stick_y, gamepad1.left_stick_x, telemetry);
-                }
-                else {
-                    Robot.DD.rightModule.applyVector(0, 0);
-                    Robot.DD.leftModule.applyVector(0, 0);
-                }
-            }
-            else {
-                if (abs(gamepad1.left_stick_x) > 0.05 || abs(gamepad1.left_stick_y) > 0.05)
-                    Robot.DD.leftModule.applyVectorTele(-gamepad1.left_stick_y, gamepad1.left_stick_x, telemetry);
-                else
-                    Robot.DD.leftModule.applyVectorTele(0,0, telemetry);
-                if (abs(gamepad1.right_stick_x) > 0.05 || abs(gamepad1.right_stick_y) > 0.05)
-                    Robot.DD.rightModule.applyVectorTele(-gamepad1.right_stick_y, gamepad1.right_stick_x, telemetry);
-                else
-                    Robot.DD.rightModule.applyVectorTele(0,0, telemetry);
-                }
-            }
-            */
-
-            /* 6 wheel system 1 encoder */
-            /*
-            if (gamepad1.b) {
-                Robot.DD.leftModule.cur_dir = new vec2(0, 1);
-                Robot.DD.rightModule.cur_dir = Robot.DD.leftModule.cur_dir;
-            }
-
-            if (!gamepad1.y) {
-                Robot.DD.leftModule.cur_dir = new vec2(cos(Robot.DD.rightModule.getDirection() + PI * 0.5), sin(Robot.DD.rightModule.getDirection() + PI * 0.5));
-                if (abs(gamepad1.left_stick_x) > 0.05 || abs(gamepad1.left_stick_y) > 0.05) {
-                    Robot.DD.rightModule.applyVectorPTele(new vec2(gamepad1.left_stick_y, gamepad1.left_stick_x), telemetry);
-                    Robot.DD.leftModule.applyVectorPTeleNoEncoder(new vec2(gamepad1.left_stick_y, gamepad1.left_stick_x), telemetry);
-                } else {
-                    Robot.DD.rightModule.applyVectorPTele(new vec2(0, 0), telemetry);
-                    Robot.DD.leftModule.applyVectorPTeleNoEncoder(new vec2(0, 0), telemetry);
-                }
-            } else {
-                if (abs(gamepad1.left_stick_x) > 0.05 || abs(gamepad1.left_stick_y) > 0.05)
-                    Robot.DD.leftModule.applyVectorTele(-gamepad1.left_stick_y, gamepad1.left_stick_x, telemetry);
-                else
-                    Robot.DD.leftModule.applyVectorTele(0, 0, telemetry);
-                if (abs(gamepad1.right_stick_x) > 0.05 || abs(gamepad1.right_stick_y) > 0.05)
-                    Robot.DD.rightModule.applyVectorTele(-gamepad1.right_stick_y, gamepad1.right_stick_x, telemetry);
-                else
-                    Robot.DD.rightModule.applyVectorTele(0, 0, telemetry);
-            }
-            */
-
-            /* left module manual handling, right module encoder handling */
-
-            /*if (gamepad1.b) {
-                Robot.DD.rightModule.cur_dir = new vec2(0, 1);
-                telemetry.addData("", "Reinit succesfull");
-                telemetry.update();
-            }
-            if (gamepad1.y) {
-                if (abs(gamepad1.right_stick_x) > 0.05 || abs(gamepad1.right_stick_y) > 0.05)
-                    Robot.DD.rightModule.applyVectorTele(-gamepad1.right_stick_y / 6.23, -gamepad1.right_stick_x / 6.23, telemetry);
-                else
-                    Robot.DD.rightModule.applyVectorTele(0, 0, telemetry);
-                if (abs(gamepad1.left_stick_x) > 0.05 || abs(gamepad1.left_stick_y) > 0.05)
-                    Robot.DD.leftModule.applyVectorTele(-gamepad1.left_stick_y / 6.23, -gamepad1.left_stick_x / 6.23, telemetry);
-                else
-                    Robot.DD.leftModule.applyVectorTele(0, 0, telemetry);
-            } else {
-                if (abs(gamepad1.left_stick_x) > 0.05 || abs(gamepad1.left_stick_y) > 0.05)
-                    Robot.DD.leftModule.applyVectorTele(-gamepad1.left_stick_y, gamepad1.left_stick_x, telemetry);
-                else
-                    Robot.DD.leftModule.applyVectorTele(0, 0, telemetry);
-                if (abs(gamepad1.right_stick_x) > 0.05 || abs(gamepad1.right_stick_y) > 0.05)
-                    Robot.DD.rightModule.applyVectorTele(-gamepad1.right_stick_y, gamepad1.right_stick_x, telemetry);
-                else
-                    Robot.DD.rightModule.applyVectorTele(0, 0, telemetry);
-            }*/
-
-            /* both modules manual handling */
-            /* if y is pressed divide power by 3 */
-            /*
-            if (abs(gamepad1.left_stick_x) > 0.05 || abs(gamepad1.left_stick_y) > 0.05)
-                Robot.DD.leftModule.applyVectorTele(-gamepad1.left_stick_y / ((gamepad1.y ? 1 : 0) * 5.23 + 1), gamepad1.left_stick_x / ((gamepad1.y ? 1 : 0) * 3.23 + 1), telemetry);
-            else
-                Robot.DD.leftModule.applyVectorTele(0, 0, telemetry);
-            if (abs(gamepad1.right_stick_x) > 0.05 || abs(gamepad1.right_stick_y) > 0.05)
-                Robot.DD.rightModule.applyVectorTele(-gamepad1.right_stick_y / ((gamepad1.y ? 1 : 0) * 5.23 + 1), gamepad1.right_stick_x / ((gamepad1.y ? 1 : 0) * 3.23 + 1), telemetry);
-            else
-                Robot.DD.rightModule.applyVectorTele(0, 0, telemetry);
-            */
-
             /*** END OF WHEELBASE DRIVING SECTION ***/
+
+            /*** AUTO RELOCATION SECTION ***/
+
+            /* WING PARKING */
+            if (gamepad1.a && op_container.blue == true) {
+                tele_auto.goToZone(BLUE_WING, drive, auto_calculator, gamepad1, Robot, telemetry, this);
+                targetAngle = BLUE_WING.getHeading();
+            }
+            else if (gamepad1.a && op_container.blue == false) {
+                tele_auto.goToZone(RED_WING, drive, auto_calculator, gamepad1, Robot, telemetry, this);
+                targetAngle = RED_WING.getHeading();
+            }
+
+            /* BACKDROP LEFT PARKING */
+            if (gamepad1.dpad_left && op_container.blue == true) {
+                tele_auto.goToZone(BLUE_LEFT_DROP, drive, auto_calculator, gamepad1, Robot, telemetry, this);
+                targetAngle = BLUE_LEFT_DROP.getHeading();
+            }
+            else if (gamepad1.dpad_left && op_container.blue == false) {
+                tele_auto.goToZone(RED_LEFT_DROP, drive, auto_calculator, gamepad1, Robot, telemetry, this);
+                targetAngle = RED_LEFT_DROP.getHeading();
+            }
+
+            /* BACKDROP CENTER PARKING */
+            if (gamepad1.dpad_up && op_container.blue == true) {
+                tele_auto.goToZone(BLUE_CENTER_DROP, drive, auto_calculator, gamepad1, Robot, telemetry, this);
+                targetAngle = BLUE_CENTER_DROP.getHeading();
+            }
+            else if (gamepad1.dpad_up && op_container.blue == false) {
+                tele_auto.goToZone(RED_CENTER_DROP, drive, auto_calculator, gamepad1, Robot, telemetry, this);
+                targetAngle = RED_CENTER_DROP.getHeading();
+            }
+
+            /* BACKDROP RIGHT PARKING */
+            if (gamepad1.dpad_right && op_container.blue == true) {
+                tele_auto.goToZone(BLUE_RIGHT_DROP, drive, auto_calculator, gamepad1, Robot, telemetry, this);
+                targetAngle = BLUE_RIGHT_DROP.getHeading();
+            }
+            else if (gamepad1.dpad_right && op_container.blue == false) {
+                tele_auto.goToZone(RED_RIGHT_DROP, drive, auto_calculator, gamepad1, Robot, telemetry, this);
+                targetAngle = RED_RIGHT_DROP.getHeading();
+            }
+
+            /* CLOSEST FARM PARKING */
+            if (gamepad1.left_bumper){
+                drive.update();
+                tele_auto.goToZone(tele_auto.findClosestFarm(drive.getPoseEstimate()), drive, auto_calculator, gamepad1, Robot, telemetry, this);
+            }
+
+
 
             /*** INTAKE CONTROL ***/
 

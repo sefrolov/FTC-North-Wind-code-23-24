@@ -23,8 +23,10 @@ public class module {
     public DcMotor downMotor = null;
     public DcMotor upMotor = null;
     double TICS_PER_REV, p_coef_turn, cur_speed = 0, target_speed = 0;
+
+    double TICS_ADDITIONAL;
     public vec2 cur_dir = new vec2(0, 1), target_dir = new vec2(0);
-    public void init(HardwareMap HM, String DownMotorName, String UpMotorName, double TPR, double coef) {
+    public void init(HardwareMap HM, String DownMotorName, String UpMotorName, double TPR, double coef, double dTics) {
         // init of downMotor
         downMotor = HM.get(DcMotor.class, DownMotorName);
         downMotor.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -40,6 +42,7 @@ public class module {
 
         TICS_PER_REV = TPR;
         p_coef_turn = coef;
+        TICS_ADDITIONAL = dTics;
     }
 
     /* function to apply power to both motors. first argument is <double> downMotorPower; second argument is <double> upMotorPower */
@@ -124,7 +127,7 @@ public class module {
     }
 
     public double getDirection(){
-        return (upMotor.getCurrentPosition() / TICS_PER_REV * 2 * PI) % (2 * PI);
+        return ((upMotor.getCurrentPosition() + TICS_ADDITIONAL) / TICS_PER_REV * 2 * PI) % (2 * PI);
     }
 
     public double getDifference(){
@@ -194,9 +197,12 @@ public class module {
             if (getDifference() < PI / 6.) applyVectorTele(target_speed, dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);
             else applyVectorTele(target_speed, dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);
             if (TICS_PER_REV == 1024) {
+                /*
                 tele.addData("upMotor:", upMotor.getCurrentPosition());
                 tele.addData("TPR:", TICS_PER_REV);
                 tele.update();
+                */
+
             }
 
         }

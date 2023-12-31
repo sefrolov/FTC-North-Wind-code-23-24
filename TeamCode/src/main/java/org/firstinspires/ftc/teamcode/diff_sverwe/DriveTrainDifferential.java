@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.RobotNW;
 import org.firstinspires.ftc.teamcode.autonomous.auto_PID;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.maths.vec2;
+import org.firstinspires.ftc.teamcode.tele_movement.op_container;
 
 public class DriveTrainDifferential {
     public module leftModule = new module();
@@ -31,8 +32,8 @@ public class DriveTrainDifferential {
 
     boolean isParked = false;
     public void init(HardwareMap HM, Telemetry tele) {
-        leftModule.init(HM, "motorLD", "motorLU", 8192, 0.3);
-        rightModule.init(HM, "motorRD", "motorRU", /*1440*/1024, 0.3);
+        leftModule.init(HM, "motorLD", "motorLU", 8192, 0.5, op_container.TICS_LEFT);
+        rightModule.init(HM, "motorRD", "motorRU", /*1440*/1024, 0.5, op_container.TICS_RIGHT);
         telemetry = tele;
     }
 
@@ -85,7 +86,7 @@ public class DriveTrainDifferential {
         tele.addData("turn left speed X:", rightWheelCoord/*.turn(0.5 * PI).getX());*/
         //tele.addData("turn left speed Y:", rightWheelCoord/*.turn(0.5 * PI)*/.getY());
         //tele.addData("turn speed:", turnSpeed);
-        tele.update();
+        //tele.update();
     }
 
     public void goForward( double speed ) {
@@ -112,15 +113,15 @@ public class DriveTrainDifferential {
         isParked = false;
         Pose2d myPose;
         Pose2d relocation;
-        while (!isParked && lop.opModeIsActive()){
+        while (!isParked && lop.opModeIsActive() && Math.abs(lop.gamepad1.left_stick_x) <= 0.02 && Math.abs(lop.gamepad1.left_stick_y) <= 0.02){
             drive.update();
             myPose = drive.getPoseEstimate();
             relocation = calculator.calculate_speeds(targetPose, myPose, 1);
-            telemetry.addData("SpeedX:", calculator.getSpeedX());
+            /*telemetry.addData("SpeedX:", calculator.getSpeedX());
             telemetry.addData("SpeedY:", calculator.getSpeedY());
             telemetry.addData("Rotation:", calculator.getRotation());
             telemetry.addData("IsParked:", isParked);
-            telemetry.update();
+            telemetry.update();*/
             if (Math.abs(calculator.getErrorX()) <= errors.getX() && Math.abs(calculator.getErrorY()) <= errors.getY() && Math.abs(calculator.getErrorHeading()) <= errors.getHeading())
                 isParked = true;
             applySpeedFieldCentric(new vec2(relocation.getX(), relocation.getY()), relocation.getHeading(), myPose.getHeading());

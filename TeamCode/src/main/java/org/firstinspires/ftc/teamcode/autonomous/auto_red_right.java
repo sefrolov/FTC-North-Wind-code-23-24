@@ -50,7 +50,7 @@ public class auto_red_right extends LinearOpMode {
             else
             {
                 targetPose = auto_constants.RED_RIGHT_LEFT_SPIKE_WAYPOINT;
-                calculator.init(targetPose.getX() - myPose.getX(), targetPose.getY() - myPose.getY(), targetPose.getHeading() - myPose.getHeading());
+                calculator.init(targetPose, myPose);
 
                 while (!isParked && opModeIsActive()){
                     drive.update();
@@ -71,7 +71,7 @@ public class auto_red_right extends LinearOpMode {
                 isParked = false;
             }
 
-            calculator.init(targetPose.getX() - myPose.getX(), targetPose.getY() - myPose.getY(), targetPose.getHeading() - myPose.getHeading());
+            calculator.init(targetPose, myPose);
 
             while (!isParked && opModeIsActive()){
                 drive.update();
@@ -106,7 +106,7 @@ public class auto_red_right extends LinearOpMode {
             else
                 targetPose = auto_constants.RED_LEFT_DROP;
 
-            calculator.reset(targetPose.getX() - myPose.getX(), targetPose.getY() - myPose.getY(), targetPose.getHeading() - myPose.getHeading());
+            calculator.reset(targetPose, myPose);
             isParked = false;
 
             while (!isParked && opModeIsActive()){
@@ -135,7 +135,7 @@ public class auto_red_right extends LinearOpMode {
             Robot.OT.stop();
 
             targetPose = auto_constants.RED_FINAL_ZONE;
-            calculator.reset(targetPose.getX() - myPose.getX(), targetPose.getY() - myPose.getY(), targetPose.getHeading() - myPose.getHeading());
+            calculator.reset(targetPose, myPose);
             isParked = false;
 
             while (!isParked && opModeIsActive()){

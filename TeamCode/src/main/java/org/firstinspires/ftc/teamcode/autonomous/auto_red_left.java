@@ -52,7 +52,7 @@ public class auto_red_left extends LinearOpMode {
             else
                 targetPose = auto_constants.RED_LEFT_LEFT_SPIKE;
 
-            calculator.init(targetPose.getX() - myPose.getX(), targetPose.getY() - myPose.getY(), targetPose.getHeading() - myPose.getHeading());
+            calculator.init(targetPose, myPose);
 
             while (!isParked && opModeIsActive()){
                 drive.update();
