@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.diff_sverwe.DriveTrainDifferential;
 import org.firstinspires.ftc.teamcode.diff_sverwe.imu_sensor;
 import org.firstinspires.ftc.teamcode.intake.intake;
 import org.firstinspires.ftc.teamcode.CVision.Detector;
+import org.firstinspires.ftc.teamcode.outtake.outtake_flipper;
 import org.firstinspires.ftc.teamcode.plane.plane;
 import org.firstinspires.ftc.teamcode.lift.lift;
 import org.firstinspires.ftc.teamcode.intake.intake_folding;
@@ -35,6 +36,8 @@ public class RobotNW {
 
     public outtake OT = new outtake();
     public AT_Detector AT = new AT_Detector();
+
+    public outtake_flipper OF = new outtake_flipper();
     ElapsedTime timer = new ElapsedTime();
 
     public void init(HardwareMap HM, Telemetry tele, LinearOpMode lop, String... object_detection_color) {
@@ -54,6 +57,8 @@ public class RobotNW {
         CO.init(HM); /* change over */
         /* OD.init(HM, tele, IM); */
         OT.init(HM); /* outtake */
+        OF.init(HM); /* outtake flipper */
+
 
         //camera = new TensorFlow(HM,  lop,  tele, "model_unquant.tflite", "labels.txt");
     }

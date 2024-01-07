@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.RobotNW;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.maths.vec2;
+import org.firstinspires.ftc.teamcode.tele_movement.op_container;
 
 @Autonomous(name = "auto_red_left")
 public class auto_red_left extends LinearOpMode {
@@ -38,7 +39,7 @@ public class auto_red_left extends LinearOpMode {
             telemetry.addData("pos:", prop_pos);
             telemetry.update();
         }
-
+        op_container.blue = false;
         waitForStart();
 
         //Robot.servo.setPosition(0.16);

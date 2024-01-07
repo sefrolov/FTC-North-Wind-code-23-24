@@ -23,11 +23,7 @@ public class tele_auto {
     public static void goToZone(Pose2d zone, SampleMecanumDrive drive, auto_PID auto_calculator, Gamepad gamepad1, RobotNW Robot, Telemetry telemetry, LinearOpMode lop) {
         drive.update();
         auto_calculator.reset(zone, drive.getPoseEstimate());
-        gamepad1.setLedColor(1, 0, 0, 30000);
-        gamepad1.rumble(30000);
         Robot.DD.straightGoTo(zone, new Pose2d(1, 1, 0.1), auto_calculator, drive, lop);
-        gamepad1.stopRumble();
-        gamepad1.setLedColor(0, 1, 0, 300000);
         Robot.DD.applySpeed(new vec2(0), 0, telemetry);
     }
 

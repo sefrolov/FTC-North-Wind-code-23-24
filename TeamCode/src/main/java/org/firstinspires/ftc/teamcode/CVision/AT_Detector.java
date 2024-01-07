@@ -3,23 +3,31 @@ package org.firstinspires.ftc.teamcode.CVision;
 import android.util.Size;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
+import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.helpers.Helpers;
+import org.firstinspires.ftc.teamcode.maths.vec2;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
+import org.opencv.core.Mat;
+
 public class AT_Detector {
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
@@ -33,8 +41,12 @@ public class AT_Detector {
      */
     private VisionPortal visionPortal;
 
-    private static final double offset_x = 0.9;
-    private static final double offset_y = -8;
+    private static final double offset_x = 0;
+    private static final double offset_y = -9;
+
+    static Vector2d camera1Offset = new Vector2d(
+            0,
+            -9);
 
 
     public void init(HardwareMap HM) {
@@ -102,7 +114,7 @@ public class AT_Detector {
     }   // end method initAprilTag()
 
     public Pose2d getErrors(int id) {
-        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+        ArrayList<AprilTagDetection> currentDetections = aprilTag.getDetections();
 
         // Step through the list of detections and display info for each one.
         for (AprilTagDetection detection : currentDetections) {
@@ -124,6 +136,91 @@ public class AT_Detector {
             }
         }
         return new Pose2d(1000, 1000, 1000);
+    }
+
+    public Vector2d getFCPosition(AprilTagDetection detection, double botheading) {
+        Vector2d cameraOffset;
+        cameraOffset = camera1Offset;
+        // get coordinates of the robot in RC coordinates
+        // ensure offsets are RC
+        double x = detection.ftcPose.x-offset_x;
+        double y = detection.ftcPose.y-offset_y;
+
+        // invert heading to correct properly
+        botheading = -botheading;
+
+
+        // rotate RC coordinates to be field-centric
+        double x2 = x*Math.cos(botheading)+y*Math.sin(botheading);
+        double y2 = x*-Math.sin(botheading)+y*Math.cos(botheading);
+        double absX;
+        double absY;
+        // add FC coordinates to apriltag position
+        // tags is just the CS apriltag library
+        vec2 tagpose = Helpers.metaPosToRRcentric(detection.metadata.fieldPosition);
+        if (detection.metadata.id <= 6) {
+            absX = tagpose.getX() + y2;
+            absY = tagpose.getY() - x2;
+
+        } else {
+            absX = tagpose.getX() - y2;
+            absY = tagpose.getY() + x2; // prev -
+
+        }
+        return new Vector2d(absX, absY);
+    }
+
+    public Vector2d getRobotPos(double botHeading) {
+        ArrayList<AprilTagDetection> Detections;
+        Detections = aprilTag.getDetections();
+        int realDetections = 0;
+        Vector2d averagePos = new Vector2d(0, 0); // starting pose to add the rest to
+        if (Detections.isEmpty())
+            return null; // if we don't see any tags, give up (USES NEED TO HANDLE NULL)
+        Vector2d RobotPos;
+
+        // Step through the list of detections and calculate the robot position from each one.
+        for (AprilTagDetection detection : Detections) {
+            if (detection.metadata != null) { // && !detection.metadata.name.contains("Small")) { // TODO: Change if we want to use wall tags?
+                Vector2d tagPos = Helpers.toVector2d(detection.metadata.fieldPosition); // SDK builtin tag position
+
+                RobotPos = getRobotLocationFromTag(botHeading, detection); // calculate the robot position from the tag position
+                //RobotPos = getFCPosition(detection, botHeading);
+
+                // we're going to get the average here by adding them all up and dividingA the number of detections
+                // we do this because the backdrop has 3 tags, so we get 3 positions
+                // hopefully by averaging them we can get a more accurate position
+                averagePos = averagePos.plus(RobotPos);
+                realDetections++;
+            }
+        }   // end for() loop
+        return averagePos.div(realDetections);
+    }
+    Vector2d getRobotLocationFromTag(double imuHeading, AprilTagDetection detection){
+        // TODO: I don't actually know trig, this is probably terrible
+        double xPos;
+        double yPos;
+        //if (Math.abs(Math.toDegrees((imuHeading - PARAMS.cameraYawOffset) - tagHeading)) - 5 > 0) { // if the robot isn't within half a degree of straight up
+        double tagHeading = Helpers.quarternionToHeading(detection.metadata.fieldOrientation); // SDK builtin tag heading
+        //double tagRelHeading = imuHeading - Math.toRadians(180) + detection.ftcPose.bearing - tagHeading;
+        /*
+        Vector2d camGlobalOffset = new Vector2d(
+                offset_x * Math.cos(-imuHeading) - offset_y * Math.sin(-imuHeading),
+                offset_x * Math.sin(-imuHeading) + offset_y * Math.cos(-imuHeading));
+        xPos = tagPos.getX() - (Math.cos(tagRelHeading) * detection.ftcPose.y) - offset_x;
+        yPos = tagPos.getY() - (Math.sin(tagRelHeading) * detection.ftcPose.y) - offset_y;
+        */
+        double tagRelHeading = Math.toRadians(90) - imuHeading - detection.ftcPose.bearing;
+        vec2 tagPos = Helpers.metaPosToRRcentric(detection.metadata.fieldPosition);
+
+        yPos = tagPos.getY() + detection.ftcPose.range * Math.cos(tagRelHeading) - offset_y * Math.cos(Math.toRadians(90) - imuHeading) + 3 * -(Math.signum(detection.id - 6.5)); /* if backdrop tags then +3; else -3 */
+        xPos = tagPos.getX() + detection.ftcPose.range * Math.sin(tagRelHeading) - offset_y * Math.sin(Math.toRadians(90) - imuHeading);
+        /*} else {
+            xPos = (tagPos.x - detection.ftcPose.y) - PARAMS.cameraOffset.x; // TODO; this will ONLY work for the backdrop tags
+            yPos = (tagPos.y - detection.ftcPose.x) - PARAMS.cameraOffset.y;
+        }*/
+
+        return new Vector2d(xPos, yPos);
     }
 }
 
