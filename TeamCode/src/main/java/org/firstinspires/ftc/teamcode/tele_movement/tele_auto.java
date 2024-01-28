@@ -19,14 +19,6 @@ public class tele_auto {
         vec2 pathVector = new vec2(targetPos.getX() - curPos.getX(), targetPos.getY() - curPos.getY());
         return pathVector.len();
     }
-
-    public static void goToZone(Pose2d zone, SampleMecanumDrive drive, auto_PID auto_calculator, Gamepad gamepad1, RobotNW Robot, Telemetry telemetry, LinearOpMode lop) {
-        drive.update();
-        auto_calculator.reset(zone, drive.getPoseEstimate());
-        Robot.DD.straightGoTo(zone, new Pose2d(1, 1, 0.1), auto_calculator, drive, lop);
-        Robot.DD.applySpeed(new vec2(0), 0, telemetry);
-    }
-
     public static Pose2d findClosestFarm(Pose2d curPos) {
         double min = 200;
         Pose2d closest = curPos;

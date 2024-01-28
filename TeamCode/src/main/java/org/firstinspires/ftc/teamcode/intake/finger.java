@@ -1,31 +1,30 @@
-package org.firstinspires.ftc.teamcode.plane;
+package org.firstinspires.ftc.teamcode.intake;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-public class plane {
-
-    Servo serv_zap;
+public class finger {
+    Servo finger;
 
     public void init(HardwareMap HM) {
         // init of motor1
-        serv_zap = HM.get(Servo.class, "SvZpsk");
+        finger = HM.get(Servo.class, "finger");
         prepare();
     }
 
     void setPos(double deg) {
-        serv_zap.setPosition(deg);
+        finger.setPosition(deg);
     }
 
-    public void launch() {
-        setPos(0.6);
+    public void drop() {
+        setPos(0.2);
     }
 
     public void prepare() {
-        setPos(0);
+        setPos(0.8);
     }
 
     public double getPos(){
-        return serv_zap.getPosition();
+        return finger.getPosition();
     }
 }

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.diff_sverwe;
 
 import static java.lang.Math.abs;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -11,6 +12,7 @@ import org.firstinspires.ftc.teamcode.RobotNW;
 import org.firstinspires.ftc.teamcode.maths.vec2;
 
 @TeleOp(name = "drive_test_enc")
+@Disabled
 public class drive_test_enc extends LinearOpMode {
     RobotNW Robot = new RobotNW();
     double last_turn = 0;

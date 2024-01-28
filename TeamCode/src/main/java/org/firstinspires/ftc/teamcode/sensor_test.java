@@ -15,6 +15,8 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.AnalogInput;
+import com.qualcomm.robotcore.hardware.AnalogSensor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -30,12 +32,12 @@ import org.firstinspires.ftc.teamcode.tele_movement.tele_auto;
 
 /*** FEEDBACK INFO ***/
 /**
-<b> GAMEPAD TABLE: </b>
-<p><font color="green">GREEN => OPERATOR CONTROLLED</font></p>
+ <b> GAMEPAD TABLE: </b>
+ <p><font color="green">GREEN => OPERATOR CONTROLLED</font></p>
  <p><font color="red">RED & vibrating => AUTO CONTROLLED</font></p>
  <p><font color="orange">ORANGE => CAN UPDATE COORDINATES</font></p>
  <br>
-<b> AUTO CONTROLS: </b>
+ <b> AUTO CONTROLS: </b>
  <p>A (cross) => go to wing</p>
  <p>X (square) => update coordinates </p>
  <p>dpad left => go to left backdrop pos</p>
@@ -45,9 +47,10 @@ import org.firstinspires.ftc.teamcode.tele_movement.tele_auto;
  <br>
 
  ***/
-@TeleOp(name = "tele_main")
-public class tele_main extends LinearOpMode {
+@TeleOp
+public class sensor_test extends LinearOpMode {
     RobotNW Robot = new RobotNW();
+    AnalogInput sensor;
     vec2 JoyDir = new vec2(0);
     Pose2d curPos;
     Vector2d atPos;
@@ -62,8 +65,8 @@ public class tele_main extends LinearOpMode {
        4 - BACKDROP RIGHT
        5 - FARM
      */
-    double last_turn = 0;
-    boolean WasRotating = false, outtake_flag = false;
+    double last_turn = 0, num_pixels = 0;
+    boolean WasRotating = false, outtake_flag = false, old_sensor = false;
     ElapsedTime outtake_timer = new ElapsedTime();
     ElapsedTime timer = new ElapsedTime();
     PID_system calculator = new PID_system();
@@ -113,12 +116,18 @@ public class tele_main extends LinearOpMode {
 
         gamepad1Feedback.setColor(0, 1, 0);
         gamepad2Feedback.setColor(0, 0, 1);
+        sensor = hardwareMap.get(AnalogInput.class, "sensor");
         waitForStart();
         timer.reset();
         gamepad2Feedback.setColor(0, 1, 0);
 
         while (opModeIsActive()) {
             /*** ODOMETRY SECTION ***/
+            if (!old_sensor && sensor.getVoltage() < 3){
+                num_pixels++;
+                old_sensor = true;
+            }
+            else if (sensor.getVoltage() > 3) old_sensor = false;
             drive.update();
             // Retrieve your pose
             curPos = drive.getPoseEstimate();
@@ -129,6 +138,11 @@ public class tele_main extends LinearOpMode {
             currentGamepad2.copy(gamepad2);
 
             /*** WHEELBASE DRIVING SECTION ***/
+            if (!old_sensor && sensor.getVoltage() < 3){
+                num_pixels++;
+                old_sensor = true;
+            }
+            else if (sensor.getVoltage() > 3) old_sensor = false;
 
             if (abs(gamepad1.left_stick_x) > 0.02 || abs(gamepad1.left_stick_y) > 0.02 || (Math.abs(gamepad1.left_trigger - gamepad1.right_trigger)) > 0.02) {
                 autoDrive = 0;
@@ -175,6 +189,11 @@ public class tele_main extends LinearOpMode {
             }
             else
                 gamepad1Feedback.setColor(0, 1, 0);
+            if (!old_sensor && sensor.getVoltage() < 3){
+                num_pixels++;
+                old_sensor = true;
+            }
+            else if (sensor.getVoltage() > 3) old_sensor = false;
 
             /* WING PARKING */
             if (gamepad1.a)
@@ -198,6 +217,11 @@ public class tele_main extends LinearOpMode {
             if (gamepad1.left_bumper){
                 autoDrive = 5;
             }
+            if (!old_sensor && sensor.getVoltage() < 3){
+                num_pixels++;
+                old_sensor = true;
+            }
+            else if (sensor.getVoltage() > 3) old_sensor = false;
 
             switch (autoDrive){
                 case 0:
@@ -268,6 +292,14 @@ public class tele_main extends LinearOpMode {
             else
                 Robot.IN.stopIntakeMotors();
 
+            if (!old_sensor && sensor.getVoltage() < 3){
+                num_pixels++;
+                old_sensor = true;
+            }
+            else if (sensor.getVoltage() > 3) old_sensor = false;
+            telemetry.addData("sensor value", sensor.getVoltage());
+            telemetry.addData("num pixels", num_pixels);
+
             /*** END OF INTAKE CONTROL ***/
 
             /*** PLANE CONTROL ***/
@@ -276,9 +308,9 @@ public class tele_main extends LinearOpMode {
                 Robot.PL.prepare();
             }
             else {
-                if (gamepad2.right_trigger > 0.5)
+                if (gamepad2.left_trigger > 0.5)
                     Robot.PL.launch();
-                else if (gamepad2.right_trigger > 0.5 && !endgame)
+                else if (gamepad2.left_trigger > 0.5 && !endgame)
                     gamepad2Feedback.runEffectDisabled();
             }
 
@@ -295,12 +327,10 @@ public class tele_main extends LinearOpMode {
                 Robot.CO.setBoxDefault();
             }
 
-            /*
             if (gamepad2.left_bumper)
                 Robot.CO.setBoxDefault();
             else if (gamepad2.right_bumper)
                 Robot.CO.setBoxScoring();
-           */
 
             /*** END OF CHANGE OVER CONTROL ***/
 
@@ -315,6 +345,11 @@ public class tele_main extends LinearOpMode {
             else
                 Robot.OT.stop();
             //Robot.OT.checkOuttake();
+            if (!old_sensor && sensor.getVoltage() < 3){
+                num_pixels++;
+                old_sensor = true;
+            }
+            else if (sensor.getVoltage() > 3) old_sensor = false;
 
             if (outtake_flag){
                 if (outtake_timer.milliseconds() < 200){
@@ -334,8 +369,6 @@ public class tele_main extends LinearOpMode {
                 elevator.target_pos += 1;
             if (currentGamepad2.dpad_down && !PreviousGamepad2.dpad_down)
                 elevator.target_pos -= 1;
-            if (currentGamepad2.left_bumper)
-                elevator.target_pos = 0;
 
             if (elevator.target_pos < 0)
                 elevator.target_pos = 0;
@@ -344,7 +377,6 @@ public class tele_main extends LinearOpMode {
 
             telemetry.addData("current position left:", elevator.LI.getPos(elevator.LI.motor_left));
             telemetry.addData("current position right:", elevator.LI.getPos(elevator.LI.motor_right));
-            telemetry.addData("current position hanger:", elevator.HG.getPos());
             telemetry.addData("lift position:", elevator.target_pos);
             telemetry.update();
 
@@ -353,15 +385,9 @@ public class tele_main extends LinearOpMode {
             /*** HANGER CONTROL ***/
             //lift.applyPower(gamepad2.left_stick_y, telemetry);
 
-            elevator.HG.applyPower(-gamepad2.right_stick_y, telemetry);
+            //Robot.HG.applyPower(-gamepad2.right_stick_y, telemetry);
 
             /*** END OF HANGER CONTROL ***/
-
-            /*** FINGER CONTROL ***/
-            if (gamepad2.a)
-                Robot.FN.prepare();
-            else if (gamepad2.y)
-                Robot.FN.drop();
 
             /*** UTILITY ***/
             if (timer.milliseconds() > 120000 && !endgame) /* endgame started */
@@ -370,6 +396,11 @@ public class tele_main extends LinearOpMode {
                 gamepad2Feedback.runEffectEndgameStart();
                 endgame = true;
             }
+            if (!old_sensor && sensor.getVoltage() < 3){
+                num_pixels++;
+                old_sensor = true;
+            }
+            else if (sensor.getVoltage() > 3) old_sensor = false;
 
             //telemetry.update();
         }

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.diff_sverwe;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -8,6 +9,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.RobotNW;
 
 @TeleOp(name = "drive_test")
+@Disabled
 public class drive_test extends LinearOpMode {
     RobotNW Robot = new RobotNW();
 

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.plane;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -7,6 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.RobotNW;
 
 @TeleOp(name = "plane_test")
+@Disabled
 public class plane_test extends LinearOpMode {
 
     RobotNW Robot = new RobotNW();;

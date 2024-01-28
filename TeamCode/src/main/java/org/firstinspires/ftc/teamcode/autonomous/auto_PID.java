@@ -10,8 +10,8 @@ public class auto_PID {
     double Ix, Dx, Px, Iy, Dy, Py, IHeading, DHeading, PHeading;
 
     public double kPtrans = 0.0205;
-    public double kDtrans = 0.1;
-    public double kItrans = 0.002;
+    public double kDtrans = 0.117;
+    public double kItrans = 0.0021;
 
     public double kPHeading = 0.135;
 
@@ -26,7 +26,6 @@ public class auto_PID {
 
     double errorHeading;
     double errorOldHeading;
-
     double targetX;
     double targetY;
     double targetHeading;
@@ -38,6 +37,9 @@ public class auto_PID {
     double speedX;
     double speedY;
     double rotation;
+
+    public double errXStart;
+    public double errYStart;
 
     vec2 relocation = new vec2(0);
 
@@ -62,30 +64,14 @@ public class auto_PID {
         speedX = 0;
         speedY = 0;
         rotation = 0;
-    }
-    public void reset(Pose2d targetPos, Pose2d curPos){
-        errorX = 0;
-        errorOldX = targetPos.getX() - curPos.getX();
 
-        errorY = 0;
-        errorOldY = targetPos.getY() - curPos.getY();
-
-        errorHeading = 0;
-        errorOldHeading = targetPos.getHeading() - curPos.getHeading();
-
-        targetX = 0;
-        targetY = 0;
-        targetHeading = 0;
-
-        currentX = 0;
-        currentY = 0;
-        currentHeading = 0;
-
-        speedX = 0;
-        speedY = 0;
-        rotation = 0;
+        errXStart = errorOldX;
+        errYStart = errorOldY;
 
         Ix = Dx = Px = Iy = Dy = Py = IHeading = DHeading = PHeading = 0;
+    }
+    public void reset(Pose2d targetPos, Pose2d curPos){
+        init(targetPos, curPos);
     }
 
     public Pose2d calculate_speeds(Pose2d target, Pose2d current, double speed){
@@ -140,6 +126,78 @@ public class auto_PID {
             speedY *= koef;
             rotation *= koef;
         }
+        speedX *= speed;
+        speedY *= speed;
+        rotation *= speed;
+
+        errorOldX = errorX;
+        errorOldY = errorY;
+        errorOldHeading = errorHeading;
+        return new Pose2d(speedX, speedY, rotation);
+    }
+
+    public Pose2d calculate_speeds_noslow(Pose2d target, Pose2d current, double speed){
+        targetX = target.getX();
+        targetY = target.getY();
+        targetHeading = target.getHeading();
+        currentX = current.getX();
+        currentY = current.getY();
+        currentHeading = current.getHeading();
+
+        errorX = targetX - currentX;
+        errorY = targetY - currentY;
+        errorHeading = targetHeading - currentHeading;
+
+        if (Math.abs(errorHeading) > PI && errorHeading > 0)
+            errorHeading = errorHeading - 2 * PI;
+        else if (Math.abs(errorHeading) > PI && errorHeading < 0)
+            errorHeading = 2 * PI + errorHeading;
+
+        relocation.set(errorX, errorY);
+
+        Px = errorX;
+        Py = errorY;
+        PHeading = errorHeading;
+
+        if (Math.abs(errorX) <= 6)
+            Ix += errorX;
+        if (Math.abs(errorY) <= 6)
+            Iy += errorY;
+        if (Math.abs(errorHeading) <= 0.2 && relocation.len() <= 4)
+            IHeading += errorHeading;
+
+        Dx = errorX - errorOldX;
+        Dy = errorY - errorOldY;
+        DHeading = errorHeading - errorOldHeading;
+
+        if (errorX * errorOldX < 0)
+            Ix = 0;
+        if (errorY * errorOldY < 0)
+            Iy = 0;
+        if (errorHeading * errorOldHeading < 0)
+            IHeading = 0;
+
+        speedX = Px * kPtrans + Dx * kDtrans + Ix * kItrans;
+        speedY = Py * kPtrans + Dy * kDtrans + Iy * kItrans;
+        rotation = PHeading * kPHeading + DHeading * kDHeading + IHeading * kIHeading;
+
+        if (Math.abs(speedX) < 0.6 || Math.abs(speedY) < 0.6 || Math.abs(rotation) < 0.6)
+        {
+            double koef = 0.8 / Math.abs((Math.min(Math.min(Math.abs(rotation), Math.abs(speedX)), Math.abs(speedY))));
+
+            speedX *= koef;
+            speedY *= koef;
+            rotation *= koef;
+        }
+
+        if (Math.abs(speedX) > 1 || Math.abs(speedY) > 1 || Math.abs(rotation) > 1){
+            double koef = 1 / Math.max(Math.max(speedX, speedY), rotation);
+
+            speedX *= koef;
+            speedY *= koef;
+            rotation *= koef;
+        }
+
         speedX *= speed;
         speedY *= speed;
         rotation *= speed;

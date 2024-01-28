@@ -42,11 +42,11 @@ public class AT_Detector {
     private VisionPortal visionPortal;
 
     private static final double offset_x = 0;
-    private static final double offset_y = -9;
+    private static final double offset_y = -8.66;
 
     static Vector2d camera1Offset = new Vector2d(
             0,
-            -9);
+            -8.66);
 
 
     public void init(HardwareMap HM) {

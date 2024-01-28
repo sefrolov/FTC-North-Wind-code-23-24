@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.localization.TwoTrackingWheelLocalizer;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -16,6 +17,7 @@ import org.firstinspires.ftc.teamcode.drive.TwoWheelTrackingLocalizer;
 import java.util.List;
 
 @TeleOp(name = "odo_test_roadrunner")
+@Disabled
 public class odo_test_roadrunner extends LinearOpMode {
 
     RobotNW Robot = new RobotNW();

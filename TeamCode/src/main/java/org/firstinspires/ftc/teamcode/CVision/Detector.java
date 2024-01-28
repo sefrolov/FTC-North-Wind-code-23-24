@@ -24,9 +24,10 @@ public class Detector {
     private TfodProcessor tfod;
     private VisionPortal visionPortal;
 
+    boolean default_left = false;
     WebcamName camera;
 
-    public void init(HardwareMap HM, Telemetry tele, String color){
+    public void init(HardwareMap HM, Telemetry tele, String color, boolean def_left){
         if (color.equals("Red"))
             TFOD_MODEL_ASSET = "red_model_meta.tflite";
         else if (color.equals("Blue")) {
@@ -39,6 +40,8 @@ public class Detector {
             tele.update();
         }
         initTfod(HM);
+
+        default_left = def_left;
     }
 
     private void initTfod(HardwareMap HM) {
@@ -126,6 +129,8 @@ public class Detector {
             else
                 return "Right";
         }
+        if (!default_left)
+            return "Left";
         return "Right";
     }
 

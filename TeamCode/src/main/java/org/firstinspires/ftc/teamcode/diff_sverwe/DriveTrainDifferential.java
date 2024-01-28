@@ -32,8 +32,8 @@ public class DriveTrainDifferential {
 
     boolean isParked = false;
     public void init(HardwareMap HM, Telemetry tele) {
-        leftModule.init(HM, "motorLD", "motorLU", 8192, 0.5, op_container.TICS_LEFT);
-        rightModule.init(HM, "motorRD", "motorRU", /*1440*/1024, 0.5, op_container.TICS_RIGHT);
+        leftModule.init(HM, "motorLD", "motorLU", 8192, 0.3, op_container.TICS_LEFT);
+        rightModule.init(HM, "motorRD", "motorRU", /*1440*/1024, 0.3, op_container.TICS_RIGHT);
         telemetry = tele;
     }
 
@@ -73,8 +73,8 @@ public class DriveTrainDifferential {
         }
 
         //rightSpeed.set(rightSpeed.getX(), -rightSpeed.getY());
-        rightModule.applyVectorPTeleHard(rightSpeed, tele);
-        leftModule.applyVectorPTeleHard(leftSpeed, tele);
+        rightModule.applyVectorPTeleHard(rightSpeed.mul(1.0), tele);
+        leftModule.applyVectorPTeleHard(leftSpeed.mul(1.0), tele);
         /*tele.addData("right speed X:", rightSpeed.getX());
         tele.addData("right speed Y:", rightSpeed.getY());
         tele.addData("left speed X:", leftSpeed.getX());
@@ -113,10 +113,28 @@ public class DriveTrainDifferential {
         isParked = false;
         Pose2d myPose;
         Pose2d relocation;
+        ElapsedTime timer = new ElapsedTime();
+        double err1 = 0;
+        double err2 = 0;
+        boolean block_suspected = false;
+
+        timer.reset();
+
         while (!isParked && lop.opModeIsActive() && Math.abs(lop.gamepad1.left_stick_x) <= 0.02 && Math.abs(lop.gamepad1.left_stick_y) <= 0.02){
             drive.update();
             myPose = drive.getPoseEstimate();
             relocation = calculator.calculate_speeds(targetPose, myPose, 1);
+            if (timer.milliseconds() > 5000 && !block_suspected) {
+                block_suspected = true;
+                err1 = new vec2(calculator.getErrorX(), calculator.getErrorY()).len();
+                timer.reset();
+            }
+            if (timer.milliseconds() > 3000 && block_suspected){
+                err2 = new vec2(calculator.getErrorX(), calculator.getErrorY()).len();
+                if (Math.abs(err2 - err1) < 5)
+                    isParked = true;
+            }
+
             /*telemetry.addData("SpeedX:", calculator.getSpeedX());
             telemetry.addData("SpeedY:", calculator.getSpeedY());
             telemetry.addData("Rotation:", calculator.getRotation());
@@ -126,6 +144,67 @@ public class DriveTrainDifferential {
                 isParked = true;
             applySpeedFieldCentric(new vec2(relocation.getX(), relocation.getY()), relocation.getHeading(), myPose.getHeading());
         }
-        applySpeed(new vec2(0), 0, telemetry);
+        applySpeed(new vec2(0, 0), 0, telemetry);
+    }
+
+    public void straightGoToNoSlow(Pose2d targetPose, Pose2d errors, auto_PID calculator, SampleMecanumDrive drive, LinearOpMode lop){
+        isParked = false;
+        Pose2d myPose;
+        Pose2d relocation;
+        ElapsedTime timer = new ElapsedTime();
+        double err1 = 0;
+        double err2 = 0;
+        boolean block_suspected = false;
+
+        timer.reset();
+
+        while (!isParked && lop.opModeIsActive() && Math.abs(lop.gamepad1.left_stick_x) <= 0.02 && Math.abs(lop.gamepad1.left_stick_y) <= 0.02){
+            drive.update();
+            myPose = drive.getPoseEstimate();
+            relocation = calculator.calculate_speeds_noslow(targetPose, myPose, 1);
+            if (timer.milliseconds() > 5000 && !block_suspected) {
+                block_suspected = true;
+                err1 = new vec2(calculator.getErrorX(), calculator.getErrorY()).len();
+                timer.reset();
+            }
+            if (timer.milliseconds() > 3000 && block_suspected){
+                err2 = new vec2(calculator.getErrorX(), calculator.getErrorY()).len();
+                if (Math.abs(err2 - err1) < 5)
+                    isParked = true;
+            }
+
+            if (calculator.getErrorX() * calculator.errXStart < 0 && calculator.getErrorY() * calculator.errYStart < 0)
+                isParked = true;
+
+            /*telemetry.addData("SpeedX:", calculator.getSpeedX());
+            telemetry.addData("SpeedY:", calculator.getSpeedY());
+            telemetry.addData("Rotation:", calculator.getRotation());
+            telemetry.addData("IsParked:", isParked);
+            telemetry.update();*/
+            if (Math.abs(calculator.getErrorX()) <= errors.getX() && Math.abs(calculator.getErrorY()) <= errors.getY() && Math.abs(calculator.getErrorHeading()) <= errors.getHeading())
+                isParked = true;
+            applySpeedFieldCentric(new vec2(relocation.getX(), relocation.getY()), relocation.getHeading(), myPose.getHeading());
+        }
+        //TODO: APPLY IT IN AUTONOMOUS ONLY WHERE NEEDED
+    }
+
+    public boolean straightGoToTeleop(Pose2d targetPose, Pose2d errors, auto_PID calculator, SampleMecanumDrive drive, LinearOpMode lop){
+        Pose2d myPose;
+        Pose2d relocation;
+
+        myPose = drive.getPoseEstimate();
+        relocation = calculator.calculate_speeds(targetPose, myPose, 1);
+        /*telemetry.addData("SpeedX:", calculator.getSpeedX());
+        telemetry.addData("SpeedY:", calculator.getSpeedY());
+        telemetry.addData("Rotation:", calculator.getRotation());
+        telemetry.addData("IsParked:", isParked);
+        telemetry.update();*/
+        if (Math.abs(calculator.getErrorX()) <= errors.getX() && Math.abs(calculator.getErrorY()) <= errors.getY() && Math.abs(calculator.getErrorHeading()) <= errors.getHeading())
+        {
+            applySpeed(new vec2(0), 0, telemetry);
+            return true;
+        }
+        applySpeedFieldCentric(new vec2(relocation.getX(), relocation.getY()), relocation.getHeading(), myPose.getHeading());
+        return false;
     }
 }

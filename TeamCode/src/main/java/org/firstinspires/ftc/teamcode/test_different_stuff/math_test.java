@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.test_different_stuff;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -7,6 +8,7 @@ import org.firstinspires.ftc.teamcode.RobotNW;
 import org.firstinspires.ftc.teamcode.maths.vec2;
 
 @TeleOp(name = "math_test")
+@Disabled
 public class math_test extends LinearOpMode {
 
     RobotNW Robot = new RobotNW();

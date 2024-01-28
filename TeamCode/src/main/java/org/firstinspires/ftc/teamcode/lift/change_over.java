@@ -5,37 +5,59 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class change_over {
 
-    Servo motor1;
-    Servo motor2;
+    public Servo motor1;
+    public Servo motor2;
+
+    Servo box_flipper;
 
     public void init(HardwareMap HM) {
 
         motor1 = HM.get(Servo.class, "change_over_1");
         motor2 = HM.get(Servo.class, "change_over_2");
-        setPos(-0.5);
+        box_flipper = HM.get(Servo.class, "box_flipper");
+        setPositionLow();
+        setBoxDefault();
     }
-
-    private void setPos(double deg) {
+    public void setPos(double deg) {
         motor1.setPosition(0.5 + deg);
         motor2.setPosition(0.5 - deg);
     }
 
-    public void setPositionLow() {
-        setPos(-0.5);
+    void setBoxServoPosition(double pos){
+        box_flipper.setPosition(pos);
     }
 
+    public void setBoxScoring(){
+        setBoxServoPosition(0.15);
+    }
+
+    public void setBoxDefault(){
+        setBoxServoPosition(0.63);
+    }
+    public void setPositionLow() {
+        setMotor1Pos(0.05);
+        setMotor2Pos(0.95);
+    }
     public void setPositionDef() {
         setPos(0);
     }
     public void setPositionHigh() {
-        setPos(0.28);
+        setMotor1Pos(1);
+        setMotor2Pos(0);
     }
 
-    public double getPos_motor1() {
-        return motor1.getPosition();
+    public void setMotor2_0(){
+        motor2.setPosition(0.);
+        motor1.setPosition(0.);
     }
-
-    public double getPos_motor2 (){
-        return motor2.getPosition();
+    public void setMotor2_1(){
+        motor2.setPosition(1.);
+        motor1.setPosition(1.);
+    }
+    public void setMotor1Pos(double pos){
+        motor1.setPosition(pos);
+    }
+    public void setMotor2Pos(double pos){
+        motor2.setPosition(pos);
     }
 }

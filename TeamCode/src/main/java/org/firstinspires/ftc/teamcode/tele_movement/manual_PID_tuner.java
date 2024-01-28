@@ -6,6 +6,7 @@ import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -19,6 +20,7 @@ import org.firstinspires.ftc.teamcode.maths.vec2;
 import java.lang.annotation.Target;
 
 @TeleOp(name = "manual_PID_tuner")
+@Disabled
 public class manual_PID_tuner extends LinearOpMode {
     RobotNW Robot = new RobotNW();
 

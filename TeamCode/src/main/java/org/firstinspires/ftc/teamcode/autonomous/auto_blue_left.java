@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.RobotNW;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.lift.elevator_thread;
 import org.firstinspires.ftc.teamcode.maths.vec2;
 import org.firstinspires.ftc.teamcode.tele_movement.op_container;
 
@@ -16,9 +17,10 @@ public class auto_blue_left extends LinearOpMode {
     ElapsedTime timer = new ElapsedTime();
     String prop_pos = "";
 
+    elevator_thread elevator = new elevator_thread();
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        Robot.init(hardwareMap, telemetry, this, "Blue");
+        Robot.init(hardwareMap, telemetry, this, "Blue", "false");
         telemetry.addData("", "Init completed");
         telemetry.update();
 
@@ -37,6 +39,10 @@ public class auto_blue_left extends LinearOpMode {
         }
 
         op_container.blue = true;
+
+        elevator.init(hardwareMap, telemetry);
+        elevator.start();
+
         waitForStart();
 
         //Robot.servo.setPosition(0.16);
@@ -50,6 +56,7 @@ public class auto_blue_left extends LinearOpMode {
             calculator.init(targetPose, myPose);
             errors = new Pose2d(5, 5, 1);
             Robot.DD.straightGoTo(targetPose, errors, calculator, drive, this);
+            Robot.DD.applySpeed(new vec2(0), 0, telemetry);
             targetPose = auto_constants.BLUE_LEFT_RIGHT_SPIKE;
         }
         else
@@ -60,25 +67,33 @@ public class auto_blue_left extends LinearOpMode {
         errors = new Pose2d(0.4, 0.4, 0.1);
         Robot.DD.straightGoTo(targetPose, errors, calculator, drive, this);
 
+
         timer.reset();
-        while(timer.milliseconds() < 325 && opModeIsActive()) {
-            Robot.IN.unloadPixel();
-            telemetry.addData("adaaaa", "+");
-            telemetry.update();
-        }
+        while (timer.milliseconds() < 60)
+            Robot.IN.intake_run_away_auto();
         Robot.IN.stopIntakeMotors();
+
+        elevator.target_pos = 4;
         Robot.CO.setPositionHigh();
+        Robot.CO.setBoxScoring();
 
         if (prop_pos.equals("Center"))
+        {
+            targetPose = auto_constants.BLUE_LEFT_CENTER_ADDITIONAL;
+            calculator.init(targetPose, myPose);
+            errors = new Pose2d(5, 5, 1);
+            Robot.DD.straightGoTo(targetPose, errors, calculator, drive, this);
             targetPose = auto_constants.BLUE_CENTER_DROP;
+        }
         else if (prop_pos.equals("Right"))
             targetPose = auto_constants.BLUE_RIGHT_DROP;
         else
             targetPose = auto_constants.BLUE_LEFT_DROP;
 
         calculator.reset(targetPose, myPose);
-        errors = new Pose2d(0.8, 0.1, 0.05);
+        errors = new Pose2d(1, 0.5, 0.05);
         Robot.DD.straightGoTo(targetPose, errors, calculator, drive, this);
+        Robot.DD.applySpeed(new vec2(0), 0, telemetry);
 
         Robot.OT.runUnloading();
         timer.reset();
@@ -88,15 +103,25 @@ public class auto_blue_left extends LinearOpMode {
         }
         Robot.OT.stop();
 
+        Robot.CO.setPositionLow();
+        Robot.CO.setBoxDefault();
+        elevator.target_pos = 0;
+
+
         targetPose = auto_constants.BLUE_FINAL_ZONE;
         calculator.reset(targetPose, myPose);
-        errors = new Pose2d(0.2, 1, 0.1);
+        errors = new Pose2d(2, 2, 0.3);
         Robot.DD.straightGoTo(targetPose, errors, calculator, drive, this);
+        Robot.DD.applySpeed(new vec2(0), 0, telemetry);
         Robot.DD.setWheelsDefault();
         Robot.CO.setPositionLow();
+        Robot.DD.stopDrivetrain();
+        /* update once if autonomous ended by timer */
         drive.update();
-        op_container.location = drive.getPoseEstimate();
-        op_container.TICS_LEFT = Robot.DD.leftModule.upMotor.getCurrentPosition();
-        op_container.TICS_RIGHT = Robot.DD.rightModule.upMotor.getCurrentPosition();
+        op_container.transferData(drive.getPoseEstimate(), Robot.DD.leftModule.upMotor.getCurrentPosition(), Robot.DD.rightModule.upMotor.getCurrentPosition(), elevator.LI.getPos(elevator.LI.motor_left), elevator.LI.getPos(elevator.LI.motor_right), Robot.HG.getPos());
+        while (opModeIsActive()){
+            drive.update();
+            op_container.transferData(drive.getPoseEstimate(), Robot.DD.leftModule.upMotor.getCurrentPosition(), Robot.DD.rightModule.upMotor.getCurrentPosition(), elevator.LI.getPos(elevator.LI.motor_left), elevator.LI.getPos(elevator.LI.motor_right), Robot.HG.getPos());
+        }
     }
 }

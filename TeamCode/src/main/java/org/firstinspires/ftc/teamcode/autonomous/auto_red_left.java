@@ -78,6 +78,7 @@ public class auto_red_left extends LinearOpMode {
             while(opModeIsActive())
                 Robot.DD.applySpeed(new vec2(0), 0, telemetry);
 
+
         }
     }
 }
