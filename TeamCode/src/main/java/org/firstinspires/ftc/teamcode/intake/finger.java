@@ -17,7 +17,7 @@ public class finger {
     }
 
     public void drop() {
-        setPos(0.2);
+        setPos(0);
     }
 
     public void prepare() {

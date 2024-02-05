@@ -41,6 +41,10 @@ public class elevator_thread extends Thread {
                     LI.setPosAutoYellow();
                     HG.setPosAutoYellow();
                     break;
+                case 10:
+                    LI.setPosDown();
+                    HG.setPosMax();
+                    break;
                 default:
                     LI.setPosDown();
                     HG.setPosDown();

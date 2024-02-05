@@ -17,10 +17,10 @@ public class hanger {
     double Pr;
     double Dr;
 
-    final double kP = 0.012;
+    final double kP = 0.01;
     final double kD = 0.01;
 
-    final static double KOEF_LIFT = -9.18125431;
+    final static double KOEF_LIFT = -8.4125431;
     int errLeft;
     int errOld;
     int err;
@@ -38,17 +38,20 @@ public class hanger {
         motor.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
-    public void setPosHigh(){ calculate_and_apply_power( 400); }
+    public void setPosHigh(){ calculate_and_apply_power( -420); }
     public void setPosMid(){
-        calculate_and_apply_power(250);
+        calculate_and_apply_power(-250);
     }
 
-    public void setPosLow(){calculate_and_apply_power(180); }
+    public void setPosLow(){calculate_and_apply_power(-180); }
     public void setPosDown(){
         calculate_and_apply_power(0);
     }
+    public void setPosMax(){
+        motor.setPower(-1);
+    }
     public void setPosAutoYellow(){
-        calculate_and_apply_power(70);
+        calculate_and_apply_power(65);
     }
 
     public void autoSetPos(int pos) {
@@ -58,6 +61,7 @@ public class hanger {
     private void calculate_and_apply_power(int target_pos){
         target_pos *= KOEF_LIFT;
         int curPosMotor = getPos();
+        int koef = 3;
 
         if (curPosMotor < 0){
             motor.setPower(0.2);
@@ -69,10 +73,12 @@ public class hanger {
 
         Dr = err - errOld;
 
-        if (Math.abs(err) < 80)
+        if (err <= 70)
+            koef = 1;
+        if (Math.abs(err) < 40)
             motor.setPower(0);
         else
-            motor.setPower(Pr * kP + Dr * kD);
+            motor.setPower( (Pr * kP + Dr * kD) * koef);
 
         errOld = err;
     }

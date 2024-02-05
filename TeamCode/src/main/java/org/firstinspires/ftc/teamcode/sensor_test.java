@@ -50,7 +50,7 @@ import org.firstinspires.ftc.teamcode.tele_movement.tele_auto;
 @TeleOp
 public class sensor_test extends LinearOpMode {
     RobotNW Robot = new RobotNW();
-    AnalogInput sensor;
+    AnalogInput sensor, button_wb_left, button_wb_right;
     vec2 JoyDir = new vec2(0);
     Pose2d curPos;
     Vector2d atPos;
@@ -117,6 +117,8 @@ public class sensor_test extends LinearOpMode {
         gamepad1Feedback.setColor(0, 1, 0);
         gamepad2Feedback.setColor(0, 0, 1);
         sensor = hardwareMap.get(AnalogInput.class, "sensor");
+        button_wb_left = hardwareMap.get(AnalogInput.class, "button_wb_left");
+        button_wb_right = hardwareMap.get(AnalogInput.class, "button_wb_right");
         waitForStart();
         timer.reset();
         gamepad2Feedback.setColor(0, 1, 0);
@@ -299,6 +301,8 @@ public class sensor_test extends LinearOpMode {
             else if (sensor.getVoltage() > 3) old_sensor = false;
             telemetry.addData("sensor value", sensor.getVoltage());
             telemetry.addData("num pixels", num_pixels);
+            telemetry.addData("wb left button value", button_wb_left.getVoltage());
+            telemetry.addData("wb right button value", button_wb_right.getVoltage());
 
             /*** END OF INTAKE CONTROL ***/
 

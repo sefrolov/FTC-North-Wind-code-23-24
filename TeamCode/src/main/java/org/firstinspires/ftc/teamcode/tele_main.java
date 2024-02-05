@@ -105,7 +105,7 @@ public class tele_main extends LinearOpMode {
         telemetry.update();
 
         calculator.init(0);
-
+        Robot.FN.drop();
         elevator.init(hardwareMap, telemetry);
         elevator.start();
 
@@ -148,6 +148,12 @@ public class tele_main extends LinearOpMode {
                 //dHeading = 0;
             }
 
+            /*
+            if (gamepad2.right_stick_button)
+                Robot.FN.drop();
+            if (gamepad2.left_stick_button)
+                Robot.FN.prepare();
+*/
 
             telemetry.addData("CALCULATE ", calculator.getRotation());
             telemetry.addData("real angle ", Robot.IM.getPositiveAngle());
@@ -257,7 +263,6 @@ public class tele_main extends LinearOpMode {
             */
 
 
-
             /*** END OF AUTO RELOCATION SECTION ***/
 
             /*** INTAKE CONTROL ***/
@@ -295,6 +300,12 @@ public class tele_main extends LinearOpMode {
                 Robot.CO.setBoxDefault();
             }
 
+            else if (gamepad2.left_bumper) {
+                Robot.CO.setHangerPos();
+            }
+            else if (gamepad2.left_stick_button) {
+                Robot.CO.setHangerPos();
+            }
             /*
             if (gamepad2.left_bumper)
                 Robot.CO.setBoxDefault();
@@ -315,6 +326,8 @@ public class tele_main extends LinearOpMode {
             else
                 Robot.OT.stop();
             //Robot.OT.checkOuttake();
+            if (gamepad2.right_stick_button)
+                Robot.CO.setPositionHi();
 
             if (outtake_flag){
                 if (outtake_timer.milliseconds() < 200){
@@ -329,6 +342,8 @@ public class tele_main extends LinearOpMode {
 
             /*** LIFT CONTROL ***/
             //lift.applyPower(gamepad2.left_stick_y, telemetry);
+            if (gamepad2.y)
+                elevator.target_pos = 10;
 
             if (currentGamepad2.dpad_up && !PreviousGamepad2.dpad_up)
                 elevator.target_pos += 1;
@@ -339,7 +354,7 @@ public class tele_main extends LinearOpMode {
 
             if (elevator.target_pos < 0)
                 elevator.target_pos = 0;
-            if (elevator.target_pos > 3)
+            if (elevator.target_pos > 3 && elevator.target_pos != 10)
                 elevator.target_pos = 3;
 
             telemetry.addData("current position left:", elevator.LI.getPos(elevator.LI.motor_left));
