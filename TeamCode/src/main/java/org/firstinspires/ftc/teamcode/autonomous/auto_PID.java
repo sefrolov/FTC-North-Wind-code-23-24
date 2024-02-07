@@ -9,14 +9,23 @@ import org.firstinspires.ftc.teamcode.maths.vec2;
 public class auto_PID {
     double Ix, Dx, Px, Iy, Dy, Py, IHeading, DHeading, PHeading;
 
+    /*
     public double kPtrans = 0.0205;
     public double kDtrans = 0.117;
     public double kItrans = 0.0021;
 
     public double kPHeading = 0.135;
-
     public double kDHeading = 0.133;
     public double kIHeading = 0.033;
+     */
+    public double kPtrans = 0.0395;
+    public double kDtrans = 0;
+    public double kItrans = 0.002;
+
+    public double kPHeading = 1.735;
+
+    public double kDHeading = 0;
+    public double kIHeading = 0.002;
 
     double errorX;
     double errorOldX;
@@ -97,9 +106,9 @@ public class auto_PID {
         Py = errorY;
         PHeading = errorHeading;
 
-        if (Math.abs(errorX) <= 6)
+        if (Math.abs(errorX) <= 4)
             Ix += errorX;
-        if (Math.abs(errorY) <= 6)
+        if (Math.abs(errorY) <= 4)
             Iy += errorY;
         if (Math.abs(errorHeading) <= 0.2 && relocation.len() <= 4)
             IHeading += errorHeading;

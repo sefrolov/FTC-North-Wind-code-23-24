@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -56,7 +57,7 @@ public class auto_blue_right extends LinearOpMode {
             targetPose = auto_constants.BLUE_RIGHT_LEFT_SPIKE_WAYPOINT;
             calculator.init(targetPose, myPose);
             errors = new Pose2d(5, 5, 1);
-            Robot.DD.straightGoToNoSlow(targetPose, errors, calculator, drive, this);
+            Robot.DD.straightGoTo(targetPose, errors, calculator, drive, this);
             targetPose = auto_constants.BLUE_RIGHT_LEFT_SPIKE;
         }
         else
@@ -70,36 +71,81 @@ public class auto_blue_right extends LinearOpMode {
 
         Robot.FN.drop();
 
-        targetPose = auto_constants.BLUE_DOBOR;
+        targetPose = auto_constants.BLUE_DOBOR_ADDITIONAL;
         calculator.reset(targetPose, myPose);
-        errors = new Pose2d(1, 1, 0.1);
+        errors = new Pose2d(2, 1, 0.2);
         Robot.DD.straightGoTo(targetPose, errors, calculator, drive, this);
 
-        /*
+        targetPose = auto_constants.BLUE_DOBOR_FIRST;
+        calculator.reset(targetPose, myPose);
+        errors = new Pose2d(1, 1, 0.2);
+        Robot.DD.straightGoTo(targetPose, errors, calculator, drive, this);
+
         Robot.IN.intake_run();
-        while(sensors.getNumPixels() < 2)
+        Robot.OT.runLoading();
+
+        double i = 0;
+        while(elevator.getNumPixels() < 1 && i < 4 && opModeIsActive())
         {
             targetPose = auto_constants.BLUE_DOBOR_BACK;
             calculator.reset(targetPose, myPose);
             errors = new Pose2d(1, 1, 0.1);
             Robot.DD.straightGoTo(targetPose, errors, calculator, drive, this);
 
-            targetPose = auto_constants.BLUE_DOBOR;
-            calculator.reset(targetPose, myPose);
-            errors = new Pose2d(2, 2, 0.1);
-            Robot.DD.straightGoToNoSlow(targetPose, errors, calculator, drive, this);
+            if (elevator.getNumPixels() < 1) {
+                targetPose = auto_constants.BLUE_DOBOR;
+                calculator.reset(targetPose, myPose);
+                errors = new Pose2d(2, 2, 0.1);
+                Robot.DD.straightGoTo(targetPose, errors, calculator, drive, this);
+                i++;
+            }
+            Robot.DD.stopDrivetrain();
+            sleep(300);
         }
+        sleep(600);
+        Robot.OT.stop();
         Robot.IN.intake_run_away_auto();
-        */
+
+
         targetPose = auto_constants.UNDER_SCENE_BACK_BLUE;
         calculator.reset(targetPose, myPose);
         errors = new Pose2d(2, 2, 0.3);
-        Robot.DD.straightGoToNoSlow(targetPose, errors, calculator, drive, this);
+        Robot.DD.straightGoTo(targetPose, errors, calculator, drive, this);
 
         targetPose = auto_constants.UNDER_SCENE_FRONT_BLUE;
         calculator.reset(targetPose, myPose);
         errors = new Pose2d(2, 2, 0.3);
-        Robot.DD.straightGoToNoSlow(targetPose, errors, calculator, drive, this);
+        Robot.DD.straightGoTo(targetPose, errors, calculator, drive, this);
+
+        targetPose = auto_constants.BLUE_BEFORE_DROPS;
+        calculator.reset(targetPose, myPose);
+        errors = new Pose2d(1, 0.5, 0.05);
+        Robot.DD.straightGoTo(targetPose, errors, calculator, drive, this);
+        Robot.DD.applySpeed(new vec2(0), 0, telemetry);
+
+
+        /*
+        Pose2d curPos = drive.getPoseEstimate();
+        Vector2d vec;
+        if ((vec = Robot.AT.getRobotPos(drive.getPoseEstimate().getHeading())) != null){
+            vec.plus(new Vector2d(curPos.getX(), curPos.getY()));
+            Pose2d pose = new Pose2d(vec.div(2), drive.getPoseEstimate().getHeading());
+
+            drive.setPoseEstimate(pose);
+        }
+        */
+
+        if (prop_pos.equals("Center"))
+            targetPose = auto_constants.BLUE_CENTER_DROP;
+        else if (prop_pos.equals("Right"))
+            targetPose = auto_constants.BLUE_RIGHT_DROP;
+        else
+            targetPose = auto_constants.BLUE_LEFT_DROP;
+
+        calculator.reset(targetPose, myPose);
+        errors = new Pose2d(1, 0.5, 0.05);
+        Robot.DD.straightGoTo(targetPose, errors, calculator, drive, this);
+        Robot.DD.applySpeed(new vec2(0), 0, telemetry);
 
         Robot.IN.stopIntakeMotors();
         /*
@@ -130,12 +176,12 @@ public class auto_blue_right extends LinearOpMode {
         Robot.CO.setPositionLow();
         Robot.CO.setBoxDefault();
         elevator.target_pos = 0;
-        */
 
         targetPose = auto_constants.BLUE_FINAL_ZONE;
         calculator.reset(targetPose, myPose);
         errors = new Pose2d(2, 2, 0.3);
         Robot.DD.straightGoTo(targetPose, errors, calculator, drive, this);
+        */
         Robot.DD.applySpeed(new vec2(0), 0, telemetry);
 
         Robot.DD.setWheelsDefault();

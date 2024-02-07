@@ -25,15 +25,15 @@ public class DriveTrainDifferential {
     public module rightModule = new module();
     vec2 rightWheelCoord = new vec2(5, 0);
     vec2 leftWheelCoord = new vec2(-5, 0);
-    double MAX_ANG_SPEED = 1. / max(rightWheelCoord.len(), leftWheelCoord.len());
+    double MAX_ANG_SPEED = 1. / max(rightWheelCoord.len(), leftWheelCoord.len()) * 0.13;
     vec2 turnSpeedLeft, turnSpeedRight, leftSpeed, rightSpeed;
 
     Telemetry telemetry;
 
     boolean isParked = false;
     public void init(HardwareMap HM, Telemetry tele) {
-        leftModule.init(HM, "motorLD", "motorLU", 8192, 0.3, op_container.TICS_LEFT);
-        rightModule.init(HM, "motorRD", "motorRU", /*1440*/1024, 0.3, op_container.TICS_RIGHT);
+        leftModule.init(HM, "motorLD", "motorLU", 8192, 0.6, op_container.TICS_LEFT);
+        rightModule.init(HM, "motorRD", "motorRU", /*1440*/1024, 0.6, op_container.TICS_RIGHT);
         telemetry = tele;
     }
 
@@ -52,8 +52,9 @@ public class DriveTrainDifferential {
         leftSpeed = trans.plus(turnSpeedLeft);
         rightSpeed.mul(-1);
         if (max(rightSpeed.len(), leftSpeed.len()) > 1) {
-            rightSpeed.mul(1. / max(rightSpeed.len(), leftSpeed.len()));
-            leftSpeed.mul(1. / max(rightSpeed.len(), leftSpeed.len()));
+            double koef = max(rightSpeed.len(), leftSpeed.len());
+            rightSpeed.mul(1. / koef);
+            leftSpeed.mul(1. / koef);
         }
 
         //rightSpeed.set(rightSpeed.getX(), -rightSpeed.getY());

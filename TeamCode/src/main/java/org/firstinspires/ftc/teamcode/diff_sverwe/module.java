@@ -82,6 +82,7 @@ public class module {
         vector.mul(4 / Math.sin(toRadians(45)));
         vector = vector.normalize();
 
+        vector.mul(0.73);
         downMotor.setPower(vector.getX());
         upMotor.setPower(vector.getY());
     }
@@ -108,6 +109,8 @@ public class module {
 
         vector.mul(4 / Math.sin(toRadians(45)));
         vector = vector.normalize();
+
+        vector.mul(0.73);
 
         downMotor.setPower(vector.getX());
         upMotor.setPower(vector.getY());
@@ -195,7 +198,7 @@ public class module {
             dir.invert();
             target_speed *= -1;
             if (getDifference() < PI / 6.) applyVectorTele(target_speed, dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);
-            else applyVectorTele(target_speed, dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);
+            else applyVectorTele(0, dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);
             if (TICS_PER_REV == 1024) {
                 /*
                 tele.addData("upMotor:", upMotor.getCurrentPosition());
@@ -208,7 +211,7 @@ public class module {
         }
         else {
             if (getDifference() < PI / 6.) applyVectorTele(target_speed, dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);
-            else applyVectorTele(target_speed, dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);
+            else applyVectorTele(0, dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);
         }
         /*
         tele.addData("target_speed", target_speed);

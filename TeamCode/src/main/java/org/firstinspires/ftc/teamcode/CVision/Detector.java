@@ -130,7 +130,7 @@ public class Detector {
                 return "Right";
         }
         if (!default_left)
-            return "Left";
+            return "Right"; //left
         return "Right";
     }
 

@@ -222,5 +222,7 @@ public class AT_Detector {
 
         return new Vector2d(xPos, yPos);
     }
+
+    public void stopStreaming() {visionPortal.stopStreaming();}
 }
 

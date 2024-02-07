@@ -11,18 +11,21 @@ public interface auto_constants {
     public static final Pose2d BLUE_LEFT_CENTER_ADDITIONAL = new Pose2d(-25.5, 30, Math.toRadians(270));
     public static final Pose2d BLUE_LEFT_RIGHT_SPIKE_WAYPOINT = new Pose2d(-30.93, 24, Math.toRadians(270));
     public static final Pose2d BLUE_LEFT_RIGHT_SPIKE = new Pose2d(-35.3, 9.35, Math.toRadians(270));
-    public static final Pose2d BLUE_RIGHT_LEFT_SPIKE = new Pose2d(-36, -36, Math.toRadians(90));
+    public static final Pose2d BLUE_RIGHT_LEFT_SPIKE = new Pose2d(-38, -36.5, Math.toRadians(90));
     public static final Pose2d BLUE_RIGHT_CENTER_SPIKE = new Pose2d(-15, -40, Math.toRadians(180));
-    public static final Pose2d BLUE_RIGHT_RIGHT_SPIKE = new Pose2d(-18, -48, Math.toRadians(180));
+    public static final Pose2d BLUE_RIGHT_RIGHT_SPIKE = new Pose2d(-22, -51.3, Math.toRadians(180));
     public static final Pose2d BLUE_LEFT_DROP = new Pose2d(-40.7, 51.35, Math.toRadians(270));
     public static final Pose2d BLUE_CENTER_DROP = new Pose2d(-36.5, 51.5, Math.toRadians(270));
     public static final Pose2d BLUE_RIGHT_DROP = new Pose2d(-27.4, 50.5, Math.toRadians(270));
     public static final Pose2d BLUE_FINAL_ZONE = new Pose2d(-12, 48, Math.toRadians(270));
     public static final Pose2d BLUE_FINAL_ZONE_WALL = new Pose2d(-58, 48, Math.toRadians(270));
 
-    public static final Pose2d BLUE_DOBOR = new Pose2d(-36, -62, Math.toRadians(270));
+    public static final Pose2d BLUE_BEFORE_DROPS = new Pose2d(-36.5, 36, Math.toRadians(270));
 
-    public static final Pose2d BLUE_DOBOR_BACK = new Pose2d(-36, -55, Math.toRadians(270));
+    public static final Pose2d BLUE_DOBOR_FIRST = new Pose2d(-13, -60.7, Math.toRadians(270));
+    public static final Pose2d BLUE_DOBOR = new Pose2d(-13, -59, Math.toRadians(270));
+    public static final Pose2d BLUE_DOBOR_BACK = new Pose2d(-13, -56, Math.toRadians(270));
+    public static final Pose2d BLUE_DOBOR_ADDITIONAL = new Pose2d(-13, -48, Math.toRadians(270));
     public static final Pose2d BLUE_RIGHT_LEFT_SPIKE_WAYPOINT = new Pose2d(-30.93, -38, Math.toRadians(90));
 
     public static final Pose2d BLUE_RIGHT_LEFT_SPIKE_ADDITIONAL = new Pose2d(-32, -42, Math.toRadians(90));
