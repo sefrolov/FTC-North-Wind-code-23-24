@@ -82,7 +82,7 @@ public class module {
         vector.mul(4 / Math.sin(toRadians(45)));
         vector = vector.normalize();
 
-        vector.mul(0.73);
+        vector.mul(1); //0.73
         downMotor.setPower(vector.getX());
         upMotor.setPower(vector.getY());
     }
@@ -110,7 +110,7 @@ public class module {
         vector.mul(4 / Math.sin(toRadians(45)));
         vector = vector.normalize();
 
-        vector.mul(0.73);
+        vector.mul(1); //0.73
 
         downMotor.setPower(vector.getX());
         upMotor.setPower(vector.getY());

@@ -115,16 +115,23 @@ public class auto_blue_right extends LinearOpMode {
         targetPose = auto_constants.UNDER_SCENE_FRONT_BLUE;
         calculator.reset(targetPose, myPose);
         errors = new Pose2d(2, 2, 0.3);
-        Robot.DD.straightGoTo(targetPose, errors, calculator, drive, this);
+        Robot.DD.straightGoToNoSlow(targetPose, errors, calculator, drive, this);
 
+        Pose2d curPos = drive.getPoseEstimate();
+        if (Math.abs(curPos.getHeading() - targetPose.getHeading()) > errors.getHeading()) { //crashed in farm
+            targetPose = new Pose2d(-9, curPos.getY(), Math.toRadians(270));
+            calculator.reset(targetPose, myPose);
+            errors = new Pose2d(2, 2, 0.3);
+            Robot.DD.straightGoTo(targetPose, errors, calculator, drive, this);
+        }
+
+        /*
         targetPose = auto_constants.BLUE_BEFORE_DROPS;
         calculator.reset(targetPose, myPose);
         errors = new Pose2d(1, 0.5, 0.05);
         Robot.DD.straightGoTo(targetPose, errors, calculator, drive, this);
         Robot.DD.applySpeed(new vec2(0), 0, telemetry);
 
-
-        /*
         Pose2d curPos = drive.getPoseEstimate();
         Vector2d vec;
         if ((vec = Robot.AT.getRobotPos(drive.getPoseEstimate().getHeading())) != null){

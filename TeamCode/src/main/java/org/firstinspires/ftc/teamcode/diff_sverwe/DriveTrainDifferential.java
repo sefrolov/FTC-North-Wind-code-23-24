@@ -25,7 +25,7 @@ public class DriveTrainDifferential {
     public module rightModule = new module();
     vec2 rightWheelCoord = new vec2(5, 0);
     vec2 leftWheelCoord = new vec2(-5, 0);
-    double MAX_ANG_SPEED = 1. / max(rightWheelCoord.len(), leftWheelCoord.len()) * 0.13;
+    double MAX_ANG_SPEED = 1. / max(rightWheelCoord.len(), leftWheelCoord.len()); //*0.13
     vec2 turnSpeedLeft, turnSpeedRight, leftSpeed, rightSpeed;
 
     Telemetry telemetry;
@@ -125,15 +125,17 @@ public class DriveTrainDifferential {
             drive.update();
             myPose = drive.getPoseEstimate();
             relocation = calculator.calculate_speeds(targetPose, myPose, 1);
-            if (timer.milliseconds() > 5000 && !block_suspected) {
+            if (timer.milliseconds() > 1000 && !block_suspected) {
                 block_suspected = true;
                 err1 = new vec2(calculator.getErrorX(), calculator.getErrorY()).len();
                 timer.reset();
             }
-            if (timer.milliseconds() > 3000 && block_suspected){
+            if (timer.milliseconds() > 1000 && block_suspected){
                 err2 = new vec2(calculator.getErrorX(), calculator.getErrorY()).len();
-                if (Math.abs(err2 - err1) < 5)
+                if (Math.abs(err2 - err1) < 3)
                     isParked = true;
+                else
+                    block_suspected = false;
             }
 
             /*telemetry.addData("SpeedX:", calculator.getSpeedX());

@@ -17,10 +17,11 @@ public class hanger {
     double Pr;
     double Dr;
 
-    final double kP = 0.01;
+    final double kP = 0.018;
     final double kD = 0.01;
 
-    final static double KOEF_LIFT = -8.4125431;
+
+    final static double KOEF_LIFT = -8.32;
     int errLeft;
     int errOld;
     int err;
@@ -36,22 +37,23 @@ public class hanger {
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motor.setDirection(DcMotorSimple.Direction.REVERSE);
+        telemetry = tele;
     }
 
-    public void setPosHigh(){ calculate_and_apply_power( -420); }
+    public void setPosHigh(){ calculate_and_apply_power( -430); }
     public void setPosMid(){
-        calculate_and_apply_power(-250);
+        calculate_and_apply_power(-260);
     }
 
-    public void setPosLow(){calculate_and_apply_power(-180); }
+    public void setPosLow(){calculate_and_apply_power(-202); }
     public void setPosDown(){
-        calculate_and_apply_power(0);
+        calculate_and_apply_power(5);
     }
     public void setPosMax(){
         motor.setPower(-1);
     }
     public void setPosAutoYellow(){
-        calculate_and_apply_power(65);
+        calculate_and_apply_power(-65);
     }
 
     public void autoSetPos(int pos) {
@@ -59,11 +61,29 @@ public class hanger {
     }
 
     private void calculate_and_apply_power(int target_pos){
-        target_pos *= KOEF_LIFT;
+        /*target_pos *= KOEF_LIFT;*/
+        telemetry.addData("targhet_pos", target_pos);
+        telemetry.update();
+        if (target_pos == -202)
+            target_pos = 1497;
+        else if (target_pos == -260)
+            target_pos = 2350;
+        else if (target_pos == -430)
+            target_pos = 3720;
+        else if (target_pos == -65)
+            target_pos = 541;
+        else if (target_pos == 5)
+            target_pos = 0;
+        else
+            target_pos = 1497;
+
+        /*else
+            target_pos *= KOEF_LIFT;*/
+
         int curPosMotor = getPos();
         int koef = 3;
 
-        if (curPosMotor < 0){
+        if (curPosMotor < -40){
             motor.setPower(0.2);
         }
 

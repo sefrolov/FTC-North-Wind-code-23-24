@@ -14,7 +14,7 @@ public class change_over {
         motor1 = HM.get(Servo.class, "change_over_1");
         motor2 = HM.get(Servo.class, "change_over_2");
         box_flipper = HM.get(Servo.class, "box_flipper");
-        setPositionLow();
+        //setPositionLow();
         setBoxDefault();
     }
     public void setPos(double deg) {
@@ -27,26 +27,26 @@ public class change_over {
     }
 
     public void setBoxScoring(){
-        setBoxServoPosition(0.51);
+        setBoxServoPosition(0.38);
     }
 
     public void setBoxDefault(){
-        setBoxServoPosition(0);
+        setBoxServoPosition(0.85);
     }
     public void setPositionLow() {
         setMotor1Pos(0.02);
-        setMotor2Pos(0.885);
+        setMotor2Pos(0.955);
     }
     public void setPositionHi() {
-        setMotor1Pos(0.44);
-        setMotor2Pos(0.44);
+        setMotor1Pos(0.54);
+        setMotor2Pos(0.34);
     }
     public void setPositionDef() {
         setPos(0);
     }
     public void setPositionHigh() {
-        setMotor1Pos(0.88);
-        setMotor2Pos(0.02);
+        setMotor1Pos(0.84);
+        setMotor2Pos(0.04);
     }
 
     public void setHangerPos() {
@@ -59,7 +59,7 @@ public class change_over {
         motor2.setPosition(0.);
         motor1.setPosition(0.);
     }
-    public void setMotor2_1(){
+    public void setMotor2_1() {
         motor2.setPosition(1.);
         motor1.setPosition(1.);
     }

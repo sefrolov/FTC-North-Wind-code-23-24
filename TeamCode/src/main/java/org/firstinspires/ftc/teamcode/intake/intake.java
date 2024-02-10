@@ -49,14 +49,15 @@ public class intake {
     }
 
     public void intake_run_away() {
-        if (time.milliseconds() > 500) /* 500 */
+       /*
+        if (time.milliseconds() > 500)
             acceleration_koef = 0.025;
         else
             acceleration_koef = (0.43 - 0.0008 * time.milliseconds());
 
         Power = acceleration_koef;
-
-        motor1.setPower(-Power);
+*/
+        motor1.setPower(-1);
     }
 
     public void intake_run_away_auto() {

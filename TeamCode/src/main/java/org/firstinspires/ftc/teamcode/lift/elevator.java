@@ -18,7 +18,7 @@ public class elevator {
     double Dr;
     double Ir, Il;
     final double kP = 0.011;
-    final double kD = 0.008;
+    final double kD = 0.011;
 
     final double kI = 0.0009;
 
@@ -77,10 +77,10 @@ public class elevator {
         int curPosRightMotor = getPos(motor_right);
 
         if (curPosLeftMotor < 0){
-            motor_left.setPower(0.3);
+            motor_left.setPower(0.3 * 0.6);
         }
         if (curPosRightMotor < 0){
-            motor_right.setPower(0.2);
+            motor_right.setPower(0.2 * 0.6);
         }
 
         errLeft = target_pos - curPosLeftMotor; /* -100*/
@@ -115,12 +115,12 @@ public class elevator {
         if (target_pos < curPosLeftMotor && errLeft < -50)
             motor_left.setPower(0);
         else
-            motor_left.setPower(Math.max((Pl * kP + Dl * kD + Il * kI), 0));
+            motor_left.setPower(Math.max((Pl * kP + Dl * kD + Il * kI) * 0.6, 0));
 
         if (target_pos < curPosRightMotor && errRight < -50)
             motor_right.setPower(0);
         else
-            motor_right.setPower(Math.max((Pr * kP + Dr * kD + Ir * kI), 0));
+            motor_right.setPower(Math.max((Pr * kP + Dr * kD + Ir * kI) * 0.6, 0));
 
         errOldLeft = errLeft;
         errOldRight = errRight;

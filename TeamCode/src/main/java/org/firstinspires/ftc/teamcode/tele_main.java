@@ -287,7 +287,7 @@ public class tele_main extends LinearOpMode {
                     gamepad2Feedback.runEffectDisabled();
             }
 
-            /*** END OF PLANE CONTROL ***/
+            /** END OF PLANE CONTROL ***/
 
             /** CHANGE OVER CONTROL ***/
 
@@ -342,7 +342,7 @@ public class tele_main extends LinearOpMode {
 
             /*** LIFT CONTROL ***/
             //lift.applyPower(gamepad2.left_stick_y, telemetry);
-            if (gamepad2.y)
+            if (gamepad2.left_bumper)
                 elevator.target_pos = 10;
 
             if (currentGamepad2.dpad_up && !PreviousGamepad2.dpad_up)
