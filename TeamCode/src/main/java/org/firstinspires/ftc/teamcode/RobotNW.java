@@ -27,7 +27,6 @@ public class RobotNW {
     public imu_sensor IM = new imu_sensor();
     public plane PL = new plane();
 
-    public hanger HG = new hanger();
 
     public odometry OD = new odometry();
     public change_over CO = new change_over();
@@ -47,7 +46,8 @@ public class RobotNW {
             ODcolor = object_detection_color[0];
             BD.init(HM, tele, ODcolor, default_left); /* tf2 detector */
         }
-        AT.init(HM);
+        else
+            AT.init(HM);
         DD.init(HM, tele); /* Differential drive */
         IN.init(HM); /* intake */
         FN.init(HM);
@@ -57,7 +57,6 @@ public class RobotNW {
         CO.init(HM); /* change over */
         /* OD.init(HM, tele, IM); */
         OT.init(HM); /* outtake */
-        //HG.init(HM, tele); /* hanger */
 
 
         //camera = new TensorFlow(HM,  lop,  tele, "model_unquant.tflite", "labels.txt");

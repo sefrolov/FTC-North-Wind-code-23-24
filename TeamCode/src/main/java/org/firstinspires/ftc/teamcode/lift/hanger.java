@@ -17,7 +17,7 @@ public class hanger {
     double Pr;
     double Dr;
 
-    final double kP = 0.018;
+    final double kP = 0.01;
     final double kD = 0.01;
 
 
@@ -59,19 +59,18 @@ public class hanger {
     public void autoSetPos(int pos) {
         calculate_and_apply_power(pos);
     }
+    public void stop(){motor.setPower(0);}
 
     private void calculate_and_apply_power(int target_pos){
         /*target_pos *= KOEF_LIFT;*/
-        telemetry.addData("targhet_pos", target_pos);
-        telemetry.update();
         if (target_pos == -202)
-            target_pos = 1497;
+            target_pos = 1700;
         else if (target_pos == -260)
-            target_pos = 2350;
+            target_pos = 2310;
         else if (target_pos == -430)
-            target_pos = 3720;
+            target_pos = 3770;
         else if (target_pos == -65)
-            target_pos = 541;
+            target_pos = 565;
         else if (target_pos == 5)
             target_pos = 0;
         else
@@ -103,7 +102,7 @@ public class hanger {
         errOld = err;
     }
     public int getPos(){
-        return motor.getCurrentPosition() - START_TICKS + op_container.HANGER_TICS;
+        return motor.getCurrentPosition() - START_TICKS;
     }
 
     public void applyPower(double power, Telemetry telemetry){

@@ -379,8 +379,7 @@ public class sensor_test extends LinearOpMode {
             if (elevator.target_pos > 3)
                 elevator.target_pos = 3;
 
-            telemetry.addData("current position left:", elevator.LI.getPos(elevator.LI.motor_left));
-            telemetry.addData("current position right:", elevator.LI.getPos(elevator.LI.motor_right));
+            telemetry.addData("current position left:", elevator.LI.getPos());
             telemetry.addData("lift position:", elevator.target_pos);
             telemetry.update();
 

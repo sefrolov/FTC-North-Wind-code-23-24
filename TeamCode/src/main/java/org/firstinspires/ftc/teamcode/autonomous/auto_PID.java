@@ -18,8 +18,8 @@ public class auto_PID {
     public double kDHeading = 0.133;
     public double kIHeading = 0.033;
      */
-    public double kPtrans = 0.0395;
-    public double kDtrans = 0.005;
+    public double kPtrans = 0.0205;
+    public double kDtrans = 0.06;
     public double kItrans = 0.002;
 
     public double kPHeading = 0.135;
@@ -129,7 +129,7 @@ public class auto_PID {
         rotation = PHeading * kPHeading + DHeading * kDHeading + IHeading * kIHeading;
 
         if (Math.abs(speedX) > 1 || Math.abs(speedY) > 1 || Math.abs(rotation) > 1){
-            double koef = 1 / Math.max(Math.max(speedX, speedY), rotation);
+            double koef = 1 / Math.max(Math.max(Math.abs(rotation), Math.abs(speedX)), Math.abs(speedY));
 
             speedX *= koef;
             speedY *= koef;
@@ -190,9 +190,17 @@ public class auto_PID {
         speedY = Py * kPtrans + Dy * kDtrans + Iy * kItrans;
         rotation = PHeading * kPHeading + DHeading * kDHeading + IHeading * kIHeading;
 
+        if (Math.abs(speedX) > 1 || Math.abs(speedY) > 1 || Math.abs(rotation) > 1){
+            double koef = 1 / Math.max(Math.max(Math.abs(rotation), Math.abs(speedX)), Math.abs(speedY));
+
+            speedX *= koef;
+            speedY *= koef;
+            rotation *= koef;
+        }
+
         if (Math.abs(speedX) < 0.6 || Math.abs(speedY) < 0.6 || Math.abs(rotation) < 0.6)
         {
-            double koef = 0.8 / Math.abs((Math.min(Math.min(Math.abs(rotation), Math.abs(speedX)), Math.abs(speedY))));
+            double koef = 0.8 / Math.max(Math.max(Math.abs(rotation), Math.abs(speedX)), Math.abs(speedY));
 
             speedX *= koef;
             speedY *= koef;
@@ -200,7 +208,7 @@ public class auto_PID {
         }
 
         if (Math.abs(speedX) > 1 || Math.abs(speedY) > 1 || Math.abs(rotation) > 1){
-            double koef = 1 / Math.max(Math.max(speedX, speedY), rotation);
+            double koef = 1 / Math.max(Math.max(Math.abs(rotation), Math.abs(speedX)), Math.abs(speedY));
 
             speedX *= koef;
             speedY *= koef;

@@ -150,7 +150,7 @@ public class DriveTrainDifferential {
         applySpeed(new vec2(0, 0), 0, telemetry);
     }
 
-    public void straightGoToNoSlow(Pose2d targetPose, Pose2d errors, auto_PID calculator, SampleMecanumDrive drive, LinearOpMode lop){
+    public void straightGoToNoSlow(Pose2d targetPose, Pose2d errors, auto_PID calculator, SampleMecanumDrive drive, LinearOpMode lop, boolean yAxis){
         isParked = false;
         Pose2d myPose;
         Pose2d relocation;
@@ -176,8 +176,11 @@ public class DriveTrainDifferential {
                     isParked = true;
             }
 
-            if (calculator.getErrorX() * calculator.errXStart < 0 && calculator.getErrorY() * calculator.errYStart < 0)
+            if (calculator.getErrorX() * calculator.errXStart <= 0 && !yAxis)
                 isParked = true;
+            if (calculator.getErrorY() * calculator.errYStart <= 0 && yAxis)
+                isParked = true;
+
 
             /*telemetry.addData("SpeedX:", calculator.getSpeedX());
             telemetry.addData("SpeedY:", calculator.getSpeedY());

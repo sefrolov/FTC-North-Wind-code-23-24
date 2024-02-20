@@ -65,6 +65,7 @@ public class tele_main extends LinearOpMode {
     double last_turn = 0;
     boolean WasRotating = false, outtake_flag = false;
     ElapsedTime outtake_timer = new ElapsedTime();
+    ElapsedTime intake_timer = new ElapsedTime();
     ElapsedTime timer = new ElapsedTime();
     PID_system calculator = new PID_system();
 
@@ -266,7 +267,7 @@ public class tele_main extends LinearOpMode {
             /*** END OF AUTO RELOCATION SECTION ***/
 
             /*** INTAKE CONTROL ***/
-            if (gamepad2.x)
+            if (gamepad2.x || gamepad1.y || gamepad1.b)
                 Robot.IN.intake_run();
             else if (gamepad2.right_trigger > 0.5)
                 Robot.IN.intake_run_away();
@@ -277,14 +278,15 @@ public class tele_main extends LinearOpMode {
 
             /*** PLANE CONTROL ***/
 
-            if (gamepad2.right_bumper) {
-                Robot.PL.prepare();
+            if (gamepad2.right_bumper || gamepad1.right_bumper) {
+                Robot.PL.launch();
             }
             else {
                 if (gamepad2.right_trigger > 0.5)
-                    Robot.PL.launch();
+                    Robot.PL.prepare();
+                /*
                 else if (gamepad2.right_trigger > 0.5 && !endgame)
-                    gamepad2Feedback.runEffectDisabled();
+                    gamepad2Feedback.runEffectDisabled();*/
             }
 
             /** END OF PLANE CONTROL ***/
@@ -304,6 +306,7 @@ public class tele_main extends LinearOpMode {
                 Robot.CO.setHangerPos();
             }
             else if (gamepad2.left_stick_button) {
+                Robot.CO.setBoxScoring();
                 Robot.CO.setHangerPos();
             }
             /*
@@ -332,6 +335,7 @@ public class tele_main extends LinearOpMode {
             if (outtake_flag){
                 if (outtake_timer.milliseconds() < 200){
                     Robot.OT.runUnloading();
+                    elevator.intake_sensor.num_pixels = 0;
                 }
                 else{
                     Robot.OT.stop();
@@ -356,19 +360,21 @@ public class tele_main extends LinearOpMode {
                 elevator.target_pos = 0;
             if (elevator.target_pos > 3 && elevator.target_pos != 10)
                 elevator.target_pos = 3;
+            if (gamepad2.left_stick_button && elevator.target_pos != 10)
+                elevator.target_pos = 10;
+            if (gamepad2.left_stick_button && elevator.target_pos == 10)
+                elevator.target_pos = 1;
 
-            telemetry.addData("current position left:", elevator.LI.getPos(elevator.LI.motor_left));
-            telemetry.addData("current position right:", elevator.LI.getPos(elevator.LI.motor_right));
-            telemetry.addData("current position hanger:", elevator.HG.getPos());
+
+            telemetry.addData("current position left:", elevator.LI.getPos());
             telemetry.addData("lift position:", elevator.target_pos);
             telemetry.update();
 
             /*** END OF LIFT CONTROL ***/
 
             /*** HANGER CONTROL ***/
-            //lift.applyPower(gamepad2.left_stick_y, telemetry);
+//            lift.applyPower(gamepad2.left_stick_y, telemetry);
 
-            elevator.HG.applyPower(-gamepad2.right_stick_y, telemetry);
 
             /*** END OF HANGER CONTROL ***/
 

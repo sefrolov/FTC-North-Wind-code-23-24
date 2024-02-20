@@ -58,24 +58,26 @@ public class auto_red_right extends LinearOpMode {
             calculator.init(targetPose, myPose);
             errors = new Pose2d(5, 5, 1);
             Robot.DD.straightGoTo(targetPose, errors, calculator, drive, this);
+            Robot.DD.applySpeed(new vec2(0), 0, telemetry);
             targetPose = auto_constants.RED_RIGHT_LEFT_SPIKE;
         }
 
         calculator.init(targetPose, myPose);
 
-        errors = new Pose2d(0.4, 0.4, 0.1);
+        errors = new Pose2d(1, 1, 0.1);
         Robot.DD.straightGoTo(targetPose, errors, calculator, drive, this);
         Robot.DD.applySpeed(new vec2(0), 0, telemetry);
 
-
-        timer.reset();
-        while (timer.milliseconds() < 60)
-            Robot.IN.intake_run_away_auto();
-        Robot.IN.stopIntakeMotors();
+        Robot.FN.drop();
 
         elevator.target_pos = 4;
         Robot.CO.setPositionHigh();
         Robot.CO.setBoxScoring();
+
+        targetPose = auto_constants.RED_BEFORE_DROPS;
+        calculator.init(targetPose, myPose);
+        errors = new Pose2d(1, 1, 0.05);
+        Robot.DD.straightGoTo(targetPose, errors, calculator, drive, this);
 
         if (prop_pos.equals("Center"))
         {
@@ -91,10 +93,11 @@ public class auto_red_right extends LinearOpMode {
             targetPose = auto_constants.RED_LEFT_DROP;
 
         calculator.reset(targetPose, myPose);
-        errors = new Pose2d(1, 0.5, 0.05);
+        errors = new Pose2d(1, 1, 0.05);
         Robot.DD.straightGoTo(targetPose, errors, calculator, drive, this);
         Robot.DD.applySpeed(new vec2(0), 0, telemetry);
 
+        sleep(800);
         Robot.OT.runUnloading();
         timer.reset();
         while(timer.milliseconds() < 800 && opModeIsActive()) {
@@ -108,20 +111,22 @@ public class auto_red_right extends LinearOpMode {
         elevator.target_pos = 0;
 
 
+        /*
         targetPose = auto_constants.RED_FINAL_ZONE;
         calculator.reset(targetPose, myPose);
-        errors = new Pose2d(0.2, 1, 0.1);
+        errors = new Pose2d(2, 2, 0.3);
         Robot.DD.straightGoTo(targetPose, errors, calculator, drive, this);
+        */
         Robot.DD.applySpeed(new vec2(0), 0, telemetry);
         Robot.DD.setWheelsDefault();
         Robot.CO.setPositionLow();
         Robot.DD.stopDrivetrain();
         /* update once if autonomous ended by timer */
         drive.update();
-        op_container.transferData(drive.getPoseEstimate(), Robot.DD.leftModule.upMotor.getCurrentPosition(), Robot.DD.rightModule.upMotor.getCurrentPosition(), elevator.LI.getPos(elevator.LI.motor_left), elevator.LI.getPos(elevator.LI.motor_right), Robot.HG.getPos());
+        op_container.transferData(drive.getPoseEstimate(), Robot.DD.leftModule.upMotor.getCurrentPosition(), Robot.DD.rightModule.upMotor.getCurrentPosition(), elevator.LI.getPos());
         while (opModeIsActive()){
             drive.update();
-            op_container.transferData(drive.getPoseEstimate(), Robot.DD.leftModule.upMotor.getCurrentPosition(), Robot.DD.rightModule.upMotor.getCurrentPosition(), elevator.LI.getPos(elevator.LI.motor_left), elevator.LI.getPos(elevator.LI.motor_right), Robot.HG.getPos());
+            op_container.transferData(drive.getPoseEstimate(), Robot.DD.leftModule.upMotor.getCurrentPosition(), Robot.DD.rightModule.upMotor.getCurrentPosition(), elevator.LI.getPos());
         }
     }
 }

@@ -17,8 +17,8 @@ public class elevator {
     double Pr;
     double Dr;
     double Ir, Il;
-    final double kP = 0.011;
-    final double kD = 0.011;
+    final double kP = 0.01;
+    final double kD = 0.013;
 
     final double kI = 0.0009;
 
@@ -29,7 +29,7 @@ public class elevator {
     int errRight;
     public DcMotor motor_left;
     public DcMotor motor_right;
-
+    final double COEF = 5;
     int START_TICKS_LEFT;
     int START_TICKS_RIGHT;
 
@@ -45,7 +45,6 @@ public class elevator {
         errOldRight = 0;
         errOldLeft = 0;
         START_TICKS_LEFT = motor_left.getCurrentPosition();
-        START_TICKS_RIGHT = motor_right.getCurrentPosition();
 
         telemetry = tele;
         telemetry.addData("START_TICKS_LEFT:", START_TICKS_LEFT);
@@ -53,15 +52,15 @@ public class elevator {
     }
 
     public void setPosHigh(){
-        calculate_and_apply_power(400);
+        calculate_and_apply_power(2000);
     }
 
     public void setPosMid(){
-        calculate_and_apply_power(250);
+        calculate_and_apply_power(1250);
     }
 
     public void setPosLow(){
-        calculate_and_apply_power(180);
+        calculate_and_apply_power(900);
     }
 
     public void setPosDown(){
@@ -69,73 +68,63 @@ public class elevator {
     }
 
     public void setPosAutoYellow(){
-        calculate_and_apply_power(70);
+        calculate_and_apply_power(600);
     }
 
     private void calculate_and_apply_power(int target_pos){
-        int curPosLeftMotor = getPos(motor_left);
-        int curPosRightMotor = getPos(motor_right);
+        int curPosLeftMotor = getPos();
 
         if (curPosLeftMotor < 0){
-            motor_left.setPower(0.3 * 0.6);
-        }
-        if (curPosRightMotor < 0){
             motor_right.setPower(0.2 * 0.6);
+            motor_left.setPower(0.2 * 0.6);
         }
 
         errLeft = target_pos - curPosLeftMotor; /* -100*/
-        errRight = target_pos - curPosRightMotor;
 
         Pl = errLeft;
-        Pr = errRight;
 
         Dl = errLeft - errOldLeft;
-        Dr = errRight - errOldRight;
 
         if (Math.abs(errLeft) <= 60)
             Il += errLeft;
-        if (Math.abs(errRight) <= 60)
-            Ir += errRight;
 
-        if (errLeft * errOldLeft < 0)
+
+       /* if (target_pos == 0 && curPosLeftMotor < 100) {
+            motor_left.setPower(0);
+            motor_right.setPower(0);
+            return;
+        }*/
+
+
+
+        if (Math.abs(errLeft) < 50) {
             Il = 0;
-        if (errRight * errOldRight < 0)
-            Ir = 0;
-
-        if (target_pos == 0 && curPosLeftMotor < 100) {
-            motor_left.setPower(0);
-            return;
-        }
-        if (target_pos == 0 && curPosRightMotor < 100) {
             motor_right.setPower(0);
-            return;
+            motor_left.setPower(0);
         }
 
-
-        if (target_pos < curPosLeftMotor && errLeft < -50)
-            motor_left.setPower(0);
-        else
+        if (target_pos > curPosLeftMotor && errLeft >= 50) {
+            motor_right.setPower(Math.max((Pl * kP + Dl * kD + Il * kI) * 0.6, 0));
             motor_left.setPower(Math.max((Pl * kP + Dl * kD + Il * kI) * 0.6, 0));
-
-        if (target_pos < curPosRightMotor && errRight < -50)
-            motor_right.setPower(0);
+        }
         else
-            motor_right.setPower(Math.max((Pr * kP + Dr * kD + Ir * kI) * 0.6, 0));
+        {
+            if (errLeft < -50) {
+
+                motor_right.setPower((Pl * kP + Dl * kD + Il * kI) * 0.6);
+                motor_left.setPower((Pl * kP + Dl * kD + Il * kI) * 0.6);
+            }
+        }
+
+        /*if (target_pos < curPosLeftMotor && errLeft >= 50) {
+
+        }*/
 
         errOldLeft = errLeft;
-        errOldRight = errRight;
     }
-    public int getPos_Left(){
-        return motor_left.getCurrentPosition() - START_TICKS_LEFT;
-
-    }
-
-    public int getPos(DcMotor motor){
-        if (motor == motor_left)
-            return motor.getCurrentPosition() - START_TICKS_LEFT + op_container.elevator_left;
-        else
-            return motor.getCurrentPosition() - START_TICKS_RIGHT + op_container.elevator_right;
-    }
+    public int getPos(){
+            return motor_left.getCurrentPosition() - START_TICKS_LEFT/* + op_container.elevator_left*/;
+          }
 
     public void applyPower(double power, Telemetry telemetry){
         motor_right.setPower(power);

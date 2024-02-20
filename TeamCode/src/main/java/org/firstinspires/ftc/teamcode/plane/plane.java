@@ -22,7 +22,7 @@ public class plane {
     }
 
     public void prepare() {
-        setPos(0);
+        setPos(1);
     }
 
     public double getPos(){

@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class intake_sensor {
     AnalogInput sensor;
     boolean old_sensor = false;
-    int num_pixels = 0;
+    public int num_pixels = 0;
 
     public void init(HardwareMap HM){
         sensor = HM.get(AnalogInput.class, "sensor");
