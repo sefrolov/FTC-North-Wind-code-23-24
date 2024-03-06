@@ -19,7 +19,7 @@ public class auto_PID {
     public double kIHeading = 0.033;
      */
     public double kPtrans = 0.0205;
-    public double kDtrans = 0.06;
+    public double kDtrans = 0.062;
     public double kItrans = 0.002;
 
     public double kPHeading = 0.135;

@@ -61,9 +61,9 @@ public class Detector {
                 // set parameters for custom models.
                 .setModelLabels(LABELS)
                 .setIsModelTensorFlow2(true)
-                .setIsModelQuantized(true)
+                .setIsModelQuantized(false)
                 .setModelInputSize(640)
-                .setModelAspectRatio(16.0 / 9.0)
+                .setModelAspectRatio(1.0 / 1.0)
 
                 .build();
 
@@ -99,17 +99,13 @@ public class Detector {
         visionPortal = builder.build();
 
         // Set confidence threshold for TFOD recognitions, at any time.
-        tfod.setMinResultConfidence(0.7f);
+        tfod.setMinResultConfidence(0.6f);
 
         // Disable or re-enable the TFOD processor at any time.
         visionPortal.setProcessorEnabled(tfod, true);
 
     }   // end method initTfod()
 
-    public void restart_streaming(HardwareMap hm){
-        visionPortal.setProcessorEnabled(tfod, false);
-        visionPortal.setProcessorEnabled(tfod, true);
-    }
     public String getPosition(Telemetry tele){
         List<Recognition> currentRecognitions = tfod.getRecognitions();
 

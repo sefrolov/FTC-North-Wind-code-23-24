@@ -33,10 +33,12 @@ public class auto_blue_right extends LinearOpMode {
         Pose2d errors;
         auto_PID calculator = new auto_PID();
 
+        timer.reset();
         while (!isStarted()) {
             telemetry.addData("", "not started");
-            prop_pos = Robot.BD.getPosition(telemetry);
-            telemetry.addData("pos:", prop_pos);
+                prop_pos = Robot.BD.getPosition(telemetry);
+                timer.reset();
+                telemetry.addData("pos:", prop_pos);
             telemetry.update();
         }
 

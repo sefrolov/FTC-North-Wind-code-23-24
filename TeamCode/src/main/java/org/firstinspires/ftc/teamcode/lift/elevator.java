@@ -17,10 +17,10 @@ public class elevator {
     double Pr;
     double Dr;
     double Ir, Il;
-    final double kP = 0.01;
-    final double kD = 0.013;
+    final double kP = 0.002;
+    final double kD = 0; //0.013
 
-    final double kI = 0.0009;
+    final double kI = 0; //0.0009
 
     int errOldLeft;
     int errLeft;
@@ -52,11 +52,11 @@ public class elevator {
     }
 
     public void setPosHigh(){
-        calculate_and_apply_power(2000);
+        calculate_and_apply_power(2245);
     }
 
     public void setPosMid(){
-        calculate_and_apply_power(1250);
+        calculate_and_apply_power(1650);
     }
 
     public void setPosLow(){
@@ -67,6 +67,10 @@ public class elevator {
         calculate_and_apply_power(0);
     }
 
+    public void setPosHang(){
+        calculate_and_apply_power(1);
+    }
+
     public void setPosAutoYellow(){
         calculate_and_apply_power(600);
     }
@@ -74,9 +78,17 @@ public class elevator {
     private void calculate_and_apply_power(int target_pos){
         int curPosLeftMotor = getPos();
 
+        if (target_pos == 1)
+        {
+            motor_right.setPower(-1);
+            motor_left.setPower(-1);
+            return;
+        }
+        
+
         if (curPosLeftMotor < 0){
-            motor_right.setPower(0.2 * 0.6);
-            motor_left.setPower(0.2 * 0.6);
+            motor_right.setPower(0.2);
+            motor_left.setPower(0.2);
         }
 
         errLeft = target_pos - curPosLeftMotor; /* -100*/
@@ -95,8 +107,6 @@ public class elevator {
             return;
         }*/
 
-
-
         if (Math.abs(errLeft) < 50) {
             Il = 0;
             motor_right.setPower(0);
@@ -104,15 +114,15 @@ public class elevator {
         }
 
         if (target_pos > curPosLeftMotor && errLeft >= 50) {
-            motor_right.setPower(Math.max((Pl * kP + Dl * kD + Il * kI) * 0.6, 0));
-            motor_left.setPower(Math.max((Pl * kP + Dl * kD + Il * kI) * 0.6, 0));
+            motor_right.setPower(Math.max((Pl * kP + Dl * kD + Il * kI), 0));
+            motor_left.setPower(Math.max((Pl * kP + Dl * kD + Il * kI), 0));
         }
         else
         {
             if (errLeft < -50) {
 
-                motor_right.setPower((Pl * kP + Dl * kD + Il * kI) * 0.6);
-                motor_left.setPower((Pl * kP + Dl * kD + Il * kI) * 0.6);
+                motor_right.setPower((Pl * kP + Dl * kD + Il * kI));
+                motor_left.setPower((Pl * kP + Dl * kD + Il * kI));
             }
         }
 
@@ -122,9 +132,16 @@ public class elevator {
 
         errOldLeft = errLeft;
     }
-    public int getPos(){
-            return motor_left.getCurrentPosition() - START_TICKS_LEFT/* + op_container.elevator_left*/;
-          }
+    public int getPos()
+    {
+        return motor_left.getCurrentPosition() - START_TICKS_LEFT/* + op_container.elevator_left*/;
+    }
+
+    public void setZero()
+    {
+        START_TICKS_LEFT = motor_left.getCurrentPosition();
+    }
+
 
     public void applyPower(double power, Telemetry telemetry){
         motor_right.setPower(power);

@@ -76,7 +76,7 @@ public class auto_red_right extends LinearOpMode {
 
         targetPose = auto_constants.RED_BEFORE_DROPS;
         calculator.init(targetPose, myPose);
-        errors = new Pose2d(1, 1, 0.05);
+        errors = new Pose2d(2, 2, 0.1);
         Robot.DD.straightGoTo(targetPose, errors, calculator, drive, this);
 
         if (prop_pos.equals("Center"))
@@ -97,7 +97,7 @@ public class auto_red_right extends LinearOpMode {
         Robot.DD.straightGoTo(targetPose, errors, calculator, drive, this);
         Robot.DD.applySpeed(new vec2(0), 0, telemetry);
 
-        sleep(800);
+        sleep(600);
         Robot.OT.runUnloading();
         timer.reset();
         while(timer.milliseconds() < 800 && opModeIsActive()) {
@@ -110,13 +110,16 @@ public class auto_red_right extends LinearOpMode {
         Robot.CO.setBoxDefault();
         elevator.target_pos = 0;
 
+        targetPose = auto_constants.RED_BEFORE_DROPS;
+        calculator.reset(targetPose, myPose);
+        errors = new Pose2d(2, 2, 0.3);
+        Robot.DD.straightGoTo(targetPose, errors, calculator, drive, this);
 
-        /*
         targetPose = auto_constants.RED_FINAL_ZONE;
         calculator.reset(targetPose, myPose);
         errors = new Pose2d(2, 2, 0.3);
         Robot.DD.straightGoTo(targetPose, errors, calculator, drive, this);
-        */
+
         Robot.DD.applySpeed(new vec2(0), 0, telemetry);
         Robot.DD.setWheelsDefault();
         Robot.CO.setPositionLow();

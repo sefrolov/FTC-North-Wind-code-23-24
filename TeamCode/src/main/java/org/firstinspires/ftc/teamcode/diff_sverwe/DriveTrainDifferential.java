@@ -33,7 +33,7 @@ public class DriveTrainDifferential {
     boolean isParked = false;
     public void init(HardwareMap HM, Telemetry tele) {
         leftModule.init(HM, "motorLD", "motorLU", 8192, 0.6, op_container.TICS_LEFT);
-        rightModule.init(HM, "motorRD", "motorRU", /*1440*/1024, 0.6, op_container.TICS_RIGHT);
+        rightModule.init(HM, "motorRD", "motorRU", 1024, 0.6, op_container.TICS_RIGHT);
         telemetry = tele;
     }
 
@@ -50,7 +50,7 @@ public class DriveTrainDifferential {
 
         rightSpeed = trans.plus(turnSpeedRight);
         leftSpeed = trans.plus(turnSpeedLeft);
-        rightSpeed.mul(-1);
+        leftSpeed.mul(-1);
         if (max(rightSpeed.len(), leftSpeed.len()) > 1) {
             double koef = max(rightSpeed.len(), leftSpeed.len());
             rightSpeed.mul(1. / koef);
@@ -67,7 +67,7 @@ public class DriveTrainDifferential {
 
         rightSpeed = trans.plus(turnSpeedRight);
         leftSpeed = trans.plus(turnSpeedLeft);
-        rightSpeed.mul(-1);
+        leftSpeed.mul(-1);
         if (max(rightSpeed.len(), leftSpeed.len()) > 1) {
             rightSpeed.mul(1. / max(rightSpeed.len(), leftSpeed.len()));
             leftSpeed.mul(1. / max(rightSpeed.len(), leftSpeed.len()));

@@ -197,21 +197,16 @@ public class module {
         if (dir.scalMul(cur_dir) < 0){
             dir.invert();
             target_speed *= -1;
-            if (getDifference() < PI / 6.) applyVectorTele(target_speed, dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);
-            else applyVectorTele(0, dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);
-            if (TICS_PER_REV == 1024) {
-                /*
-                tele.addData("upMotor:", upMotor.getCurrentPosition());
-                tele.addData("TPR:", TICS_PER_REV);
-                tele.update();
-                 */
-
-            }
-
+            //if (getDifference() < PI / 6.)
+                applyVectorTele(target_speed, dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);
+            //else
+            //    applyVectorTele(0, dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);
         }
         else {
-            if (getDifference() < PI / 6.) applyVectorTele(target_speed, dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);
-            else applyVectorTele(0, dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);
+            //if (getDifference() < PI / 6.)
+                applyVectorTele(target_speed, dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);
+            //else
+            //    applyVectorTele(0, dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);
         }
         /*
         tele.addData("target_speed", target_speed);
@@ -229,12 +224,16 @@ public class module {
         if (dir.scalMul(cur_dir) < 0){
             dir.invert();
             target_speed *= -1;
-            if (getDifference() < PI / 6.) applyVector(target_speed, dir.vecMul(cur_dir) / dir.len() * p_coef_turn);
-            else applyVector(target_speed, dir.vecMul(cur_dir) / dir.len() * p_coef_turn);
+            if (getDifference() < PI / 6.)
+                applyVector(target_speed, dir.vecMul(cur_dir) / dir.len() * p_coef_turn);
+            else
+                applyVector(target_speed, dir.vecMul(cur_dir) / dir.len() * p_coef_turn);
         }
         else {
-            if (getDifference() < PI / 6.) applyVector(target_speed, dir.vecMul(cur_dir) / dir.len() * p_coef_turn);
-            else applyVector(target_speed, dir.vecMul(cur_dir) / dir.len() * p_coef_turn);
+            if (getDifference() < PI / 6.)
+                applyVector(target_speed, dir.vecMul(cur_dir) / dir.len() * p_coef_turn);
+            else
+                applyVector(target_speed, dir.vecMul(cur_dir) / dir.len() * p_coef_turn);
         }
     }
 

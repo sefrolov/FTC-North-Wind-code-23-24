@@ -30,12 +30,12 @@ import org.firstinspires.ftc.teamcode.tele_movement.tele_auto;
 
 /*** FEEDBACK INFO ***/
 /**
-<b> GAMEPAD TABLE: </b>
-<p><font color="green">GREEN => OPERATOR CONTROLLED</font></p>
+ <b> GAMEPAD TABLE: </b>
+ <p><font color="green">GREEN => OPERATOR CONTROLLED</font></p>
  <p><font color="red">RED & vibrating => AUTO CONTROLLED</font></p>
  <p><font color="orange">ORANGE => CAN UPDATE COORDINATES</font></p>
  <br>
-<b> AUTO CONTROLS: </b>
+ <b> AUTO CONTROLS: </b>
  <p>A (cross) => go to wing</p>
  <p>X (square) => update coordinates </p>
  <p>dpad left => go to left backdrop pos</p>
@@ -45,8 +45,8 @@ import org.firstinspires.ftc.teamcode.tele_movement.tele_auto;
  <br>
 
  ***/
-@TeleOp(name = "tele_main")
-public class tele_main extends LinearOpMode {
+@TeleOp(name = "Tele")
+public class Tele extends LinearOpMode {
     RobotNW Robot = new RobotNW();
     vec2 JoyDir = new vec2(0);
     Pose2d curPos;
@@ -270,9 +270,9 @@ public class tele_main extends LinearOpMode {
             /*** END OF AUTO RELOCATION SECTION ***/
 
             /*** INTAKE CONTROL ***/
-            if (gamepad2.x/* || gamepad1.y || gamepad1.b*/ && elevator.target_pos == 0 && flipperPos == 0)
+            if (gamepad2.x/* || gamepad1.y || gamepad1.b*/ && elevator.target_pos == 0 && flipperPos == 0 && elevator.getNumPixels() <= 2)
                 Robot.IN.intake_run();
-            else if (gamepad2.right_trigger > 0.5)
+            else if (gamepad2.right_trigger > 0.5 && elevator.getNumPixels() > 2)
                 Robot.IN.intake_run_away();
             else
                 Robot.IN.stopIntakeMotors();
@@ -397,7 +397,7 @@ public class tele_main extends LinearOpMode {
             /*** FINGER CONTROL ***/
             if (gamepad2.a)
                 Robot.FN.prepare();
-            
+
             else if (gamepad2.y)
                 Robot.FN.drop();
 

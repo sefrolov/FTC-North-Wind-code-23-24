@@ -35,8 +35,7 @@ public class elevator_thread extends Thread {
                     LI.setPosAutoYellow();
                     break;
                 case 10:
-
-                    LI.setPosDown();
+                    LI.setPosHang();
                     break;
                 default:
                     LI.setPosDown();
