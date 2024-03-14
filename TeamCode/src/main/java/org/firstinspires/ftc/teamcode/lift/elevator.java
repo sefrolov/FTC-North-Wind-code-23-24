@@ -84,7 +84,7 @@ public class elevator {
             motor_left.setPower(-1);
             return;
         }
-        
+
 
         if (curPosLeftMotor < 0){
             motor_right.setPower(0.2);

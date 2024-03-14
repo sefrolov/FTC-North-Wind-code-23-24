@@ -5,6 +5,7 @@ import static java.lang.Math.abs;
 import static java.lang.Math.acos;
 import static java.lang.Math.atan2;
 import static java.lang.Math.cos;
+import static java.lang.Math.max;
 import static java.lang.Math.signum;
 import static java.lang.Math.sin;
 import static java.lang.Math.toRadians;
@@ -108,9 +109,13 @@ public class module {
         System.out.println("after new vector set:" + vector.getX());
 
         vector.mul(4 / Math.sin(toRadians(45)));
-        vector = vector.normalize();
+        //vector = vector.normalize();
 
-        vector.mul(1); //0.73
+        if (abs(max(vector.getX(), vector.getY())) > 1){
+            vector.mul(1. / abs(max(vector.getX(), vector.getY())));
+        }
+
+        //vector.mul(1); //0.73
 
         downMotor.setPower(vector.getX());
         upMotor.setPower(vector.getY());
@@ -197,16 +202,16 @@ public class module {
         if (dir.scalMul(cur_dir) < 0){
             dir.invert();
             target_speed *= -1;
-            //if (getDifference() < PI / 6.)
+            if (getDifference() < PI / 6.)
                 applyVectorTele(target_speed, dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);
-            //else
-            //    applyVectorTele(0, dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);
+            else
+                applyVectorTele(0, dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);
         }
         else {
-            //if (getDifference() < PI / 6.)
+            if (getDifference() < PI / 6.)
                 applyVectorTele(target_speed, dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);
-            //else
-            //    applyVectorTele(0, dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);
+            else
+                applyVectorTele(0, dir.vecMul(cur_dir) / dir.len() * p_coef_turn, tele);
         }
         /*
         tele.addData("target_speed", target_speed);

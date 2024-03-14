@@ -31,7 +31,7 @@ public class change_over {
     }
 
     public void setBoxDefault(){
-        setBoxServoPosition(0.55);
+        setBoxServoPosition(0.56);
     }
     public void setPositionLow() {
         setMotor1Pos(0.03);

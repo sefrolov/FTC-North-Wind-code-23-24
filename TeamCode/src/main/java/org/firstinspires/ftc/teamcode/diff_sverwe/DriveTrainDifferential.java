@@ -32,8 +32,8 @@ public class DriveTrainDifferential {
 
     boolean isParked = false;
     public void init(HardwareMap HM, Telemetry tele) {
-        leftModule.init(HM, "motorLD", "motorLU", 8192, 0.6, op_container.TICS_LEFT);
-        rightModule.init(HM, "motorRD", "motorRU", 1024, 0.6, op_container.TICS_RIGHT);
+        leftModule.init(HM, "motorLD", "motorLU", 8192, 0.5, op_container.TICS_LEFT);//0.6
+        rightModule.init(HM, "motorRD", "motorRU", 1024, 0.4, op_container.TICS_RIGHT);//0.6
         telemetry = tele;
     }
 

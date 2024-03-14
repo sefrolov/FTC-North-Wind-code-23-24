@@ -11,8 +11,8 @@ import org.firstinspires.ftc.teamcode.lift.elevator_thread;
 import org.firstinspires.ftc.teamcode.maths.vec2;
 import org.firstinspires.ftc.teamcode.tele_movement.op_container;
 
-@Autonomous(name = "auto_blue_left")
-public class auto_blue_left extends LinearOpMode {
+@Autonomous
+public class auto_test extends LinearOpMode {
     RobotNW Robot = new RobotNW();
     ElapsedTime timer = new ElapsedTime();
     String prop_pos = "";
@@ -47,66 +47,20 @@ public class auto_blue_left extends LinearOpMode {
 
         //Robot.servo.setPosition(0.16);
 
-        Robot.BD.StopStreaming();
-        if (prop_pos.equals("Center"))
-            targetPose = auto_constants.BLUE_LEFT_CENTER_SPIKE;
-        else if (prop_pos.equals("Right"))
-        {
-            targetPose = auto_constants.BLUE_LEFT_RIGHT_SPIKE_WAYPOINT;
-            calculator.init(targetPose, myPose);
-            errors = new Pose2d(5, 5, 1);
-            Robot.DD.straightGoTo(targetPose, errors, calculator, drive, this);
-            Robot.DD.applySpeed(new vec2(0), 0, telemetry);
-            targetPose = auto_constants.BLUE_LEFT_RIGHT_SPIKE;
-        }
-        else
-            targetPose = auto_constants.BLUE_LEFT_LEFT_SPIKE;
+        targetPose = new Pose2d(-42, 15, Math.toRadians(180));
 
         calculator.init(targetPose, myPose);
+        elevator.target_pos = 2;
+        Robot.CO.setPositionHigh();
+        Robot.CO.setBoxScoring();
 
         errors = new Pose2d(1, 1, 0.1);
         Robot.DD.straightGoTo(targetPose, errors, calculator, drive, this);
         Robot.DD.applySpeed(new vec2(0), 0, telemetry);
 
-        Robot.FN.drop();
-
-        if (prop_pos.equals("Right")) {
-            targetPose = auto_constants.BLUE_LEFT_RIGHT_SPIKE_DOP;
-            calculator.init(targetPose, myPose);
-            errors = new Pose2d(1, 1, 1);
-            Robot.DD.straightGoTo(targetPose, errors, calculator, drive, this);
-        }
-        else if (prop_pos.equals("Center")) {
-            targetPose = auto_constants.BLUE_LEFT_CENTER_SPIKE_DOP;
-            calculator.init(targetPose, myPose);
-            errors = new Pose2d(1, 1, 1);
-            Robot.DD.straightGoTo(targetPose, errors, calculator, drive, this);
-        }
-        elevator.target_pos = 4;
-        Robot.CO.setPositionHigh();
-        Robot.CO.setBoxScoring();
-
-        if (prop_pos.equals("Center"))
-        {
-            /*targetPose = auto_constants.BLUE_LEFT_CENTER_ADDITIONAL;
-            calculator.init(targetPose, myPose);
-            errors = new Pose2d(5, 5, 1);
-            Robot.DD.straightGoTo(targetPose, errors, calculator, drive, this);*/
-            targetPose = auto_constants.BLUE_CENTER_DROP;
-        }
-        else if (prop_pos.equals("Right"))
-            targetPose = auto_constants.BLUE_RIGHT_DROP;
-        else
-            targetPose = auto_constants.BLUE_LEFT_DROP;
-
-        calculator.reset(targetPose, myPose);
-        errors = new Pose2d(1, 1, 0.05);
-        Robot.DD.straightGoTo(targetPose, errors, calculator, drive, this);
-        Robot.DD.applySpeed(new vec2(0), 0, telemetry);
-
         Robot.OT.runUnloading();
         timer.reset();
-        while(timer.milliseconds() < 800 && opModeIsActive()) {
+        while(timer.milliseconds() < 3800 && opModeIsActive()) {
             telemetry.addData("adaaaa", "+");
             telemetry.update();
         }
@@ -115,26 +69,34 @@ public class auto_blue_left extends LinearOpMode {
         Robot.CO.setPositionLow();
         Robot.CO.setBoxDefault();
         elevator.target_pos = 0;
+/*
+        targetPose = new Pose2d(-40, 20, Math.toRadians(180));
+        calculator.reset(targetPose, myPose);
+        errors = new Pose2d(1, 1, 0.1);
+        Robot.DD.straightGoTo(targetPose, errors, calculator, drive, this);
+        Robot.DD.applySpeed(new vec2(0), 0, telemetry);
 
+*/
 
+        /*
 
         targetPose = auto_constants.BLUE_BEFORE_DROPS;
         calculator.reset(targetPose, myPose);
         errors = new Pose2d(2, 2, 0.3);
         Robot.DD.straightGoTo(targetPose, errors, calculator, drive, this);
 
-        targetPose = auto_constants.BLUE_FINAL_ZONE_CENTER;
+        targetPose = auto_constants.BLUE_FINAL_ZONE_WALL;
         calculator.reset(targetPose, myPose);
         errors = new Pose2d(2, 2, 0.3);
         Robot.DD.straightGoTo(targetPose, errors, calculator, drive, this);
-
+        */
         Robot.DD.applySpeed(new vec2(0), 0, telemetry);
         Robot.DD.setWheelsDefault();
         //Robot.CO.setPositionLow();
         Robot.DD.stopDrivetrain();
         //elevator.target_pos = 0;
         timer.reset();
-        while (!isStopRequested() && timer.milliseconds() < 1000) drive.update();
+        while (!isStopRequested() && timer.milliseconds() < 3000) drive.update();
         elevator.interrupt();
         /* update once if autonomous ended by timer */
         drive.update();

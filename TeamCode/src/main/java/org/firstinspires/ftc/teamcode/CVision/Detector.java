@@ -62,8 +62,8 @@ public class Detector {
                 .setModelLabels(LABELS)
                 .setIsModelTensorFlow2(true)
                 .setIsModelQuantized(false)
-                .setModelInputSize(640)
-                .setModelAspectRatio(1.0 / 1.0)
+                .setModelInputSize(480)
+                .setModelAspectRatio(16.0 / 9.0)
 
                 .build();
 

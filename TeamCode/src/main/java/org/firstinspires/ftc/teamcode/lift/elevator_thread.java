@@ -42,6 +42,8 @@ public class elevator_thread extends Thread {
                     break;
             }
         }
+        LI.motor_left.setPower(0);
+        LI.motor_right.setPower(0);
     }
 
     public void init(HardwareMap HM, Telemetry tele){

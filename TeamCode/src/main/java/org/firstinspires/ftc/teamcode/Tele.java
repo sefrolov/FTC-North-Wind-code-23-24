@@ -53,8 +53,8 @@ public class Tele extends LinearOpMode {
     Vector2d atPos;
 
     int flipperPos = 0; //1 up 0 low
-    boolean endgame = false;
-    int autoDrive = 0;
+    boolean endgame = false, intake_run_away_flag = false;
+    int autoDrive = 0, old_pix = 0;
     /*
        0 - OFF
        1 - WING
@@ -68,6 +68,7 @@ public class Tele extends LinearOpMode {
     ElapsedTime outtake_timer = new ElapsedTime();
     ElapsedTime intake_timer = new ElapsedTime();
     ElapsedTime timer = new ElapsedTime();
+    ElapsedTime intake_run_away = new ElapsedTime();
 
     ElapsedTime timer_flipper = new ElapsedTime();
     PID_system calculator = new PID_system();
@@ -143,9 +144,7 @@ public class Tele extends LinearOpMode {
                     Robot.DD.applySpeed(JoyDir, /*calculator.calculate_speeds(dHeading)*/ 0, telemetry);
                 else
                     Robot.DD.applySpeed(JoyDir, last_turn, telemetry);
-            }
-            else
-            {
+            } else {
                 if (autoDrive == 0)
                     Robot.DD.applySpeed(new vec2(0, 0), /*calculator.calculate_speeds(dHeading)*/0, telemetry);
                 //Robot.DD.applySpeed(new vec2(0, 0), 0, telemetry);
@@ -167,7 +166,7 @@ public class Tele extends LinearOpMode {
             telemetry.addData("Left ticks", Robot.DD.leftModule.upMotor.getCurrentPosition());
             telemetry.addData("X:", curPos.getX());
             telemetry.addData("Y:", curPos.getY());
-
+            telemetry.addData("pixel", elevator.getNumPixels());
 
 
             /*** END OF WHEELBASE DRIVING SECTION ***/
@@ -182,8 +181,7 @@ public class Tele extends LinearOpMode {
             else if (atPos != null && gamepad1.x) {
                 drive.setPoseEstimate(new Pose2d(atPos, curPos.getHeading()));
                 gamepad1Feedback.runEffectCoordsUpdated();
-            }
-            else
+            } else
                 gamepad1Feedback.setColor(0, 1, 0);
 
             /* WING PARKING */
@@ -195,29 +193,28 @@ public class Tele extends LinearOpMode {
                 autoDrive = 2;
 
             /* BACKDROP CENTER PARKING */
-            if (gamepad1.dpad_up){
+            if (gamepad1.dpad_up) {
                 autoDrive = 3;
             }
 
             /* BACKDROP RIGHT PARKING */
-            if (gamepad1.dpad_right){
+            if (gamepad1.dpad_right) {
                 autoDrive = 4;
             }
 
             /* CLOSEST FARM PARKING */
-            if (gamepad1.left_bumper){
+            if (gamepad1.left_bumper) {
                 autoDrive = 5;
             }
 
-            switch (autoDrive){
+            switch (autoDrive) {
                 case 0:
                     break;
                 case 1:
                     if (op_container.blue) {
                         if (Robot.DD.straightGoToTeleop(BLUE_WING, new Pose2d(1, 1, 0.1), auto_calculator, drive, this))
                             autoDrive = 0;
-                    }
-                    else {
+                    } else {
                         if (Robot.DD.straightGoToTeleop(RED_WING, new Pose2d(1, 1, 0.1), auto_calculator, drive, this))
                             autoDrive = 0;
                     }
@@ -226,8 +223,7 @@ public class Tele extends LinearOpMode {
                     if (op_container.blue) {
                         if (Robot.DD.straightGoToTeleop(BLUE_LEFT_DROP, new Pose2d(1, 1, 0.1), auto_calculator, drive, this))
                             autoDrive = 0;
-                    }
-                    else {
+                    } else {
                         if (Robot.DD.straightGoToTeleop(RED_LEFT_DROP, new Pose2d(1, 1, 0.1), auto_calculator, drive, this))
                             autoDrive = 0;
                     }
@@ -236,8 +232,7 @@ public class Tele extends LinearOpMode {
                     if (op_container.blue) {
                         if (Robot.DD.straightGoToTeleop(BLUE_CENTER_DROP, new Pose2d(1, 1, 0.1), auto_calculator, drive, this))
                             autoDrive = 0;
-                    }
-                    else {
+                    } else {
                         if (Robot.DD.straightGoToTeleop(RED_CENTER_DROP, new Pose2d(1, 1, 0.1), auto_calculator, drive, this))
                             autoDrive = 0;
                     }
@@ -246,8 +241,7 @@ public class Tele extends LinearOpMode {
                     if (op_container.blue) {
                         if (Robot.DD.straightGoToTeleop(BLUE_RIGHT_DROP, new Pose2d(1, 1, 0.1), auto_calculator, drive, this))
                             autoDrive = 0;
-                    }
-                    else {
+                    } else {
                         if (Robot.DD.straightGoToTeleop(RED_RIGHT_DROP, new Pose2d(1, 1, 0.1), auto_calculator, drive, this))
                             autoDrive = 0;
                     }
@@ -272,11 +266,20 @@ public class Tele extends LinearOpMode {
             /*** INTAKE CONTROL ***/
             if (gamepad2.x/* || gamepad1.y || gamepad1.b*/ && elevator.target_pos == 0 && flipperPos == 0 && elevator.getNumPixels() <= 2)
                 Robot.IN.intake_run();
-            else if (gamepad2.right_trigger > 0.5 && elevator.getNumPixels() > 2)
+            else if (gamepad2.right_trigger > 0.5) {
                 Robot.IN.intake_run_away();
+            } else if (elevator.getNumPixels() > 2 && old_pix <= 2) {
+                Robot.IN.intake_run_away();
+                intake_run_away.reset();
+                intake_run_away_flag = true;
+            }
+            else if (intake_run_away_flag && intake_run_away.milliseconds() < 500){
+                Robot.IN.intake_run_away();
+            }
+            else if(intake_run_away_flag && intake_run_away.milliseconds() > 500) intake_run_away_flag = false;
             else
                 Robot.IN.stopIntakeMotors();
-
+            old_pix = elevator.getNumPixels();
             /*** END OF INTAKE CONTROL ***/
 
             /*** PLANE CONTROL ***/

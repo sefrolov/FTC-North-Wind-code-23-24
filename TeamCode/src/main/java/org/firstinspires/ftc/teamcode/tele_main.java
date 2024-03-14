@@ -138,7 +138,12 @@ public class tele_main extends LinearOpMode {
                 autoDrive = 0;
                 last_turn = (gamepad1.left_trigger - gamepad1.right_trigger);
                 JoyDir.set(-gamepad1.left_stick_x, -gamepad1.left_stick_y);
-
+                last_turn *= 0.75;
+                if (gamepad1.x) {
+                    JoyDir.mul(1./4.);
+                    last_turn *= 0.5;
+                }
+                if (JoyDir.len() < 0.02) JoyDir.set(0, 0);
                 if (Math.abs(last_turn) < 0.02)
                     Robot.DD.applySpeed(JoyDir, /*calculator.calculate_speeds(dHeading)*/ 0, telemetry);
                 else
@@ -151,6 +156,11 @@ public class tele_main extends LinearOpMode {
                 //Robot.DD.applySpeed(new vec2(0, 0), 0, telemetry);
                 //dHeading = 0;
             }
+
+
+
+            //if (last_turn > 0.02) WasRotating = true;
+            //else WasRotating = false;
 
             /*
             if (gamepad2.right_stick_button)
@@ -390,7 +400,7 @@ public class tele_main extends LinearOpMode {
                 Robot.CO.setHangerPos();
             }
             if (gamepad2.left_stick_button && elevator.target_pos == 10 && !PreviousGamepad2.left_stick_button)
-                elevator.target_pos = 1;
+                elevator.target_pos = 3;
 
             /*** END OF HANGER CONTROL ***/
 
