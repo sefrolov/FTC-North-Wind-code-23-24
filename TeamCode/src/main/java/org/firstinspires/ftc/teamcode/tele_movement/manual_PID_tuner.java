@@ -40,7 +40,7 @@ public class manual_PID_tuner extends LinearOpMode {
         telemetry.addData("", "init succesfully");
         telemetry.update();
 
-        calculator.init(targetPose, curPose);
+        calculator.reset(targetPose, curPose);
 
         waitForStart();
 
