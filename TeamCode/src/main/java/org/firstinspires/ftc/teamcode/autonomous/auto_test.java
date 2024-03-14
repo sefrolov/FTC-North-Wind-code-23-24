@@ -49,7 +49,7 @@ public class auto_test extends LinearOpMode {
 
         targetPose = new Pose2d(-42, 15, Math.toRadians(180));
 
-        calculator.init(targetPose, myPose);
+        calculator.reset(targetPose, myPose);
         elevator.target_pos = 2;
         Robot.CO.setPositionHigh();
         Robot.CO.setBoxScoring();

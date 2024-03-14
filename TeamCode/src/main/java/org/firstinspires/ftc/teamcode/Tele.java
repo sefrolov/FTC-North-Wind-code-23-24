@@ -114,7 +114,7 @@ public class Tele extends LinearOpMode {
         elevator.init(hardwareMap, telemetry);
         elevator.start();
 
-        auto_calculator.init(new Pose2d(0, 48, 0), new Pose2d(0, 48, 0));
+        auto_calculator.reset(new Pose2d(0, 48, 0), new Pose2d(0, 48, 0));
 
         gamepad1Feedback.setColor(0, 1, 0);
         gamepad2Feedback.setColor(0, 0, 1);
