@@ -53,7 +53,7 @@ public class auto_blue_left extends LinearOpMode {
         else if (prop_pos.equals("Right"))
         {
             targetPose = auto_constants.BLUE_LEFT_RIGHT_SPIKE_WAYPOINT;
-            calculator.init(targetPose, myPose);
+            calculator.reset(targetPose, myPose);
             errors = new Pose2d(5, 5, 1);
             Robot.DD.straightGoTo(targetPose, errors, calculator, drive, this);
             Robot.DD.applySpeed(new vec2(0), 0, telemetry);
@@ -62,7 +62,7 @@ public class auto_blue_left extends LinearOpMode {
         else
             targetPose = auto_constants.BLUE_LEFT_LEFT_SPIKE;
 
-        calculator.init(targetPose, myPose);
+        calculator.reset(targetPose, myPose);
 
         errors = new Pose2d(1, 1, 0.1);
         Robot.DD.straightGoTo(targetPose, errors, calculator, drive, this);
@@ -77,7 +77,7 @@ public class auto_blue_left extends LinearOpMode {
         if (prop_pos.equals("Center"))
         {
             targetPose = auto_constants.BLUE_LEFT_CENTER_ADDITIONAL;
-            calculator.init(targetPose, myPose);
+            calculator.reset(targetPose, myPose);
             errors = new Pose2d(5, 5, 1);
             Robot.DD.straightGoTo(targetPose, errors, calculator, drive, this);
             targetPose = auto_constants.BLUE_CENTER_DROP;

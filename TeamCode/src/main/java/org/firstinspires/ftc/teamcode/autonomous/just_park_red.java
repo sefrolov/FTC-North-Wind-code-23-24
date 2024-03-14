@@ -48,7 +48,7 @@ public class just_park_red extends LinearOpMode {
 
         sleep(24000);
         targetPose = new Pose2d(60, 55, Math.toRadians(0));
-        calculator.init(targetPose, myPose);
+        calculator.reset(targetPose, myPose);
         errors = new Pose2d(1, 1, 0.1);
         Robot.DD.straightGoTo(targetPose, errors, calculator, drive, this);
         Robot.DD.applySpeed(new vec2(0), 0, telemetry);
