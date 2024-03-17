@@ -11,13 +11,43 @@ import org.firstinspires.ftc.teamcode.lift.elevator_thread;
 import org.firstinspires.ftc.teamcode.maths.vec2;
 import org.firstinspires.ftc.teamcode.tele_movement.op_container;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+
 @Autonomous(name = "auto_blue_left")
 public class auto_blue_left extends LinearOpMode {
     RobotNW Robot = new RobotNW();
     ElapsedTime timer = new ElapsedTime();
     String prop_pos = "";
-
+    Pose2d parking_zone = auto_constants.BLUE_FINAL_ZONE_WALL;
+    float delay = 0;
     elevator_thread elevator = new elevator_thread();
+    BufferedReader reader;
+
+    {
+        try {
+            FileReader fr = new FileReader("configs/config.txt");
+            reader = new BufferedReader(fr);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    void readConfig(){
+        try {
+            String zone = reader.readLine();
+            if (zone.equals("wall"))
+                parking_zone = auto_constants.BLUE_FINAL_ZONE_WALL;
+            if (zone.equals("center"))
+                parking_zone = auto_constants.BLUE_FINAL_ZONE_CENTER;
+            delay = Float.parseFloat(reader.readLine());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         Robot.init(hardwareMap, telemetry, this, "Blue", "false");
@@ -30,6 +60,8 @@ public class auto_blue_left extends LinearOpMode {
         Pose2d targetPose;
         Pose2d errors;
         auto_PID calculator = new auto_PID();
+
+        readConfig();
 
         while (!isStarted()) {
             telemetry.addData("", "not started");
@@ -46,8 +78,12 @@ public class auto_blue_left extends LinearOpMode {
         waitForStart();
 
         //Robot.servo.setPosition(0.16);
-
         Robot.BD.StopStreaming();
+
+        timer.reset();
+        while(timer.milliseconds() < delay)
+            ;
+
         if (prop_pos.equals("Center"))
             targetPose = auto_constants.BLUE_LEFT_CENTER_SPIKE;
         else if (prop_pos.equals("Right"))
@@ -123,7 +159,7 @@ public class auto_blue_left extends LinearOpMode {
         errors = new Pose2d(2, 2, 0.3);
         Robot.DD.straightGoTo(targetPose, errors, calculator, drive, this);
 
-        targetPose = auto_constants.BLUE_FINAL_ZONE_CENTER;
+        targetPose = parking_zone;
         calculator.reset(targetPose, myPose);
         errors = new Pose2d(2, 2, 0.3);
         Robot.DD.straightGoTo(targetPose, errors, calculator, drive, this);
